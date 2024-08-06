@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctybb4niolni3"]
+
+[ext_resource type="Shader" path="res://scenes/ships_fleet/fading_trail.gdshader" id="1_tajfm"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ys3et"]
+shader = ExtResource("1_tajfm")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gcgjo"]
+size = Vector2(12, 4)
+
+[sub_resource type="Gradient" id="Gradient_6a1ig"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Ship" type="CPUParticles2D"]
+material = SubResource("ShaderMaterial_ys3et")
+amount = 100
+lifetime = 3.0
+lifetime_randomness = 0.3
+texture = SubResource("PlaceholderTexture2D_gcgjo")
+particle_flag_align_y = true
+gravity = Vector2(0, 0)
+color_ramp = SubResource("Gradient_6a1ig")

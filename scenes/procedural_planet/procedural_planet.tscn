@@ -1,0 +1,37 @@
+[gd_scene load_steps=8 format=3 uid="uid://dnerbdusnaofr"]
+
+[ext_resource type="Script" path="res://scenes/procedural_planet/procedural_planet.gd" id="1_2swpa"]
+[ext_resource type="Shader" path="res://scenes/procedural_planet/procedural_planet.gdshader" id="1_tl7a6"]
+[ext_resource type="Texture2D" uid="uid://dr8pb2ip0k08j" path="res://scenes/procedural_planet/albedo.png" id="3_pc1s8"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xihql"]
+fractal_octaves = 8
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_bt5w2"]
+width = 256
+height = 256
+depth = 256
+seamless = true
+noise = SubResource("FastNoiseLite_xihql")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m4mhh"]
+shader = ExtResource("1_tl7a6")
+shader_parameter/size = 100.0
+shader_parameter/rotationSpeed = 0.05
+shader_parameter/atmosphereColor = Color(0, 0.3, 1, 0.3)
+shader_parameter/atmosphereSize = 0.3
+shader_parameter/cloudsSize = 0.05
+shader_parameter/cloudsDensity = 0.22
+shader_parameter/cloudsTurbulence = 0.01
+shader_parameter/windSpeed = 0.03
+shader_parameter/noise = SubResource("NoiseTexture3D_bt5w2")
+shader_parameter/albedo = ExtResource("3_pc1s8")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ipvyw"]
+size = Vector2(2, 2)
+
+[node name="ProceduralPlanet" type="Sprite2D"]
+material = SubResource("ShaderMaterial_m4mhh")
+scale = Vector2(100, 100)
+texture = SubResource("PlaceholderTexture2D_ipvyw")
+script = ExtResource("1_2swpa")

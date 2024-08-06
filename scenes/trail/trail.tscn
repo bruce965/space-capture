@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3 uid="uid://ckfk1xgxfk1c3"]
+
+[ext_resource type="Shader" path="res://scenes/trail/trail.gdshader" id="1_fjdrv"]
+[ext_resource type="Texture2D" uid="uid://qb1fvyepkup2" path="res://scenes/trail/trail.png" id="2_nw1t2"]
+[ext_resource type="Script" path="res://scenes/trail/trail.gd" id="3_cnvkj"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f7lnm"]
+shader = ExtResource("1_fjdrv")
+shader_parameter/color = Color(1, 0, 1, 1)
+
+[node name="Trail" type="Sprite2D"]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_f7lnm")
+scale = Vector2(10, 1)
+texture = ExtResource("2_nw1t2")
+script = ExtResource("3_cnvkj")

@@ -1,0 +1,78 @@
+[gd_scene load_steps=7 format=3 uid="uid://dq00mi6jwsa1f"]
+
+[ext_resource type="PackedScene" uid="uid://dnerbdusnaofr" path="res://scenes/procedural_planet/procedural_planet.tscn" id="1_8mf3x"]
+[ext_resource type="Script" path="res://scenes/planet/planet.gd" id="1_e208c"]
+[ext_resource type="Shader" path="res://scenes/planet/planet_selection.gdshader" id="2_bl05u"]
+[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://icons/character.svg" id="2_kglxp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tsywx"]
+radius = 50.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lnvto"]
+shader = ExtResource("2_bl05u")
+shader_parameter/size = 100.0
+
+[node name="Planet" type="Node2D"]
+script = ExtResource("1_e208c")
+
+[node name="InputListener" type="Area2D" parent="."]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape" type="CollisionShape2D" parent="InputListener"]
+shape = SubResource("CircleShape2D_tsywx")
+
+[node name="Earth" parent="." instance=ExtResource("1_8mf3x")]
+
+[node name="Selection" type="ColorRect" parent="."]
+unique_name_in_owner = true
+visible = false
+material = SubResource("ShaderMaterial_lnvto")
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+mouse_filter = 2
+
+[node name="Population" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -11.5
+offset_right = 0.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+
+[node name="PopulationMargin" type="MarginContainer" parent="Population"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 2
+
+[node name="PopulationBox" type="HBoxContainer" parent="Population/PopulationMargin"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="PopulationLabel" type="Label" parent="Population/PopulationMargin/PopulationBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+
+[node name="PopulationIcon" type="TextureRect" parent="Population/PopulationMargin/PopulationBox"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_kglxp")
+stretch_mode = 3
+
+[connection signal="input_event" from="InputListener" to="." method="_on_input_listener_input_event"]
+[connection signal="mouse_entered" from="InputListener" to="." method="_on_input_listener_mouse_entered"]
+[connection signal="mouse_exited" from="InputListener" to="." method="_on_input_listener_mouse_exited"]
+[connection signal="gui_input" from="Selection" to="." method="_on_selection_gui_input"]
