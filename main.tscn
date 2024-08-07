@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://cdaf4bh0jaa45"]
 
 [ext_resource type="PackedScene" uid="uid://dq00mi6jwsa1f" path="res://scenes/planet/planet.tscn" id="1_0p552"]
-[ext_resource type="Script" path="res://game_logic/game_logic.gd" id="1_kb05v"]
+[ext_resource type="Script" path="res://scripts/game_logic.gd" id="1_kb05v"]
 [ext_resource type="Script" path="res://scenes/player/player.gd" id="2_plgh6"]
 [ext_resource type="Texture2D" uid="uid://bydmcc5d53ldx" path="res://icons/paw_print.svg" id="3_mxakn"]
 [ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://icons/character.svg" id="3_qxmev"]
@@ -57,7 +57,7 @@ position = Vector2(702, 414)
 position = Vector2(246, 394)
 count = 29
 
-[node name="UI" type="Control" parent="."]
+[node name="UI" type="Control" parent="." node_paths=PackedStringArray("trail")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,9 +66,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("7_khbdl")
+trail = NodePath("Trail")
 
 [node name="Trail" parent="UI" instance=ExtResource("10_b5ql7")]
-position = Vector2(577.094, 325.561)
-rotation = 0.610903
-scale = Vector2(4.53022, 1)
-color = Color(0.184314, 0.329412, 1, 1)
+visible = false
