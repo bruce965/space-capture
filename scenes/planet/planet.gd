@@ -20,13 +20,6 @@ var player: Player :
 func _ready() -> void:
 	is_selected = false
 
-func _on_game_start(game: GameLogic) -> void:
-	pass
-
-func _on_game_tick(game: GameLogic, tick: int) -> void:
-	if player != game.neutral_player and tick % 10 == 0:
-		population += 1
-
 @export_category("UI")
 
 signal selected(planet: Planet)

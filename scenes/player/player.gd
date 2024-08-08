@@ -5,6 +5,8 @@ class_name Player
 
 @export var icon: Texture2D
 
+var pending_operations: Array[GameOperation] = []
+
 func _on_game_start(game: GameLogic) -> void:
 	pass
 
