@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://dtlatmtuggp6x"]
+
+[ext_resource type="Shader" path="res://scenes/nebula/nebula.gdshader" id="1_nqp0c"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8c2xm"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cukca"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("FastNoiseLite_8c2xm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y72ex"]
+shader = ExtResource("1_nqp0c")
+shader_parameter/noise = SubResource("NoiseTexture2D_cukca")
+
+[node name="Nebula" type="ColorRect"]
+material = SubResource("ShaderMaterial_y72ex")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
