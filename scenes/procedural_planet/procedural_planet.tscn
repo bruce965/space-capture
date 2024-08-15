@@ -15,6 +15,7 @@ seamless = true
 noise = SubResource("FastNoiseLite_xihql")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m4mhh"]
+resource_local_to_scene = true
 shader = ExtResource("1_tl7a6")
 shader_parameter/size = 100.0
 shader_parameter/rotationSpeed = 0.05

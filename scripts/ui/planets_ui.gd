@@ -1,7 +1,10 @@
 class_name PlanetsUI
 extends Control
 
-@export var trail: Trail
+## Container for trails.
+@export var trails_container: Node2D
+
+var _trail: Trail
 
 signal fleet_dispatched(from: ControlPlanet, to: ControlPlanet)
 
@@ -9,6 +12,11 @@ func register_planet(control: ControlPlanet) -> void:
 	control.selected.connect(_on_planet_selected)
 	control.pointer_entered.connect(_on_planet_pointer_entered)
 	control.pointer_exited.connect(_on_planet_pointer_exited)
+
+func _ready() -> void:
+	_trail = SceneTemplates.scenes.trail.instantiate()
+	_trail.visible = false
+	trails_container.add_child(_trail)
 
 func _process(delta: float) -> void:
 	_update_trail(delta, false)
@@ -63,18 +71,12 @@ func _on_planet_pointer_exited(planet: ControlPlanet) -> void:
 
 #region Trail
 
-var _trail_opacity := 0.
-
 func _update_trail(delta: float, snap_position: bool) -> void:
-	var show_trail := _dragging_from_planet and _selected_planet != null and _selected_planet.player is LocalPlayer
-	if show_trail or trail.visible:
-		_trail_opacity = Utils.damp(_trail_opacity, 1. if show_trail else 0., 1e-4, delta)
-		trail.color = Color(_selected_planet.player.color, _trail_opacity)
-		trail.visible = _trail_opacity > .01
-		
-		if show_trail:
-			var target_position = _last_cursor_position if _pointed_planet == null else _pointed_planet.global_position
-			trail.start_position = _selected_planet.global_position
-			trail.end_position = target_position if snap_position else Utils.damp(trail.end_position, target_position, 1e-20, delta)
+	_trail.show = _dragging_from_planet and _selected_planet != null and _selected_planet.player is LocalPlayer
+	if _trail.show:
+		_trail.color = _selected_planet.player.color
+		var target_position = _last_cursor_position if _pointed_planet == null else _pointed_planet.global_position
+		_trail.start_position = _selected_planet.global_position
+		_trail.end_position = target_position if snap_position else Utils.damp(_trail.end_position, target_position, 1e-20, delta)
 
 #endregion
