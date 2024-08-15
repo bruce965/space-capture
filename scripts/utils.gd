@@ -1,4 +1,4 @@
-class_name Util
+class_name Utils
 
 ## Time-independent damping with exponential-decay.
 ##

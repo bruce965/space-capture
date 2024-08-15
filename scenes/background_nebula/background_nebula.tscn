@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dtlatmtuggp6x"]
 
-[ext_resource type="Shader" path="res://scenes/nebula/nebula.gdshader" id="1_nqp0c"]
+[ext_resource type="Shader" path="res://scenes/background_nebula/background_nebula.gdshader" id="1_nqp0c"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_8c2xm"]
 
@@ -14,7 +14,7 @@ noise = SubResource("FastNoiseLite_8c2xm")
 shader = ExtResource("1_nqp0c")
 shader_parameter/noise = SubResource("NoiseTexture2D_cukca")
 
-[node name="Nebula" type="ColorRect"]
+[node name="BackgroundNebula" type="ColorRect"]
 material = SubResource("ShaderMaterial_y72ex")
 anchors_preset = 15
 anchor_right = 1.0

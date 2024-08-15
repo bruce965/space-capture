@@ -1,5 +1,5 @@
 extends Node2D
-class_name Planet
+class_name ControlPlanet
 
 ## The player currenly controlling this planet.
 var player: Player :
@@ -32,7 +32,7 @@ var is_selected: bool :
 	set(value):
 		%Selection.visible = value
 
-func _on_input_listener_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+func _on_input_listener_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	# TODO: handle touch appropriately (InputEventScreenTouch).
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 		selected.emit(self)

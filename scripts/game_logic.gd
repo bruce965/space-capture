@@ -1,69 +1,77 @@
-extends Node
 class_name GameLogic
+extends Node
 
-const LOGIC_TICKS_PER_SECOND: float = 20.
-const LOGIC_SECONDS_PER_TICK = 1. / LOGIC_TICKS_PER_SECOND
+const LOGIC_TICKS_PER_SECOND := 20.
+const LOGIC_SECONDS_PER_TICK := 1. / LOGIC_TICKS_PER_SECOND
 
-## Neutral player owning all non-conquered planets.
-@export var neutral_player: Player
+## Templates for spawnable stuff.
+@export var templates: TemplateScenes
+
+## Container for planets.
+@export var planets_container: Node2D
+
+## Interface to interact with planets.
+@export var planets_ui: PlanetsUI
 
 ## Game players.
-@export var players: Array[Player] = []
+@export var players: Array[Player]
 
 ## Game planets.
-@export var planets: Array[Planet] = []
+@export var planets: Array[Planet]
 
-var ticks_count: int
-var extra_time: float
+var _game: GameState
+var _planet_controls: Array[ControlPlanet]
 
-signal game_start(game: GameLogic)
-signal game_tick(game: GameLogic, tick: int)
+var _extra_time: float
 
 func _ready() -> void:
-	_game_init()
-	game_start.emit(self)
+	# New game.
+	_game = GameState.new()
+
+	# Add players.
+	for i in range(players.size()):
+		_game.add_player()
+
+	# Add planets.
+	for i in range(planets.size()):
+		# Data.
+		var data := GameState.PlanetData.new()
+		data.position = Vector2i(planets[i].location)
+		data.grow_every_ticks = 10
+		data.player_id = (i + 1) if (i < players.size() - 1) else 0
+		data.population = 0
+		_game.add_planet(data)
+
+		# UI control.
+		var control: ControlPlanet = templates.control_planet.instantiate()
+		control.position = planets[i].location
+		control.player = players[data.player_id]
+		control.population = data.population
+		_planet_controls.push_back(control)
+		planets_container.add_child(control)
+		planets_ui.register_planet(control)
+
+	# Register UI signals.
+	_game.planet_player_changed.connect(_set_planet_player)
+	_game.planet_population_changed.connect(_set_planet_population)
+	planets_ui.fleet_dispatched.connect(_dispatch_fleet)
 
 func _process(delta: float) -> void:
-	extra_time += delta
+	_extra_time += delta
 	
-	while extra_time > LOGIC_SECONDS_PER_TICK:
-		extra_time -= LOGIC_SECONDS_PER_TICK
-		_game_tick(ticks_count)
-		ticks_count += 1
+	while _extra_time > LOGIC_SECONDS_PER_TICK:
+		_extra_time -= LOGIC_SECONDS_PER_TICK
+		_game.tick()
 
-func _game_init() -> void:
-	ticks_count = 0
-	extra_time = 0.
+func _set_planet_player(planet_id: int, player_id: int) -> void:
+	_planet_controls[planet_id].player = players[player_id]
 
-	for player in players:
-		game_start.connect(player._on_game_start)
-		game_tick.connect(player._on_game_tick)
+func _set_planet_population(planet_id: int, population: int) -> void:
+	_planet_controls[planet_id].population = population
 
-	for i in range(planets.size()):
-		var planet := planets[i]
-		planet.player = players[i] if i < players.size() else neutral_player
-		planet.is_selected = false
-
-func _game_tick(tick: int) -> void:
-	for planet in planets:
-		if planet.player != neutral_player and tick % 10 == 0:
-			planet.population += 1
-
-	for player in players:
-		for op in player.pending_operations:
-			if op is GameOperationSendFleet:
-				var count = min(op.max_count, op.from.population)
-				op.from.population -= count
-				if op.from.player == op.to.player:
-					op.to.population += count
-				else:
-					op.to.population -= count
-					if op.to.population <= 0:
-						op.to.player = op.from.player
-						op.to.population = abs(op.from.population)
-			else:
-				assert(false, "Unknown GameOperation: %s" % [op])
-
-		player.pending_operations.clear()
-
-	game_tick.emit(self, tick)
+func _dispatch_fleet(from: ControlPlanet, to: ControlPlanet) -> void:
+	var player_id := players.find(from.player)
+	var from_planet_id := _planet_controls.find(from)
+	var to_planet_id := _planet_controls.find(to)
+	var max_count: int = ceil(from.population / 2.)
+	_game.dispatch_fleet(player_id, from_planet_id, to_planet_id, max_count)

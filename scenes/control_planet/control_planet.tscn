@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://dq00mi6jwsa1f"]
 
 [ext_resource type="PackedScene" uid="uid://dnerbdusnaofr" path="res://scenes/procedural_planet/procedural_planet.tscn" id="1_8mf3x"]
-[ext_resource type="Script" path="res://scenes/planet/planet.gd" id="1_e208c"]
-[ext_resource type="Shader" path="res://scenes/planet/planet_selection.gdshader" id="2_bl05u"]
+[ext_resource type="Script" path="res://scenes/control_planet/control_planet.gd" id="1_e208c"]
+[ext_resource type="Shader" path="res://scenes/control_planet/planet_selection.gdshader" id="2_bl05u"]
 [ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://icons/character.svg" id="2_kglxp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tsywx"]

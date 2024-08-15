@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="TemplateScenes" load_steps=3 format=3 uid="uid://cp0dudi0f5r62"]
+
+[ext_resource type="PackedScene" uid="uid://dq00mi6jwsa1f" path="res://scenes/control_planet/control_planet.tscn" id="1_3rbtf"]
+[ext_resource type="Script" path="res://scenes/templates/template_scenes.gd" id="1_yvn3m"]
+
+[resource]
+script = ExtResource("1_yvn3m")
+control_planet = ExtResource("1_3rbtf")
