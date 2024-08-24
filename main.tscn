@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cdaf4bh0jaa45"]
+[gd_scene load_steps=19 format=3 uid="uid://cdaf4bh0jaa45"]
 
 [ext_resource type="Script" path="res://scripts/game_logic.gd" id="1_uj8ti"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="2_plgh6"]
@@ -7,9 +7,10 @@
 [ext_resource type="Script" path="res://scripts/player_local.gd" id="4_7rlmh"]
 [ext_resource type="Texture2D" uid="uid://dx1wjviioa8u5" path="res://icons/chip.svg" id="4_pgo63"]
 [ext_resource type="Script" path="res://scripts/ui/planets_ui.gd" id="7_khbdl"]
-[ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/background_nebula/background_nebula.tscn" id="7_sv4lv"]
+[ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/backgrounds/nebula.tscn" id="7_sv4lv"]
 [ext_resource type="Script" path="res://scripts/player_ai.gd" id="7_v73fw"]
 [ext_resource type="Script" path="res://scripts/planet.gd" id="8_ve3b1"]
+[ext_resource type="PackedScene" uid="uid://b0ec8jbenscpp" path="res://scenes/backgrounds/stars.tscn" id="9_lum1l"]
 
 [sub_resource type="Resource" id="Resource_mxp7y"]
 script = ExtResource("2_plgh6")
@@ -57,7 +58,9 @@ planets_ui = NodePath("../PlanetsUI")
 players = Array[ExtResource("2_plgh6")]([SubResource("Resource_mxp7y"), SubResource("Resource_1dtpf"), SubResource("Resource_7wtc7")])
 planets = Array[ExtResource("8_ve3b1")]([SubResource("Resource_50eg2"), SubResource("Resource_2525o"), SubResource("Resource_irtww"), SubResource("Resource_wdycy")])
 
-[node name="BackgroundNebula" parent="." instance=ExtResource("7_sv4lv")]
+[node name="Stars" parent="." instance=ExtResource("9_lum1l")]
+
+[node name="Nebula" parent="." instance=ExtResource("7_sv4lv")]
 
 [node name="Planets" type="Node2D" parent="."]
 

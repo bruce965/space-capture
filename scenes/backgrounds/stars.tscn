@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0ec8jbenscpp"]
+
+[ext_resource type="Shader" path="res://scenes/backgrounds/background_stars.gdshader" id="1_u4u73"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y72ex"]
+shader = ExtResource("1_u4u73")
+
+[node name="Stars" type="ColorRect"]
+material = SubResource("ShaderMaterial_y72ex")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

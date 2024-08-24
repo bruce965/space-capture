@@ -1,8 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://dtlatmtuggp6x"]
 
-[ext_resource type="Shader" path="res://scenes/background_nebula/background_nebula.gdshader" id="1_nqp0c"]
+[ext_resource type="Shader" path="res://scenes/backgrounds/background_nebula.gdshader" id="1_nqp0c"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_8c2xm"]
+fractal_octaves = 4
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cukca"]
 width = 256
