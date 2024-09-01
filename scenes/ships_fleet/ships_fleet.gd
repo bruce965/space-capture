@@ -1,9 +1,9 @@
 extends Node2D
 class_name ShipsFleet
 
-@export var departed_at: float # Time.get_ticks_msec()
+@export var departed_at: int # Time.get_ticks_msec()
 
-@export var arrives_at: float # Time.get_ticks_msec()
+@export var arrives_at: int # Time.get_ticks_msec()
 
 @export var from: Vector2
 
@@ -14,7 +14,7 @@ class_name ShipsFleet
 @export var count: int :
 	set(value):
 		count = value
-		_update__instances_count()
+		_update_instances_count()
 
 @export var trail: Trail
 
@@ -36,14 +36,16 @@ var _instances: Array[Node2D] = []
 
 @export var ship_template: PackedScene
 
-func _update__instances_count() -> void:
+func _update_instances_count() -> void:
 	var diff = count - _instances.size()
 
 	for i in range(diff):
 		var j = float(1 + _instances.size())
-		var ship := ship_template.instantiate()
+		var ship: Ship = ship_template.instantiate()
+		ship.color = player.color
 		add_child(ship)
 		ship.position = Vector2.from_angle(j) * j * 2.
+		ship.look_at(to - from)
 		_instances.push_back(ship)
 
 	for i in range(-diff):
@@ -59,10 +61,9 @@ func _update_position(tick: int) -> void:
 		position = lerp(from, to, smoothstep(0., 1., progress))
 		if tick >= arrives_at:
 			_arrived = true
-			trail.show = false
+			trail.show_trail = false
 
-			for ship in _instances:
-				ship.emitting = false
+			# TODO: fade out ships.
 
 			await get_tree().create_timer(5.).timeout
 			queue_free()

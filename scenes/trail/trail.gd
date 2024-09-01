@@ -8,9 +8,9 @@ static var _inv_texture_width := NAN
 		color = value
 		_update_color(color)
 
-@export var show: bool = true :
+@export var show_trail: bool = true :
 	set(value):
-		show = value
+		show_trail = value
 		visible = true
 
 @export var auto_free: bool
@@ -36,13 +36,13 @@ func _update_transform(start: Vector2, end: Vector2) -> void:
 		
 	scale = Vector2((end - start).length() * _inv_texture_width, 1.)
 
-func _update_color(color: Color) -> void:
-	var c := Color(color.r, color.g, color.b, color.a * _opacity)
+func _update_color(trail_color: Color) -> void:
+	var c := Color(trail_color.r, trail_color.g, trail_color.b, trail_color.a * _opacity)
 	material.set_shader_parameter('color', c)
 
 func _process(delta: float) -> void:
 	var prev_opacity := _opacity
-	_opacity = Utils.damp(_opacity, 1. if show else 0., 1e-4, delta)
+	_opacity = Utils.damp(_opacity, 1. if show_trail else 0., 1e-4, delta)
 	if _opacity != prev_opacity:
 		if _opacity < .01:
 			_opacity = 0.

@@ -72,8 +72,8 @@ func _on_planet_pointer_exited(planet: ControlPlanet) -> void:
 #region Trail
 
 func _update_trail(delta: float, snap_position: bool) -> void:
-	_trail.show = _dragging_from_planet and _selected_planet != null and _selected_planet.player is LocalPlayer
-	if _trail.show:
+	_trail.show_trail = _dragging_from_planet and _selected_planet != null and _selected_planet.player is LocalPlayer
+	if _trail.show_trail:
 		_trail.color = _selected_planet.player.color
 		var target_position = _last_cursor_position if _pointed_planet == null else _pointed_planet.global_position
 		_trail.start_position = _selected_planet.global_position
