@@ -2,7 +2,7 @@
 
 [ext_resource type="Shader" path="res://scenes/trail/trail.gdshader" id="1_fjdrv"]
 [ext_resource type="Texture2D" uid="uid://qb1fvyepkup2" path="res://scenes/trail/trail.png" id="2_nw1t2"]
-[ext_resource type="Script" path="res://scenes/trail/trail.gd" id="3_cnvkj"]
+[ext_resource type="Script" path="res://scenes/trail/Trail.cs" id="3_hnvmo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f7lnm"]
 resource_local_to_scene = true
@@ -14,4 +14,4 @@ texture_repeat = 2
 material = SubResource("ShaderMaterial_f7lnm")
 scale = Vector2(10, 1)
 texture = ExtResource("2_nw1t2")
-script = ExtResource("3_cnvkj")
+script = ExtResource("3_hnvmo")

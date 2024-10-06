@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://dq00mi6jwsa1f"]
 
 [ext_resource type="PackedScene" uid="uid://dnerbdusnaofr" path="res://scenes/procedural_planet/procedural_planet.tscn" id="1_8mf3x"]
-[ext_resource type="Script" path="res://scenes/control_planet/control_planet.gd" id="1_e208c"]
+[ext_resource type="Script" path="res://scenes/control_planet/ControlPlanet.cs" id="1_gbjyd"]
 [ext_resource type="Shader" path="res://scenes/control_planet/planet_selection.gdshader" id="2_bl05u"]
 [ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://icons/character.svg" id="2_kglxp"]
 
@@ -13,7 +13,7 @@ shader = ExtResource("2_bl05u")
 shader_parameter/size = 100.0
 
 [node name="Planet" type="Node2D"]
-script = ExtResource("1_e208c")
+script = ExtResource("1_gbjyd")
 
 [node name="InputListener" type="Area2D" parent="."]
 monitoring = false
@@ -72,7 +72,7 @@ mouse_filter = 2
 texture = ExtResource("2_kglxp")
 stretch_mode = 3
 
-[connection signal="input_event" from="InputListener" to="." method="_on_input_listener_input_event"]
-[connection signal="mouse_entered" from="InputListener" to="." method="_on_input_listener_mouse_entered"]
-[connection signal="mouse_exited" from="InputListener" to="." method="_on_input_listener_mouse_exited"]
+[connection signal="input_event" from="InputListener" to="." method="OnInputListenerInputEvent"]
+[connection signal="mouse_entered" from="InputListener" to="." method="OnInputListenerMouseEntered"]
+[connection signal="mouse_exited" from="InputListener" to="." method="OnInputListenerMouseExited"]
 [connection signal="gui_input" from="Selection" to="." method="_on_selection_gui_input"]

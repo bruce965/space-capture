@@ -12,8 +12,12 @@ config_version=5
 
 config/name="Space Capture"
 run/main_scene="res://main.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[dotnet]
+
+project/assembly_name="SpaceCapture"
 
 [rendering]
 

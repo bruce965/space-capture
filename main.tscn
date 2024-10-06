@@ -1,62 +1,62 @@
 [gd_scene load_steps=19 format=3 uid="uid://cdaf4bh0jaa45"]
 
-[ext_resource type="Script" path="res://scripts/game_logic.gd" id="1_uj8ti"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="2_plgh6"]
+[ext_resource type="Script" path="res://scripts/PlayerLocal.cs" id="1_3h84q"]
+[ext_resource type="Script" path="res://scripts/Planet.cs" id="1_rrxte"]
+[ext_resource type="Script" path="res://scripts/Player.cs" id="1_tr3cj"]
+[ext_resource type="Script" path="res://scripts/PlayerAI.cs" id="1_u42tr"]
 [ext_resource type="Texture2D" uid="uid://bydmcc5d53ldx" path="res://icons/paw_print.svg" id="3_mxakn"]
+[ext_resource type="Script" path="res://scripts/GameLogic.cs" id="3_q0fqo"]
 [ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://icons/character.svg" id="3_qxmev"]
-[ext_resource type="Script" path="res://scripts/player_local.gd" id="4_7rlmh"]
 [ext_resource type="Texture2D" uid="uid://dx1wjviioa8u5" path="res://icons/chip.svg" id="4_pgo63"]
-[ext_resource type="Script" path="res://scripts/ui/planets_ui.gd" id="7_khbdl"]
 [ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/backgrounds/nebula.tscn" id="7_sv4lv"]
-[ext_resource type="Script" path="res://scripts/player_ai.gd" id="7_v73fw"]
-[ext_resource type="Script" path="res://scripts/planet.gd" id="8_ve3b1"]
 [ext_resource type="PackedScene" uid="uid://b0ec8jbenscpp" path="res://scenes/backgrounds/stars.tscn" id="9_lum1l"]
+[ext_resource type="Script" path="res://scripts/ui/PlanetsUI.cs" id="11_u25me"]
 
 [sub_resource type="Resource" id="Resource_mxp7y"]
-script = ExtResource("2_plgh6")
-color = Color(0.745, 0.745, 0.745, 1)
-icon = ExtResource("3_mxakn")
+script = ExtResource("1_tr3cj")
+Color = Color(0.745, 0.745, 0.745, 1)
+Icon = ExtResource("3_mxakn")
 
 [sub_resource type="Resource" id="Resource_1dtpf"]
-script = ExtResource("4_7rlmh")
-color = Color(0.236993, 0.373968, 1, 1)
-icon = ExtResource("3_qxmev")
+script = ExtResource("1_3h84q")
+Color = Color(0.236993, 0.373968, 1, 1)
+Icon = ExtResource("3_qxmev")
 
 [sub_resource type="Resource" id="Resource_7wtc7"]
-script = ExtResource("7_v73fw")
-color = Color(0.835294, 0.160784, 0, 1)
-icon = ExtResource("4_pgo63")
+script = ExtResource("1_u42tr")
+Color = Color(0.835294, 0.160784, 0, 1)
+Icon = ExtResource("4_pgo63")
 
-[sub_resource type="Resource" id="Resource_50eg2"]
-script = ExtResource("8_ve3b1")
-location = Vector2(200, 200)
-type = 0
+[sub_resource type="Resource" id="Resource_1nuc3"]
+script = ExtResource("1_rrxte")
+Location = Vector2(200, 200)
+Type = 0
 
-[sub_resource type="Resource" id="Resource_2525o"]
-script = ExtResource("8_ve3b1")
-location = Vector2(952, 448)
-type = 0
+[sub_resource type="Resource" id="Resource_qh3gq"]
+script = ExtResource("1_rrxte")
+Location = Vector2(952, 448)
+Type = 0
 
-[sub_resource type="Resource" id="Resource_irtww"]
-script = ExtResource("8_ve3b1")
-location = Vector2(450, 234)
-type = 0
+[sub_resource type="Resource" id="Resource_u1yeo"]
+script = ExtResource("1_rrxte")
+Location = Vector2(450, 234)
+Type = 0
 
-[sub_resource type="Resource" id="Resource_wdycy"]
-script = ExtResource("8_ve3b1")
-location = Vector2(702, 414)
-type = 0
+[sub_resource type="Resource" id="Resource_c2fhs"]
+script = ExtResource("1_rrxte")
+Location = Vector2(702, 414)
+Type = 0
 
 [node name="Main" type="Node"]
 
-[node name="GameLogic" type="Node" parent="." node_paths=PackedStringArray("planets_container", "trails_container", "fleets_container", "planets_ui")]
-script = ExtResource("1_uj8ti")
-planets_container = NodePath("../Planets")
-trails_container = NodePath("../Trails")
-fleets_container = NodePath("../Fleets")
-planets_ui = NodePath("../PlanetsUI")
-players = Array[ExtResource("2_plgh6")]([SubResource("Resource_mxp7y"), SubResource("Resource_1dtpf"), SubResource("Resource_7wtc7")])
-planets = Array[ExtResource("8_ve3b1")]([SubResource("Resource_50eg2"), SubResource("Resource_2525o"), SubResource("Resource_irtww"), SubResource("Resource_wdycy")])
+[node name="GameLogic" type="Node" parent="." node_paths=PackedStringArray("PlanetsContainer", "TrailsContainer", "FleetsContainer", "PlanetsUI")]
+script = ExtResource("3_q0fqo")
+PlanetsContainer = NodePath("../Planets")
+TrailsContainer = NodePath("../Trails")
+FleetsContainer = NodePath("../Fleets")
+PlanetsUI = NodePath("../PlanetsUI")
+Players = Array[ExtResource("1_tr3cj")]([SubResource("Resource_mxp7y"), SubResource("Resource_1dtpf"), SubResource("Resource_7wtc7")])
+Planets = Array[Object]([SubResource("Resource_1nuc3"), SubResource("Resource_qh3gq"), SubResource("Resource_u1yeo"), SubResource("Resource_c2fhs")])
 
 [node name="Stars" parent="." instance=ExtResource("9_lum1l")]
 
@@ -68,7 +68,7 @@ planets = Array[ExtResource("8_ve3b1")]([SubResource("Resource_50eg2"), SubResou
 
 [node name="Fleets" type="Node2D" parent="."]
 
-[node name="PlanetsUI" type="Control" parent="." node_paths=PackedStringArray("trails_container")]
+[node name="PlanetsUI" type="Control" parent="." node_paths=PackedStringArray("TrailsContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,5 +76,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("7_khbdl")
-trails_container = NodePath("../Trails")
+script = ExtResource("11_u25me")
+TrailsContainer = NodePath("../Trails")

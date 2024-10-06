@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="SceneTemplates" load_steps=5 format=3 uid="uid://cp0dudi0f5r62"]
+[gd_resource type="Resource" load_steps=5 format=3 uid="uid://cp0dudi0f5r62"]
 
-[ext_resource type="PackedScene" uid="uid://dq00mi6jwsa1f" path="res://scenes/control_planet/control_planet.tscn" id="1_3rbtf"]
-[ext_resource type="Script" path="res://scenes/templates/scene_templates.gd" id="1_yvn3m"]
-[ext_resource type="PackedScene" uid="uid://cpffyaoh8x5bp" path="res://scenes/ships_fleet/ships_fleet.tscn" id="3_x17ul"]
-[ext_resource type="PackedScene" uid="uid://ckfk1xgxfk1c3" path="res://scenes/trail/trail.tscn" id="4_hiuw1"]
+[ext_resource type="PackedScene" uid="uid://dq00mi6jwsa1f" path="res://scenes/control_planet/control_planet.tscn" id="1_a0tpk"]
+[ext_resource type="Script" path="res://scenes/templates/SceneTemplates.cs" id="1_ybx2m"]
+[ext_resource type="PackedScene" uid="uid://cpffyaoh8x5bp" path="res://scenes/ships_fleet/ships_fleet.tscn" id="2_ocr7v"]
+[ext_resource type="PackedScene" uid="uid://ckfk1xgxfk1c3" path="res://scenes/trail/trail.tscn" id="3_gygkc"]
 
 [resource]
-script = ExtResource("1_yvn3m")
-control_planet = ExtResource("1_3rbtf")
-trail = ExtResource("4_hiuw1")
-ships_fleet = ExtResource("3_x17ul")
+script = ExtResource("1_ybx2m")
+ControlPlanet = ExtResource("1_a0tpk")
+Trail = ExtResource("3_gygkc")
+ShipsFleet = ExtResource("2_ocr7v")
