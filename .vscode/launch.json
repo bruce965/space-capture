@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Game",
+      "type": "godot",
+      "request": "launch",
+      "project": "${workspaceFolder}/src/SpaceCapture/"
+    },
+    {
+      "name": "Server",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/SpaceCapture.Server/SpaceCapture.Server.csproj"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Game + Server",
+      "configurations": [
+        "Game",
+        "Server"
+      ]
+    }
+  ]
+}
