@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cpffyaoh8x5bp"]
 
-[ext_resource type="Script" path="res://scenes/ships_fleet/ShipsFleet.cs" id="1_isl3a"]
+[ext_resource type="Script" uid="uid://mwtqsw44qbrk" path="res://scenes/ships_fleet/ShipsFleet.cs" id="1_isl3a"]
 [ext_resource type="PackedScene" uid="uid://ctybb4niolni3" path="res://scenes/ships_fleet/ship/ship.tscn" id="2_6eafk"]
 
 [node name="ShipsFleet" type="Node2D"]
