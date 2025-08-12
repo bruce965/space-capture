@@ -51,12 +51,12 @@ Type = 0
 
 [node name="GameLogic" type="Node" parent="." node_paths=PackedStringArray("PlanetsContainer", "TrailsContainer", "FleetsContainer", "PlanetsUI")]
 script = ExtResource("3_q0fqo")
-Players = [SubResource("Resource_mxp7y"), SubResource("Resource_1dtpf"), SubResource("Resource_7wtc7")]
-Planets = Array[Object]([SubResource("Resource_1nuc3"), SubResource("Resource_qh3gq"), SubResource("Resource_u1yeo"), SubResource("Resource_c2fhs")])
 PlanetsContainer = NodePath("../Planets")
 TrailsContainer = NodePath("../Trails")
 FleetsContainer = NodePath("../Fleets")
 PlanetsUI = NodePath("../PlanetsUI")
+Players = [SubResource("Resource_mxp7y"), SubResource("Resource_1dtpf"), SubResource("Resource_7wtc7")]
+Planets = Array[Object]([SubResource("Resource_1nuc3"), SubResource("Resource_qh3gq"), SubResource("Resource_u1yeo"), SubResource("Resource_c2fhs")])
 
 [node name="Stars" parent="." instance=ExtResource("9_lum1l")]
 

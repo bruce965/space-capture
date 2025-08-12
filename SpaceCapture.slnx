@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="src/Bruce965.Godot.Services/Bruce965.Godot.Services.csproj" />
   <Project Path="src/SpaceCapture/SpaceCapture.csproj" />
   <Project Path="src/SpaceCapture.Server/SpaceCapture.Server.csproj" />
   <Project Path="src/SpaceCapture.Shared/SpaceCapture.Shared.csproj" />

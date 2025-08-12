@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bruce965.Godot.Services\Bruce965.Godot.Services.csproj" />
     <ProjectReference Include="..\SpaceCapture.Shared\SpaceCapture.Shared.csproj" />
   </ItemGroup>
 
