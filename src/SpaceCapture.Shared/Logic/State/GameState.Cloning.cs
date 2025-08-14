@@ -1,4 +1,7 @@
-﻿using SpaceCapture.Shared.Abstractions;
+﻿// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: AGPL-3.0-only
+
+using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Shared.Logic.State;

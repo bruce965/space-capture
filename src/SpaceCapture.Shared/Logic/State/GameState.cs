@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: AGPL-3.0-only
+
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 using SpaceCapture.Shared.Logic.Configuration;
 using SpaceCapture.Shared.Utilities;

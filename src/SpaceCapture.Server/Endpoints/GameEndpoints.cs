@@ -1,7 +1,11 @@
+// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: AGPL-3.0-only
+
 using Microsoft.AspNetCore.Mvc;
 using SpaceCapture.Shared;
-using SpaceCapture.Shared.Logic;
 using SpaceCapture.Shared.Logic.Configuration;
+using SpaceCapture.Shared.Logic.Rules;
+using SpaceCapture.Shared.Logic.State;
 using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Server.Endpoints;
@@ -17,6 +21,7 @@ public static class GameEndpoints
         GameConfiguration configuration = new()
         {
             Seed = gameSeed,
+            Rules = RulesSet.Standard,
             PlayersCount = 2,
             CelestialBodies =
             [

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright 2024 Fabio Iotti
+# SPDX-License-Identifier: MIT
+
 class_name LineTrail2D
 extends Line2D
 

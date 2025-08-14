@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2024 Fabio Iotti
+// SPDX-License-Identifier: AGPL-3.0-only
+
 shader_type canvas_item;
 
 // Noise texture.

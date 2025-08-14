@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2024 Fabio Iotti
+// SPDX-License-Identifier: MIT
+
 using Godot;
 
 namespace SpaceCapture;

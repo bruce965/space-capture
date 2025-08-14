@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: MIT
+
 //#define SERIALIZATION
 
 using System.Buffers;

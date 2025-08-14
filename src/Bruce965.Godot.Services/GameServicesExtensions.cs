@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: MIT
+
 using System;
 using Bruce965.Godot.Services;
 using Godot;

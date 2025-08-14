@@ -1,4 +1,7 @@
-﻿using System;
+﻿// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: MIT
+
+using System;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

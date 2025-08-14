@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: MIT
+
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
