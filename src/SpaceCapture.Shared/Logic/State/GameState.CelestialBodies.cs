@@ -1,8 +1,9 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
-using SpaceCapture.Shared.Types;
+using SpaceCapture.Shared.Abstractions;
+using SpaceCapture.Shared.Utilities;
 
-namespace SpaceCapture.Shared.Logic;
+namespace SpaceCapture.Shared.Logic.State;
 
 partial class GameState
 {
@@ -10,6 +11,8 @@ partial class GameState
     /// Data about a celestial body in a game.
     /// </summary>
     public struct CelestialBodyData
+        : ICloneable<CelestialBodyData>,
+            ITransferable<CelestialBodyData>
     {
         List<ResourceCount>? _resources;
         List<StructureCount>? _structures;
@@ -77,6 +80,24 @@ partial class GameState
         {
             get => _planetaryUpgrades is { Count: > 0 } u ? u : null;
             set => _planetaryUpgrades = value;
+        }
+
+        /// <inheritdoc/>
+        public readonly CelestialBodyData Clone() =>
+            new()
+            {
+                _resources = _resources?.DeepClone(),
+                _structures = _structures?.DeepClone(),
+                _planetaryUpgrades = _planetaryUpgrades?.DeepClone(),
+                Player = Player,
+            };
+
+        public void CopyFrom(CelestialBodyData other)
+        {
+            TransferHelper.CopyImmutable(ref _resources, other._resources);
+            TransferHelper.CopyImmutable(ref _structures, other._structures);
+            TransferHelper.CopyImmutable(ref _planetaryUpgrades, other._planetaryUpgrades);
+            Player = other.Player;
         }
     }
 

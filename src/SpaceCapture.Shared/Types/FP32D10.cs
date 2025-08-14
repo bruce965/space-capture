@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SpaceCapture.Shared.Abstractions;
 
 namespace SpaceCapture.Shared.Types;
 
@@ -18,7 +19,8 @@ namespace SpaceCapture.Shared.Types;
 public readonly struct FP32D10
     : IBinaryInteger<FP32D10>,
         ITrigonometricFunctions<FP32D10>,
-        IConvertible
+        IConvertible,
+        IImmutable
 {
     public class JsonConverter : JsonConverter<FP32D10>
     {

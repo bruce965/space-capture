@@ -1,7 +1,8 @@
 using System.Text.Json.Serialization;
+using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Types;
 
-namespace SpaceCapture.Shared.Logic;
+namespace SpaceCapture.Shared.Logic.State;
 
 partial class GameState
 {
@@ -11,6 +12,7 @@ partial class GameState
     /// <param name="type"></param>
     /// <param name="count"></param>
     public readonly struct PlanetaryUpgrade(PlanetaryUpgradeType type, int level, FP32D10 health)
+        : IImmutable
     {
         /// <summary>
         /// Planetary upgrade type.

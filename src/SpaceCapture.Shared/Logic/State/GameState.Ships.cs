@@ -1,17 +1,20 @@
 using System.ComponentModel;
-using System.Numerics;
 using System.Text.Json.Serialization;
+using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Types;
+using SpaceCapture.Shared.Utilities;
 
-namespace SpaceCapture.Shared.Logic;
+namespace SpaceCapture.Shared.Logic.State;
 
 partial class GameState
 {
     /// <summary>
     /// Data about a ship in a game.
     /// </summary>
-    public struct ShipData
+    public struct ShipData : ICloneable<ShipData>, ITransferable<ShipData>
     {
+        List<ResourceCount> _resources;
+
         /// <summary>
         /// Ship type.
         /// </summary>
@@ -25,14 +28,29 @@ partial class GameState
         /// <summary>
         /// Resources on this ship.
         /// </summary>
-        public List<ResourceCount> Resources { get; set; }
+        public List<ResourceCount> Resources
+        {
+            get => _resources ??= [];
+            set => _resources = value;
+        }
+
+        public ShipData Clone() => this with { Resources = Resources.DeepClone() };
+
+        public void CopyFrom(ShipData other)
+        {
+            Type = other.Type;
+            Health = other.Health;
+            TransferHelper.CopyImmutable(ref _resources, other._resources);
+        }
     }
 
     /// <summary>
     /// Fleet of ships in a game.
     /// </summary>
-    public struct Fleet
+    public struct Fleet : ICloneable<Fleet>, ITransferable<Fleet>
     {
+        List<ShipData>? _ships;
+
         /// <summary>
         /// Index of the player that controls this fleet.
         /// </summary>
@@ -58,7 +76,21 @@ partial class GameState
         /// Ships in this fleet.
         /// </summary>
         [JsonPropertyName("ships")]
-        public List<ShipData> Ships { get; set; }
+        public List<ShipData> Ships
+        {
+            get => _ships ??= [];
+            set => _ships = value;
+        }
+
+        public Fleet Clone() => this with { Ships = Ships.DeepClone() };
+
+        public void CopyFrom(Fleet other)
+        {
+            Player = other.Player;
+            CurrentPosition = other.CurrentPosition;
+            TargetPosition = other.TargetPosition;
+            TransferHelper.Copy(ref _ships, other._ships);
+        }
     }
 
     List<Fleet>? _fleets;

@@ -1,7 +1,6 @@
 using System.Text;
-using SpaceCapture.Shared.Utilities;
 
-namespace SpaceCapture.Shared;
+namespace SpaceCapture.Shared.Utilities;
 
 public static class RandomNameGenerator
 {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SpaceCapture.Shared.Logic;
+namespace SpaceCapture.Shared;
 
 [JsonConverter(typeof(JsonStringEnumConverter<ShipType>))]
 public enum ShipType

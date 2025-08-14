@@ -1,10 +1,11 @@
 using System.Buffers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using SpaceCapture.Shared.Abstractions;
 
 namespace SpaceCapture.Shared.Types;
 
-public readonly struct Vector2<T>(T x, T y)
+public readonly struct Vector2<T>(T x, T y) : IImmutable
 {
     public class JsonConverter : JsonConverter<Vector2<T>>
     {

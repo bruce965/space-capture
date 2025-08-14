@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using SpaceCapture.Shared.Logic.Configuration;
 using SpaceCapture.Shared.Utilities;
 
-namespace SpaceCapture.Shared.Logic;
+namespace SpaceCapture.Shared.Logic.State;
 
 /// <summary>
 /// Snapshot of the state of a game.
