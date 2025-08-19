@@ -24,7 +24,7 @@ public static class RandomNameGenerator
         return new(data);
     }
 
-    public static string Star(ref DeterministicRandom.Seed seed) => _stars.Generate(ref seed);
+    public static string Star(ref DeterministicRandom rand) => _stars.Generate(ref rand);
 
-    public static string Planet(ref DeterministicRandom.Seed seed) => _planets.Generate(ref seed);
+    public static string Planet(ref DeterministicRandom rand) => _planets.Generate(ref rand);
 }

@@ -3,7 +3,8 @@
 
 using System.Text.Json.Serialization;
 using SpaceCapture.Server.Endpoints;
-using SpaceCapture.Shared.Logic.Configuration;
+using SpaceCapture.Shared.Logic.Simulation;
+using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Types;
 
 WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(args);
@@ -20,9 +21,9 @@ v1Api.MapGet("/game/generate", GameEndpoints.NewGame);
 
 app.Run();
 
-[JsonSerializable(typeof(GameConfiguration))]
-[JsonSerializable(typeof(GameState))]
-[JsonSerializable(typeof(ReadOnlyMemory<FP32D10>))]
+[JsonSerializable(typeof(GameSimulation))]
+[JsonSerializable(typeof(GameStage))]
+[JsonSerializable(typeof(ReadOnlyMemory<FP32D16>))]
 [JsonSerializable(typeof(CelestialBodyResource[]))]
 [JsonSerializable(typeof(IEnumerable<CelestialBodyResource>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext;

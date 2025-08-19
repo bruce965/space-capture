@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
-using SpaceCapture.Shared.Logic.State;
-using SpaceCapture.Shared.Types;
+using SpaceCapture.Shared.Logic.Stage;
+using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
@@ -11,19 +11,20 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 /// </summary>
 public partial class GameSimulation
 {
-    const long TicksPerSecond = 60;
-    const long FarSnapshotTicks = TicksPerSecond * 60 * 5; // 5 minutes
-    const long NearSnapshotTicks = TicksPerSecond * 5; // 5 seconds
+    const long FarSnapshotTicks = GameConstants.TicksPerSecond * 60 * 5; // 5 minutes
+    const long NearSnapshotTicks = GameConstants.TicksPerSecond * 5; // 5 seconds
 
-    readonly Cache[] _snapshots;
-    ref Cache Initial => ref _snapshots[0]; // Initial state.
-    ref Cache PreviousFarSnapshot => ref _snapshots[1]; // State 5~10 minutes ago.
-    ref Cache NextFarSnapshot => ref _snapshots[2]; // State 0~5 minutes ago.
-    ref Cache PreviousNearSnapshot => ref _snapshots[3]; // State 5~10 seconds ago.
-    ref Cache NextNearSnapshot => ref _snapshots[4]; // State 0~5 seconds ago.
-    ref Cache Current => ref _snapshots[5]; // Current state.
+    readonly GameStage _stage;
 
     readonly RulesCache _rules;
+
+    readonly Snapshot[] _snapshots;
+    ref Snapshot Initial => ref _snapshots[0]; // Initial state.
+    ref Snapshot PrevFarSnapshot => ref _snapshots[1]; // State 5~10 minutes ago.
+    ref Snapshot NextFarSnapshot => ref _snapshots[2]; // State 0~5 minutes ago.
+    ref Snapshot PrevNearSnapshot => ref _snapshots[3]; // State 5~10 seconds ago.
+    ref Snapshot NextNearSnapshot => ref _snapshots[4]; // State 0~5 seconds ago.
+    ref Snapshot Current => ref _snapshots[5]; // Current state.
 
     /// <summary>
     /// Something happened in the game. This might also be an event that reverts
@@ -37,18 +38,15 @@ public partial class GameSimulation
     readonly List<GameEvent> _eventsHistory; // Occurred events, excluding cancelled.
 
     /// <summary>
-    /// Current state of a game, should be treated as read-only.
-    /// </summary>
-    public GameState State => Current.State;
-
-    /// <summary>
     /// Initialize a new simuation from the specified state.
     /// </summary>
     /// <param name="state"></param>
-    public GameSimulation(GameState state)
+    public GameSimulation(GameStage stage)
     {
-        Cache c = new(state.Clone());
-        _rules = new(state.Configuration.Rules);
+        _stage = stage;
+        _rules = new(_stage.Rules);
+
+        Snapshot c = new(this);
         _snapshots = [c, c.Clone(), c.Clone(), c.Clone(), c.Clone(), c.Clone()];
 
         _actionsHistory = new(65536);
@@ -65,7 +63,7 @@ public partial class GameSimulation
     /// <param name="action"></param>
     public void ExecuteAction(GameAction action)
     {
-        long currentTick = Current.State.Tick;
+        long currentTick = Current.Tick;
         if (action.Tick < currentTick)
             MoveClock(action.Tick);
 
@@ -95,9 +93,9 @@ public partial class GameSimulation
     public void MoveClock(long tick)
     {
         // The requested tick is in the past, a rollback is necessary.
-        if (tick < Current.State.Tick)
+        if (tick < Current.Tick)
         {
-            if (tick < Initial.State.Tick)
+            if (tick < Initial.Tick)
                 throw new ArgumentOutOfRangeException(
                     nameof(tick),
                     "Unable to rollback to before the start of the game."
@@ -106,8 +104,8 @@ public partial class GameSimulation
             for (int i = _snapshots.Length - 1; i >= 0; i--)
             {
                 // Look for the most recent snapshot before or at the requested tick.
-                Cache snapshot = _snapshots[i];
-                if (snapshot.State.Tick >= tick)
+                Snapshot snapshot = _snapshots[i];
+                if (snapshot.Tick >= tick)
                     continue;
 
                 // Rollback all the snapshots that follow it, including the current state.
@@ -119,7 +117,7 @@ public partial class GameSimulation
         }
 
         // Fast-forward to the requested tick.
-        while (Current.State.Tick < tick)
+        while (Current.Tick < tick)
             TickClock();
     }
 
@@ -129,64 +127,101 @@ public partial class GameSimulation
     public void TickClock()
     {
         // Step into the next tick.
-        Current.State.Tick++;
+        Current.Tick++;
 
         // Process actions.
-        for (; Current.ActionsCount < _actionsHistory.Count; Current.ActionsCount++)
-        {
-            ProcessAction(_actionsHistory[Current.ActionsCount]);
-
-            // TODO: validate past events and revert the ones that are no longer valid.
-        }
+        ProcessActions(this, ref Current, _actionsHistory);
 
         // TODO: move fleets.
 
         // TODO: resolve conflicts.
 
-        // Produce resources.
-        for (int i = 0; i < Current.State.Configuration.CelestialBodies.Length; i++)
-        {
-            foreach (CelestialBodyCache body in Current.CelestialBodies)
-            {
-                foreach (ref CelestialBodyResourcesCache res in body.Resources)
-                {
-                    int factoriesCount = 0;
-                    foreach (var s in _rules.FactoriesByResource[res.Configuration.Type])
-                        factoriesCount += body.Structures[s].Data.Count;
-
-                    FP32D10 increment = res.Configuration.ProductionRate * factoriesCount;
-                    res.Data = new(res.Data.Type, res.Data.Count + increment);
-                }
-            }
-        }
+        // Produce resources on all celestial bodies that have factories.
+        ProcessStructures(in _rules, in Current);
 
         // Take a "near" snapshot if enough time has passed since last one.
-        if (Current.State.Tick - NextNearSnapshot.State.Tick > NearSnapshotTicks)
-        {
-            (PreviousNearSnapshot, NextNearSnapshot, Current) = (
-                NextNearSnapshot,
-                Current,
-                PreviousNearSnapshot
-            );
-
-            Current.CopyFrom(NextNearSnapshot);
-        }
+        RollSnapshots(NearSnapshotTicks, ref PrevNearSnapshot, ref NextNearSnapshot, ref Current);
 
         // Take a "far" snapshot if enough time has passed since last one.
-        if (Current.State.Tick - NextFarSnapshot.State.Tick > FarSnapshotTicks)
-        {
-            (PreviousFarSnapshot, NextFarSnapshot, Current) = (
-                NextFarSnapshot,
-                Current,
-                PreviousFarSnapshot
-            );
-
-            Current.CopyFrom(NextFarSnapshot);
-        }
+        RollSnapshots(FarSnapshotTicks, ref PrevFarSnapshot, ref NextFarSnapshot, ref Current);
     }
 
     void ProcessAction(GameAction action)
     {
         // TODO
+    }
+
+    /// <summary>
+    /// Process all actions scheduled for the current tick.
+    /// </summary>
+    /// <param name="self"></param>
+    /// <param name="current"></param>
+    /// <param name="history"></param>
+    static void ProcessActions(GameSimulation self, ref Snapshot current, List<GameAction> history)
+    {
+        for (; current.ActionsCount < history.Count; current.ActionsCount++)
+        {
+            self.ProcessAction(history[current.ActionsCount]);
+
+            // TODO: validate past events and revert the ones that are no longer valid.
+        }
+    }
+
+    /// <summary>
+    /// Process all active structures.
+    /// </summary>
+    /// <param name="rules"></param>
+    /// <param name="current"></param>
+    static void ProcessStructures(in RulesCache rules, in Snapshot current)
+    {
+        Span<int> activeStructures = stackalloc int[rules.Rules.Structures.Length];
+
+        // Iterate all celestial bodies. The order does not matter, each
+        // celestial body is isolated from the others.
+        foreach (CelestialBody body in current.CelestialBodies)
+        {
+            // For each celestial body, iterate all structure types at random.
+            // Iterating randomly is necessary so that even in case of resource
+            // starvation, all structure types have equal chance to activate.
+            foreach (ref Structure structure in current.Random.Shuffled(body.Structures))
+            {
+                // Check how many active structures have enough resources to run.
+                int enoughResourcesForActiveCount = structure.ActiveCount;
+                foreach (ResourceCountCache resource in structure.TypeData.ActiveCost)
+                {
+                    int max = (int)(body.Resources[resource.Index].Count / resource.Data.Count);
+                    if (max < enoughResourcesForActiveCount)
+                        enoughResourcesForActiveCount = max;
+
+                    // TODO: take storage limits into consideration.
+                }
+
+                // Use up resources.
+                foreach (ResourceCountCache resource in structure.TypeData.ActiveCost)
+                    body.Resources[resource.Index].Count -=
+                        resource.Data.Count * enoughResourcesForActiveCount;
+
+                // Increase structure products.
+                foreach (ResourceCountCache resource in structure.TypeData.Produces)
+                    body.Resources[resource.Index].Count +=
+                        resource.Data.Count
+                        * enoughResourcesForActiveCount
+                        * body.Resources[resource.Index].Configuration.ProductionMultiplier;
+            }
+        }
+    }
+
+    static void RollSnapshots(
+        long ticksInterval,
+        ref Snapshot prev,
+        ref Snapshot next,
+        ref Snapshot current
+    )
+    {
+        if (current.Tick - next.Tick <= ticksInterval)
+            return;
+
+        (prev, next, current) = (next, current, prev);
+        current.CopyFrom(next);
     }
 }

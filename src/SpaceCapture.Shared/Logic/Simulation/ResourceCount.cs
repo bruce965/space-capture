@@ -1,0 +1,33 @@
+// SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
+// SPDX-License-Identifier: AGPL-3.0-only
+
+using System.Text.Json.Serialization;
+using SpaceCapture.Shared.Abstractions;
+using SpaceCapture.Shared.Types;
+
+namespace SpaceCapture.Shared.Logic.Simulation;
+
+/// <summary>
+/// Resource type and amount of that resource.
+/// </summary>
+/// <param name="type"></param>
+public struct ResourceCount(ResourceType type)
+    : ICloneable<ResourceCount>,
+        ITransferable<ResourceCount>
+{
+    /// <summary>
+    /// Resource type.
+    /// </summary>
+    [JsonPropertyName("type")]
+    public readonly ResourceType Type => type;
+
+    /// <summary>
+    /// Amount.
+    /// </summary>
+    [JsonPropertyName("count")]
+    public FP32D16 Count { get; set; }
+
+    public readonly ResourceCount Clone() => this;
+
+    public void CopyFrom(ResourceCount other) => this = other;
+}

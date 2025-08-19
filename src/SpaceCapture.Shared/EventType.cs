@@ -5,8 +5,8 @@ using System.Text.Json.Serialization;
 
 namespace SpaceCapture.Shared;
 
-[JsonConverter(typeof(JsonStringEnumConverter<ActionType>))]
-public enum ActionType
+[JsonConverter(typeof(JsonStringEnumConverter<EventType>))]
+public enum EventType
 {
     [JsonStringEnumMemberName("fleet-create")]
     FleetCreate,

@@ -157,20 +157,20 @@ public class MarkovChain
         #endregion
     }
 
-    public string Generate(ref DeterministicRandom.Seed seed)
+    public string Generate(ref DeterministicRandom rand)
     {
         char[] result = ArrayPool<char>.Shared.Rent(_maxLength + 1);
         try
         {
             while (true)
             {
-                string current = Get(ref seed, _starters);
+                string current = Get(ref rand, _starters);
                 current.CopyTo(result);
                 int resultIndex = current.Length;
 
                 while (resultIndex <= _maxLength)
                 {
-                    char chr = Get(ref seed, _weights[current]);
+                    char chr = Get(ref rand, _weights[current]);
                     if (chr == '\0')
                     {
                         if (resultIndex >= _minLength)
@@ -261,9 +261,9 @@ public class MarkovChain
         return weights;
     }
 
-    static T Get<T>(ref DeterministicRandom.Seed seed, (T Value, uint Weight)[] weights)
+    static T Get<T>(ref DeterministicRandom rand, (T Value, uint Weight)[] weights)
     {
-        uint random = (uint)DeterministicRandom.Next(ref seed);
+        uint random = (uint)rand.Next();
 
         for (int i = 0; ; i++)
         {

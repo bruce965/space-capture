@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2024 Fabio Iotti
+// SPDX-License-Identifier: MIT
+
 shader_type canvas_item;
 
 // Max 1 star for each cell, star size cannot be bigger than cell size.

@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Space Capture"
-run/main_scene="res://main.tscn"
+run/main_scene="uid://cdaf4bh0jaa45"
 config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameServices="*res://scripts/GameServices.cs"
+GameServices="*res://old/scripts/GameServices.cs"
 
 [dotnet]
 

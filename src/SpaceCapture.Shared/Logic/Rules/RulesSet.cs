@@ -12,7 +12,12 @@ namespace SpaceCapture.Shared.Logic.Rules;
 public partial class RulesSet : IImmutable
 {
     /// <summary>
-    /// Structures that produce/extract resources from celestial bodies.
+    /// Types of resources in this game.
     /// </summary>
-    public ImmutableArray<FactoryRule> Factories { get; init; }
+    public ImmutableArray<ResourceRule> Resources { get; init; } = [];
+
+    /// <summary>
+    /// Types of structures in this game.
+    /// </summary>
+    public ImmutableArray<StructureRule> Structures { get; init; } = [];
 }

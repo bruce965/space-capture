@@ -3,75 +3,81 @@
 
 using Microsoft.AspNetCore.Mvc;
 using SpaceCapture.Shared;
-using SpaceCapture.Shared.Logic.Configuration;
 using SpaceCapture.Shared.Logic.Rules;
-using SpaceCapture.Shared.Logic.State;
+using SpaceCapture.Shared.Logic.Simulation;
+using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Server.Endpoints;
 
 public static class GameEndpoints
 {
-    public static IResult NewGame([FromQuery] DeterministicRandom.Seed? seed = null)
+    public static IResult NewGame(
+        [FromQuery] DeterministicRandom? seed = null,
+        [FromQuery] int ticks = 0
+    )
     {
-        DeterministicRandom.Seed gameSeed = seed ?? DeterministicRandom.NewSeed();
+        DeterministicRandom gameSeed = seed ?? new DeterministicRandom();
 
-        DeterministicRandom.Seed rand = gameSeed.Sanitize();
+        DeterministicRandom rand = gameSeed.Sanitize();
 
-        GameConfiguration configuration = new()
+        GameStage stage = new()
         {
             Seed = gameSeed,
-            Rules = RulesSet.Standard,
             PlayersCount = 2,
+            Rules = RulesSet.Standard,
             CelestialBodies =
             [
-                new(RandomNameGenerator.Star(ref rand), (0, 0)),
-                new(RandomNameGenerator.Planet(ref rand), (-200, -50))
+                new(CelestialBodyType.Terra, RandomNameGenerator.Star(ref rand), (0, 0)),
+                new(CelestialBodyType.Terra, RandomNameGenerator.Planet(ref rand), (-200, -50))
                 {
-                    MaxUpgradeLevel = 3,
-                    PopulationCap = 1000,
                     Resources =
                     [
-                        new(ResourceType.Food, 1, 10),
-                        new(ResourceType.Metal, 1, 10),
-                        new(ResourceType.Gas, 1, 10),
+                        new(ResourceType.Population) { HardLimit = 1000 },
+                        new(ResourceType.Food) { SoftLimit = 10, HardLimit = 12 },
+                        new(ResourceType.Metal) { SoftLimit = 10, HardLimit = 12 },
+                        new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
                     ],
+                    MaxUpgradeLevel = 3,
                 },
-                new(RandomNameGenerator.Planet(ref rand), (200, 50))
+                new(CelestialBodyType.Terra, RandomNameGenerator.Planet(ref rand), (200, 50))
                 {
-                    MaxUpgradeLevel = 3,
-                    PopulationCap = 1000,
                     Resources =
                     [
-                        new(ResourceType.Food, 1, 10),
-                        new(ResourceType.Metal, 1, 10),
-                        new(ResourceType.Gas, 1, 10),
+                        new(ResourceType.Population) { HardLimit = 1000 },
+                        new(ResourceType.Food) { SoftLimit = 10, HardLimit = 12 },
+                        new(ResourceType.Metal) { SoftLimit = 10, HardLimit = 12 },
+                        new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
                     ],
+                    MaxUpgradeLevel = 3,
                 },
             ],
         };
 
-        GameState game = new(configuration)
+        GameSimulation simulation = new(stage)
         {
-            CelestialBodies =
-            [
-                new(),
-                new()
-                {
-                    Player = 0,
-                    Resources = [new(ResourceType.Population, 10), new(ResourceType.Food, 10)],
-                },
-                new()
-                {
-                    Player = 1,
-                    Resources = [new(ResourceType.Population, 10), new(ResourceType.Food, 10)],
-                },
-            ],
+            //CelestialBodies =
+            //[
+            //    new(),
+            //    new()
+            //    {
+            //        Player = 0,
+            //        Resources = [new(ResourceType.Population, 10), new(ResourceType.Food, 10)],
+            //    },
+            //    new()
+            //    {
+            //        Player = 1,
+            //        Resources = [new(ResourceType.Population, 10), new(ResourceType.Food, 10)],
+            //    },
+            //],
         };
 
-        // string json = JsonSerializer.Serialize(game, AppJsonSerializerContext.Default.GameState);
-        // GameState state = JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.GameState)!;
+        for (int i = 0; i < ticks; i++)
+            simulation.TickClock();
 
-        return Results.Ok(game);
+        //string json = JsonSerializer.Serialize(simulation.State), AppJsonSerializerContext.Default.GameState);
+        //simulation.State = JsonSerializer.Deserialize(json, AppJsonSerializerContext.Default.GameState)!;
+
+        return Results.Ok(stage);
     }
 }
