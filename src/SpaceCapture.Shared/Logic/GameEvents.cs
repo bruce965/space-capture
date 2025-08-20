@@ -3,4 +3,6 @@
 
 namespace SpaceCapture.Shared.Logic;
 
-public readonly record struct GameEvent(long Tick);
+public abstract record class GameEvent(long Tick);
+
+//public record class CelestialBodyCreateEvent(long Tick, ) : GameEvent(Tick);

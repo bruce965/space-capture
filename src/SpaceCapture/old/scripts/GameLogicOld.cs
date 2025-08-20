@@ -7,7 +7,7 @@ using Godot.Collections;
 
 namespace SpaceCapture;
 
-public partial class GameLogic : Node
+public partial class GameLogicOld : Node
 {
     const float LogicTicksPerSecond = 20f;
     const float LogicSecondsPerTick = 1f / LogicTicksPerSecond;

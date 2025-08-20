@@ -1,13 +1,17 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Diagnostics;
 using SpaceCapture.Shared.Abstractions;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
-partial class GameSimulation
+partial class GameSimulation<TData>
 {
-    struct Structure(StructureRuleCache rule) : ICloneable<Structure>, ITransferable<Structure>
+    [DebuggerDisplay($"{{{nameof(TypeData)},nq}}")]
+    public struct Structure(StructureRuleCache rule)
+        : ICloneable<Structure>,
+            ITransferable<Structure>
     {
         /// <summary>
         /// Data for this structure type.

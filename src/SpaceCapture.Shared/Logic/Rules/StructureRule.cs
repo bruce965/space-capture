@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Logic.Simulation;
 using SpaceCapture.Shared.Types;
@@ -12,6 +13,7 @@ namespace SpaceCapture.Shared.Logic.Rules;
 /// Describes the behaviour of a type of structure.
 /// </summary>
 /// <param name="type"></param>
+[DebuggerDisplay($"{{{nameof(Type)},nq}}")]
 public readonly struct StructureRule(StructureType type) : IImmutable
 {
     /// <summary>

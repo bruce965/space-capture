@@ -2,24 +2,24 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using SpaceCapture.Shared.Logic.Rules;
-using SpaceCapture.Shared.Logic.Stage;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
-partial class GameSimulation
+partial class GameSimulation<TData>
 {
     /// <summary>
     /// Representation of the game rules, in a form that takes more memory but can be accessed faster.
     /// </summary>
     /// <param name="rules"></param>
-    sealed class RulesCache(RulesSet rules)
+    public sealed class RulesCache(RulesSet rules)
     {
         public RulesSet Rules => rules;
 
         public ImmutableArray<ResourceRuleCache> Resources =
         [
-            .. rules.Resources.Select((r, i) => new ResourceRuleCache(r, (ResourceTypeIndex)i)),
+            .. rules.Resources.Select((r, i) => new ResourceRuleCache(r, new() { Index = i })),
         ];
 
         public ImmutableArray<StructureRuleCache> Structures =
@@ -29,7 +29,7 @@ partial class GameSimulation
                     new StructureRuleCache
                     {
                         Rules = s,
-                        Index = (StructureTypeIndex)i,
+                        Index = new() { Index = i },
                         BuildCost = Cache(s.BuildCost, rules),
                         RepairCost = Cache(s.RepairCost, rules),
                         CommitCost = Cache(s.CommitCost, rules),
@@ -39,6 +39,26 @@ partial class GameSimulation
                     }
             ),
         ];
+
+        internal ImmutableDictionary<ResourceType, ResourceTypeIndex> ResourceTypeToIndex = rules
+            .Resources.Select(
+                (r, i) =>
+                    KeyValuePair.Create<ResourceType, ResourceTypeIndex>(
+                        r.Type,
+                        new() { Index = i }
+                    )
+            )
+            .ToImmutableDictionary();
+
+        internal ImmutableDictionary<StructureType, StructureTypeIndex> StructureTypeToIndex = rules
+            .Structures.Select(
+                (s, i) =>
+                    KeyValuePair.Create<StructureType, StructureTypeIndex>(
+                        s.Type,
+                        new() { Index = i }
+                    )
+            )
+            .ToImmutableDictionary();
 
         static ImmutableArray<ResourceCountCache>? Cache(
             ImmutableArray<ResourceCount>? count,
@@ -53,20 +73,24 @@ partial class GameSimulation
                 .. count.Select(c => new ResourceCountCache
                 {
                     Data = c,
-                    Index = (ResourceTypeIndex)
-                        rules.Resources.Index().First(r => r.Item.Type == c.Type).Index,
+                    Index = new()
+                    {
+                        Index = rules.Resources.Index().First(r => r.Item.Type == c.Type).Index,
+                    },
                 }),
             ];
     }
 
-    readonly struct ResourceRuleCache(ResourceRule rules, ResourceTypeIndex index)
+    [DebuggerDisplay($"{{{nameof(Rules)},nq}}")]
+    public readonly struct ResourceRuleCache(ResourceRule rules, ResourceTypeIndex index)
     {
         public ResourceRule Rules => rules;
 
         public ResourceTypeIndex Index => index;
     }
 
-    readonly record struct StructureRuleCache(
+    [DebuggerDisplay($"{{{nameof(Rules)},nq}}")]
+    public readonly record struct StructureRuleCache(
         StructureRule Rules,
         StructureTypeIndex Index,
         ImmutableArray<ResourceCountCache>? BuildCost,
@@ -77,5 +101,6 @@ partial class GameSimulation
         ImmutableArray<ResourceCountCache> Stores
     );
 
-    readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index);
+    [DebuggerDisplay($"{{{nameof(Data)},nq}}")]
+    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index);
 }

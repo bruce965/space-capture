@@ -1,16 +1,18 @@
 [gd_scene load_steps=4 format=3 uid="uid://cdaf4bh0jaa45"]
 
-[ext_resource type="Script" uid="uid://c0d2wjsbudnk3" path="res://GameLogic.cs" id="1_h2yge"]
+[ext_resource type="Script" uid="uid://bpcc2lsys1ole" path="res://GameLogic.cs" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/backgrounds/nebula.tscn" id="7_sv4lv"]
 [ext_resource type="PackedScene" uid="uid://b0ec8jbenscpp" path="res://scenes/backgrounds/stars.tscn" id="9_lum1l"]
 
 [node name="Main" type="Node"]
 
-[node name="GameLogic" type="Node" parent="."]
+[node name="GameLogic" type="Node" parent="." node_paths=PackedStringArray("CelestialBodiesContainer")]
 script = ExtResource("1_h2yge")
+CelestialBodiesContainer = NodePath("../CelestialBodies")
 
 [node name="Stars" parent="." instance=ExtResource("9_lum1l")]
 
 [node name="Nebula" parent="." instance=ExtResource("7_sv4lv")]
 
-[node name="Planets" type="Node2D" parent="."]
+[node name="CelestialBodies" type="Node2D" parent="."]
+position = Vector2(576, 324)

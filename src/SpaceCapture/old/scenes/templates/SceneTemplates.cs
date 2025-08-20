@@ -8,7 +8,7 @@ namespace SpaceCapture;
 [GlobalClass]
 public partial class SceneTemplates : Resource
 {
-    public static SceneTemplates Scenes { get; } = ResourceLoader.Load<SceneTemplates>("res://scenes/templates/scene_templates.tres");
+    public static SceneTemplates Scenes { get; } = ResourceLoader.Load<SceneTemplates>("res://old/scenes/templates/scene_templates.tres");
 
     [Export]
     public PackedScene ControlPlanet { get; set; }

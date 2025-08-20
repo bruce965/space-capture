@@ -18,6 +18,7 @@ namespace SpaceCapture.Shared.Types;
 /// 32-bit signed fixed point number with 16 bits of decimal precision.
 /// </summary>
 [JsonConverter(typeof(JsonConverter))]
+[DebuggerDisplay($"{{{nameof(ToString)}(),nq}}")]
 public readonly partial struct FP32D16
     : IBinaryInteger<FP32D16>,
         ITrigonometricFunctions<FP32D16>,
@@ -29,13 +30,13 @@ public readonly partial struct FP32D16
             ref Utf8JsonReader reader,
             Type typeToConvert,
             JsonSerializerOptions options
-        ) => new(Convert.ToInt32(reader.GetDecimal() * ValueOne));
+        ) => (FP32D16)reader.GetDecimal();
 
         public override void Write(
             Utf8JsonWriter writer,
             FP32D16 value,
             JsonSerializerOptions options
-        ) => writer.WriteNumberValue(value.ToDecimal(null) / 1.000000000000000000000000000000000m);
+        ) => writer.WriteNumberValue((decimal)value / 1.000000000000000000000000000000000m);
     }
 
     const int BinaryDecimalDigits = 16;
@@ -257,34 +258,31 @@ public readonly partial struct FP32D16
 
     public DateTime ToDateTime(IFormatProvider? provider) => throw new NotImplementedException();
 
-    public decimal ToDecimal(IFormatProvider? provider) =>
-        Math.Round((decimal)_v / One._v, s_approximateDecimalPrecision);
+    public decimal ToDecimal(IFormatProvider? provider) => (decimal)this;
 
-    public double ToDouble(IFormatProvider? provider) =>
-        Math.Round((double)_v / One._v, s_approximateDecimalPrecision);
+    public double ToDouble(IFormatProvider? provider) => (double)this;
 
-    public short ToInt16(IFormatProvider? provider) => (short)(_v >> BinaryDecimalDigits);
+    public short ToInt16(IFormatProvider? provider) => (short)this;
 
-    public int ToInt32(IFormatProvider? provider) => _v >> BinaryDecimalDigits;
+    public int ToInt32(IFormatProvider? provider) => (int)this;
 
-    public long ToInt64(IFormatProvider? provider) => _v >> BinaryDecimalDigits;
+    public long ToInt64(IFormatProvider? provider) => (long)this;
 
-    public sbyte ToSByte(IFormatProvider? provider) => (sbyte)(_v >> BinaryDecimalDigits);
+    public sbyte ToSByte(IFormatProvider? provider) => (sbyte)this;
 
-    public float ToSingle(IFormatProvider? provider) =>
-        MathF.Round((float)_v / One._v, s_approximateDecimalPrecision);
+    public float ToSingle(IFormatProvider? provider) => (float)this;
 
     public string ToString(IFormatProvider? provider) =>
-        Math.Round(ToDecimal(provider)).ToString(provider);
+        Math.Round((decimal)this).ToString(provider);
 
     public object ToType(Type conversionType, IFormatProvider? provider) =>
         throw new NotImplementedException();
 
-    public ushort ToUInt16(IFormatProvider? provider) => (ushort)(_v >> BinaryDecimalDigits);
+    public ushort ToUInt16(IFormatProvider? provider) => (ushort)this;
 
-    public uint ToUInt32(IFormatProvider? provider) => (uint)(_v >> BinaryDecimalDigits);
+    public uint ToUInt32(IFormatProvider? provider) => (uint)this;
 
-    public ulong ToUInt64(IFormatProvider? provider) => (ulong)(_v >> BinaryDecimalDigits);
+    public ulong ToUInt64(IFormatProvider? provider) => (ulong)this;
 
     public static FP32D16 Acos(FP32D16 x) => throw new NotImplementedException();
 
@@ -411,6 +409,15 @@ public readonly partial struct FP32D16
     public static explicit operator ulong(FP32D16 value) =>
         (ulong)(value._v >> BinaryDecimalDigits);
 
+    public static implicit operator float(FP32D16 value) =>
+        (float)Math.Round((double)value._v / One._v, s_approximateDecimalPrecision);
+
+    public static implicit operator double(FP32D16 value) =>
+        Math.Round((double)value._v / One._v, s_approximateDecimalPrecision);
+
+    public static implicit operator decimal(FP32D16 value) =>
+        Math.Round((decimal)value._v / One._v, s_approximateDecimalPrecision);
+
     public static implicit operator FP32D16(byte value) => new(value << BinaryDecimalDigits);
 
     public static implicit operator FP32D16(char value) => new(value << BinaryDecimalDigits);
@@ -429,4 +436,11 @@ public readonly partial struct FP32D16
 
     public static explicit operator FP32D16(ulong value) =>
         new((int)(value << BinaryDecimalDigits));
+
+    public static explicit operator FP32D16(float value) => new(Convert.ToInt32(value * ValueOne));
+
+    public static explicit operator FP32D16(double value) => new(Convert.ToInt32(value * ValueOne));
+
+    public static explicit operator FP32D16(decimal value) =>
+        new(Convert.ToInt32(value * ValueOne));
 }

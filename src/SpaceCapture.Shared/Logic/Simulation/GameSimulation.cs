@@ -6,10 +6,13 @@ using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
+/// <inheritdoc cref="GameSimulation{TData}"/>
+public class GameSimulation(GameStage stage) : GameSimulation<Empty>(stage);
+
 /// <summary>
 /// Executes all the game logic.
 /// </summary>
-public partial class GameSimulation
+public partial class GameSimulation<TData>
 {
     const long FarSnapshotTicks = GameConstants.TicksPerSecond * 60 * 5; // 5 minutes
     const long NearSnapshotTicks = GameConstants.TicksPerSecond * 5; // 5 seconds
@@ -25,6 +28,10 @@ public partial class GameSimulation
     ref Snapshot PrevNearSnapshot => ref _snapshots[3]; // State 5~10 seconds ago.
     ref Snapshot NextNearSnapshot => ref _snapshots[4]; // State 0~5 seconds ago.
     ref Snapshot Current => ref _snapshots[5]; // Current state.
+
+    public Accessor<Player, PlayerIndex> Players => Current.Players;
+
+    public Accessor<CelestialBody, CelestialBodyIndex> CelestialBodies => Current.CelestialBodies;
 
     /// <summary>
     /// Something happened in the game. This might also be an event that reverts
@@ -51,6 +58,27 @@ public partial class GameSimulation
 
         _actionsHistory = new(65536);
         _eventsHistory = new(65536);
+    }
+
+    /// <summary>
+    /// Commit current state of the simulation, releasing all previous snapshots,
+    /// thus freeing memory and preventing rollbacks to before the current time.
+    /// </summary>
+    public void Commit()
+    {
+        _actionsHistory.RemoveRange(0, Current.ActionsCount);
+        _eventsHistory.RemoveRange(0, Current.EventsCount);
+
+        for (int i = 0; i < _snapshots.Length - 1; i++)
+            _snapshots[i].CopyFrom(Current);
+    }
+
+    /// <summary>
+    /// Emit events to initialize the game stage.
+    /// </summary>
+    public void Initialize()
+    {
+        // TODO
     }
 
     /// <summary>
@@ -157,7 +185,11 @@ public partial class GameSimulation
     /// <param name="self"></param>
     /// <param name="current"></param>
     /// <param name="history"></param>
-    static void ProcessActions(GameSimulation self, ref Snapshot current, List<GameAction> history)
+    static void ProcessActions(
+        GameSimulation<TData> self,
+        ref Snapshot current,
+        List<GameAction> history
+    )
     {
         for (; current.ActionsCount < history.Count; current.ActionsCount++)
         {
@@ -183,7 +215,7 @@ public partial class GameSimulation
             // For each celestial body, iterate all structure types at random.
             // Iterating randomly is necessary so that even in case of resource
             // starvation, all structure types have equal chance to activate.
-            foreach (ref Structure structure in current.Random.Shuffled(body.Structures))
+            foreach (ref Structure structure in current.Random.Shuffled(body.Structures.Span))
             {
                 // Check how many active structures have enough resources to run.
                 int enoughResourcesForActiveCount = structure.ActiveCount;

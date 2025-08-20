@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Diagnostics;
 using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Types;
 
@@ -10,6 +11,7 @@ namespace SpaceCapture.Shared.Logic.Rules;
 /// Describes the behaviour of a type of resource.
 /// </summary>
 /// <param name="type"></param>
+[DebuggerDisplay($"{{{nameof(Type)},nq}}")]
 public readonly struct ResourceRule(ResourceType type) : IImmutable
 {
     /// <summary>

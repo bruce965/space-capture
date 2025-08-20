@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://24p4x7uddi3s" path="res://old/scripts/Player.cs" id="1_tr3cj"]
 [ext_resource type="Script" uid="uid://dh5mq8ckejbe" path="res://old/scripts/PlayerAI.cs" id="1_u42tr"]
 [ext_resource type="Texture2D" uid="uid://bydmcc5d53ldx" path="res://old/icons/paw_print.svg" id="3_mxakn"]
-[ext_resource type="Script" uid="uid://b1aw6s1xr3sic" path="res://old/scripts/GameLogic.cs" id="3_q0fqo"]
+[ext_resource type="Script" uid="uid://b1aw6s1xr3sic" path="res://old/scripts/GameLogicOld.cs" id="3_q0fqo"]
 [ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://old/icons/character.svg" id="3_qxmev"]
 [ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/backgrounds/nebula.tscn" id="7_sv4lv"]
 [ext_resource type="PackedScene" uid="uid://b0ec8jbenscpp" path="res://scenes/backgrounds/stars.tscn" id="9_lum1l"]

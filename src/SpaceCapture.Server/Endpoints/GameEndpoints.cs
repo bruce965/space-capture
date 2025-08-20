@@ -3,7 +3,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using SpaceCapture.Shared;
-using SpaceCapture.Shared.Logic.Rules;
+using SpaceCapture.Shared.Logic;
 using SpaceCapture.Shared.Logic.Simulation;
 using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Utilities;
@@ -19,58 +19,17 @@ public static class GameEndpoints
     {
         DeterministicRandom gameSeed = seed ?? new DeterministicRandom();
 
-        DeterministicRandom rand = gameSeed.Sanitize();
+        GameStage stage = GameGenerator.FromSeed(gameSeed);
 
-        GameStage stage = new()
-        {
-            Seed = gameSeed,
-            PlayersCount = 2,
-            Rules = RulesSet.Standard,
-            CelestialBodies =
-            [
-                new(CelestialBodyType.Terra, RandomNameGenerator.Star(ref rand), (0, 0)),
-                new(CelestialBodyType.Terra, RandomNameGenerator.Planet(ref rand), (-200, -50))
-                {
-                    Resources =
-                    [
-                        new(ResourceType.Population) { HardLimit = 1000 },
-                        new(ResourceType.Food) { SoftLimit = 10, HardLimit = 12 },
-                        new(ResourceType.Metal) { SoftLimit = 10, HardLimit = 12 },
-                        new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
-                    ],
-                    MaxUpgradeLevel = 3,
-                },
-                new(CelestialBodyType.Terra, RandomNameGenerator.Planet(ref rand), (200, 50))
-                {
-                    Resources =
-                    [
-                        new(ResourceType.Population) { HardLimit = 1000 },
-                        new(ResourceType.Food) { SoftLimit = 10, HardLimit = 12 },
-                        new(ResourceType.Metal) { SoftLimit = 10, HardLimit = 12 },
-                        new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
-                    ],
-                    MaxUpgradeLevel = 3,
-                },
-            ],
-        };
+        GameSimulation simulation = new(stage);
 
-        GameSimulation simulation = new(stage)
-        {
-            //CelestialBodies =
-            //[
-            //    new(),
-            //    new()
-            //    {
-            //        Player = 0,
-            //        Resources = [new(ResourceType.Population, 10), new(ResourceType.Food, 10)],
-            //    },
-            //    new()
-            //    {
-            //        Player = 1,
-            //        Resources = [new(ResourceType.Population, 10), new(ResourceType.Food, 10)],
-            //    },
-            //],
-        };
+        simulation.CelestialBodies.Span[1].Player = simulation.Players.Span[0].Index;
+        simulation.CelestialBodies.Span[1].Resources[ResourceType.Population].Count = 10;
+        simulation.CelestialBodies.Span[1].Resources[ResourceType.Food].Count = 10;
+
+        simulation.CelestialBodies.Span[2].Player = simulation.Players.Span[1].Index;
+        simulation.CelestialBodies.Span[2].Resources[ResourceType.Population].Count = 10;
+        simulation.CelestialBodies.Span[2].Resources[ResourceType.Food].Count = 10;
 
         for (int i = 0; i < ticks; i++)
             simulation.TickClock();

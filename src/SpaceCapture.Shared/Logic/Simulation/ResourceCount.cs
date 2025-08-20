@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Types;
@@ -11,6 +12,7 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 /// Resource type and amount of that resource.
 /// </summary>
 /// <param name="type"></param>
+[DebuggerDisplay($"{{{nameof(Type)},nq}}")]
 public struct ResourceCount(ResourceType type)
     : ICloneable<ResourceCount>,
         ITransferable<ResourceCount>

@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://ku6vttanajtg"]
+
+[sub_resource type="Shader" id="Shader_eepe1"]
+code = "shader_type canvas_item;
+
+void fragment() {
+	float dist = length(UV - vec2(1.));
+	float water = length(UV - vec2(.7)) / 2.;
+	vec3 color = mix(vec3(1., .85, 0.), vec3(1., .2, 0.), vec3(smoothstep(0., 1., water)));
+	COLOR = vec4(color, smoothstep(1., .85, dist));
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iw6s3"]
+shader = SubResource("Shader_eepe1")
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_3dix0"]
+size = Vector2(8, 8)
+
+[node name="YellowDwarf" type="Sprite2D"]
+material = SubResource("ShaderMaterial_iw6s3")
+scale = Vector2(12.5, 12.5)
+texture = SubResource("PlaceholderTexture2D_3dix0")

@@ -8,6 +8,9 @@ namespace SpaceCapture.Shared;
 [JsonConverter(typeof(JsonStringEnumConverter<EventType>))]
 public enum EventType
 {
+    [JsonStringEnumMemberName("celestial-body-create")]
+    CelestialBodyCreate,
+
     [JsonStringEnumMemberName("fleet-create")]
     FleetCreate,
 

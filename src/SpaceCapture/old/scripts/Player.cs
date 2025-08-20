@@ -14,7 +14,7 @@ public partial class Player : Resource
     [Export]
     public Texture2D Icon { get; set; }
 
-    public virtual void ProcessGameTick(GameLogic game)
+    public virtual void ProcessGameTick(GameLogicOld game)
     {
     }
 }

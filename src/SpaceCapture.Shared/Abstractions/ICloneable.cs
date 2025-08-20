@@ -6,7 +6,7 @@ namespace SpaceCapture.Shared.Abstractions;
 /// <inheritdoc cref="ICloneable"/>
 /// <typeparam name="TSelf"></typeparam>
 public interface ICloneable<TSelf> : ICloneable
-    where TSelf : notnull
+    where TSelf : notnull, ICloneable<TSelf>
 {
     /// <inheritdoc cref="ICloneable.Clone"/>
     new TSelf Clone();

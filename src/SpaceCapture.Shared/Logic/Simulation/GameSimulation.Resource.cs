@@ -1,15 +1,17 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Diagnostics;
 using SpaceCapture.Shared.Abstractions;
 using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Types;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
-partial class GameSimulation
+partial class GameSimulation<TData>
 {
-    struct Resource(ResourceRuleCache rule, CelestialBodyResource configuration)
+    [DebuggerDisplay($"{{{nameof(TypeData)},nq}}")]
+    public struct Resource(ResourceRuleCache rule, CelestialBodyResource configuration)
         : ICloneable<Resource>,
             ITransferable<Resource>
     {
