@@ -12,7 +12,7 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 /// Resource type and amount of that resource.
 /// </summary>
 /// <param name="type"></param>
-[DebuggerDisplay($"{{{nameof(Type)},nq}}")]
+[DebuggerDisplay($"{{{nameof(Type)},nq}} ({{{nameof(Count)},nq}})")]
 public struct ResourceCount(ResourceType type)
     : ICloneable<ResourceCount>,
         ITransferable<ResourceCount>

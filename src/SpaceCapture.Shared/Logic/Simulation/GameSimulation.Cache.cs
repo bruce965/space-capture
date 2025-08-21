@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using SpaceCapture.Shared.Logic.Rules;
+using SpaceCapture.Shared.Types;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
@@ -30,8 +31,8 @@ partial class GameSimulation<TData>
                     {
                         Rules = s,
                         Index = new() { Index = i },
-                        BuildCost = Cache(s.BuildCost, rules),
-                        RepairCost = Cache(s.RepairCost, rules),
+                        BuildCost = Cache(s.BuildCost, rules, s.BuildTicks),
+                        RepairCost = Cache(s.RepairCost, rules, s.BuildTicks),
                         CommitCost = Cache(s.CommitCost, rules),
                         ActiveCost = Cache(s.ActiveCost, rules),
                         Produces = Cache(s.Produces, rules),
@@ -62,12 +63,14 @@ partial class GameSimulation<TData>
 
         static ImmutableArray<ResourceCountCache>? Cache(
             ImmutableArray<ResourceCount>? count,
-            RulesSet rules
-        ) => count is { } c ? Cache(c, rules) : null;
+            RulesSet rules,
+            long ticks = 1
+        ) => count is { } c ? Cache(c, rules, ticks) : null;
 
         static ImmutableArray<ResourceCountCache> Cache(
             ImmutableArray<ResourceCount> count,
-            RulesSet rules
+            RulesSet rules,
+            long ticks = 1
         ) =>
             [
                 .. count.Select(c => new ResourceCountCache
@@ -77,6 +80,7 @@ partial class GameSimulation<TData>
                     {
                         Index = rules.Resources.Index().First(r => r.Item.Type == c.Type).Index,
                     },
+                    CostPerTick = c.Count / (FP32D16)ticks,
                 }),
             ];
     }
@@ -102,5 +106,5 @@ partial class GameSimulation<TData>
     );
 
     [DebuggerDisplay($"{{{nameof(Data)},nq}}")]
-    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index);
+    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index, FP32D16 CostPerTick);
 }

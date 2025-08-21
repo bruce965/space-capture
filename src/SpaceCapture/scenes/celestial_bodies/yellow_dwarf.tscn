@@ -1,4 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://ku6vttanajtg"]
+[gd_scene load_steps=5 format=3 uid="uid://ku6vttanajtg"]
+
+[ext_resource type="PackedScene" uid="uid://m7w4u8ogp4fq" path="res://scenes/celestial_bodies/celestial_body.tscn" id="1_45aow"]
 
 [sub_resource type="Shader" id="Shader_eepe1"]
 code = "shader_type canvas_item;
@@ -11,13 +13,15 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_iw6s3"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vke84"]
 shader = SubResource("Shader_eepe1")
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_3dix0"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_73v6w"]
 size = Vector2(8, 8)
 
-[node name="YellowDwarf" type="Sprite2D"]
-material = SubResource("ShaderMaterial_iw6s3")
+[node name="YellowDwarf" instance=ExtResource("1_45aow")]
+
+[node name="Sprite" type="Sprite2D" parent="." index="0"]
+material = SubResource("ShaderMaterial_vke84")
 scale = Vector2(12.5, 12.5)
-texture = SubResource("PlaceholderTexture2D_3dix0")
+texture = SubResource("PlaceholderTexture2D_73v6w")

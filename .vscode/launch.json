@@ -3,9 +3,17 @@
   "configurations": [
     {
       "name": "Game",
-      "type": "godot",
+      "type": "coreclr",
       "request": "launch",
-      "project": "${workspaceFolder}/src/SpaceCapture/"
+      "program": "${config:godotTools.editorPath.godot4}",
+      "preLaunchTask": "build",
+      "args": [
+        "--path",
+        "${workspaceRoot}/src/SpaceCapture/"
+      ],
+      "cwd": "${workspaceFolder}/src/SpaceCapture/",
+      "console": "internalConsole",
+      "stopAtEntry": false
     },
     {
       "name": "Server",

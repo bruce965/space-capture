@@ -1,7 +1,8 @@
 {
-    "recommendations": [
-        "ms-dotnettools.csdevkit",
-        "csharpier.csharpier-vscode",
-        "editorconfig.editorconfig"
-    ]
+  "recommendations": [
+    "ms-dotnettools.csdevkit",
+    "csharpier.csharpier-vscode",
+    "editorconfig.editorconfig",
+    "geequlim.godot-tools"
+  ]
 }

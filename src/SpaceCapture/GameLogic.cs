@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using Godot;
+using SpaceCapture.Shared;
 using SpaceCapture.Shared.Logic;
 using SpaceCapture.Shared.Logic.Simulation;
 using SpaceCapture.Shared.Logic.Stage;
@@ -18,21 +19,41 @@ public partial class GameLogic : Node
     [Export]
     public Node2D CelestialBodiesContainer { get; set; }
 
-    GameSimulation<Node2D> _game;
+    public GameSimulation<Node2D> Simulation { get; private set; }
 
     public override void _Ready()
     {
         DeterministicRandom seed = DeterministicRandom.Parse("test", CultureInfo.InvariantCulture);
         GameStage stage = GameGenerator.FromSeed(seed);
-        _game = new(stage);
+        Simulation = new(stage);
 
-        foreach (ref var body in _game.CelestialBodies)
+        Simulation.CelestialBodies.Span[1].Player = Simulation.Players.Span[0].Index;
+        Simulation.CelestialBodies.Span[1].Resources[ResourceType.Population].Count = 10;
+        Simulation.CelestialBodies.Span[1].Resources[ResourceType.Food].Count = 10;
+        Simulation.CelestialBodies.Span[1].Structures[StructureType.Farm].Count = 1;
+        Simulation.CelestialBodies.Span[1].Structures[StructureType.Farm].ActiveCount = 1;
+
+        Simulation.CelestialBodies.Span[2].Player = Simulation.Players.Span[1].Index;
+        Simulation.CelestialBodies.Span[2].Resources[ResourceType.Population].Count = 10;
+        Simulation.CelestialBodies.Span[2].Resources[ResourceType.Food].Count = 10;
+        Simulation.CelestialBodies.Span[2].Structures[StructureType.Farm].Count = 1;
+        Simulation.CelestialBodies.Span[2].Structures[StructureType.Farm].ActiveCount = 1;
+
+        Simulation.Commit();
+
+        for (int i = 0; i < Simulation.CelestialBodies.Span.Length; i++)
         {
-            Node2D instance = Templates
+            ref var body = ref Simulation.CelestialBodies.Span[i];
+
+            CelestialBody instance = Templates
                 .Scenes.CelestialBodies[body.Configuration.Type]
-                .Instantiate<Node2D>();
+                .Instantiate<CelestialBody>();
 
             CelestialBodiesContainer.AddChild(instance);
+
+            instance.Game = this;
+
+            instance.Index = i;
 
             instance.Position = new Vector2(
                 body.Configuration.Location.X,
@@ -45,8 +66,9 @@ public partial class GameLogic : Node
 
     public override void _Process(double delta)
     {
-        _game.TickClock();
+        Simulation.TickClock();
 
-        // TODO
+        foreach (ref var body in Simulation.CelestialBodies)
+            ((CelestialBody)body.Data).Sync(body);
     }
 }

@@ -31,6 +31,8 @@ public static class GameEndpoints
         simulation.CelestialBodies.Span[2].Resources[ResourceType.Population].Count = 10;
         simulation.CelestialBodies.Span[2].Resources[ResourceType.Food].Count = 10;
 
+        simulation.Commit();
+
         for (int i = 0; i < ticks; i++)
             simulation.TickClock();
 

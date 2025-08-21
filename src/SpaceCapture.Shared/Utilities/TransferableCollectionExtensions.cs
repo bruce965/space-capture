@@ -15,7 +15,8 @@ public static class TransferableCollectionExtensions
 
         for (int i = 0; i < value.Length; i++)
         {
-            if (value[i] is { } v && other[i] is { } o)
+            ref T v = ref value[i];
+            if (v is not null && other[i] is { } o)
                 v.CopyFrom(o);
             else
                 value[i] = other[i] is { } o2 ? o2.Clone() : default!;
@@ -29,9 +30,14 @@ public static class TransferableCollectionExtensions
         for (int i = 0; i < value.Count && i < other.Count; i++)
         {
             if (value[i] is { } v && other[i] is { } o)
+            {
                 v.CopyFrom(o);
+                value[i] = v;
+            }
             else
+            {
                 value[i] = other[i] is { } o2 ? o2.Clone() : default!;
+            }
         }
 
         if (value.Count > other.Count)

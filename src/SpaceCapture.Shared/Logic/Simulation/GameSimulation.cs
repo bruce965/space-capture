@@ -29,6 +29,8 @@ public partial class GameSimulation<TData>
     ref Snapshot NextNearSnapshot => ref _snapshots[4]; // State 0~5 seconds ago.
     ref Snapshot Current => ref _snapshots[5]; // Current state.
 
+    public long Tick => Current.Tick;
+
     public Accessor<Player, PlayerIndex> Players => Current.Players;
 
     public Accessor<CelestialBody, CelestialBodyIndex> CelestialBodies => Current.CelestialBodies;
@@ -167,6 +169,8 @@ public partial class GameSimulation<TData>
         // Produce resources on all celestial bodies that have factories.
         ProcessStructures(in _rules, in Current);
 
+        ProcessBuildQueue(in _rules, in Current);
+
         // Take a "near" snapshot if enough time has passed since last one.
         RollSnapshots(NearSnapshotTicks, ref PrevNearSnapshot, ref NextNearSnapshot, ref Current);
 
@@ -176,7 +180,15 @@ public partial class GameSimulation<TData>
 
     void ProcessAction(GameAction action)
     {
-        // TODO
+        switch (action)
+        {
+            case BuildStructureAction act:
+                Current.CelestialBodies[act.CelestialBody].BuildQueue.Add(new(act.Structure));
+                break;
+
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     /// <summary>
@@ -239,6 +251,65 @@ public partial class GameSimulation<TData>
                         resource.Data.Count
                         * enoughResourcesForActiveCount
                         * body.Resources[resource.Index].Configuration.ProductionMultiplier;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Process build queues.
+    /// </summary>
+    /// <param name="rules"></param>
+    /// <param name="current"></param>
+    static void ProcessBuildQueue(in RulesCache rules, in Snapshot current)
+    {
+        // Iterate all celestial bodies. The order does not matter, each
+        // celestial body is isolated from the others.
+        foreach (CelestialBody body in current.CelestialBodies)
+        {
+            if (body.BuildQueue.Count is 0)
+                continue;
+
+            for (int i = 0; i < body.BuildQueue.Count; i++)
+            {
+                BuildQueueSlot build = body.BuildQueue[i];
+
+                StructureRuleCache structure = rules.Structures[
+                    rules.StructureTypeToIndex[build.Type].Index
+                ];
+
+                if (structure.BuildCost is not { } cost)
+                {
+                    body.BuildQueue.RemoveAt(i--);
+                    continue;
+                }
+
+                bool canBuild = true;
+                foreach (ResourceCountCache resource in cost)
+                {
+                    if (body.Resources[resource.Index].Count < resource.CostPerTick)
+                    {
+                        canBuild = false;
+                        break;
+                    }
+                }
+
+                if (!canBuild)
+                    break;
+
+                foreach (ResourceCountCache resource in cost)
+                    body.Resources[resource.Index].Count -= resource.CostPerTick;
+
+                if (++build.Progress >= structure.Rules.BuildTicks)
+                {
+                    body.Structures[structure.Index].Count++;
+                    body.Structures[structure.Index].ActiveCount++;
+
+                    body.BuildQueue.RemoveAt(i);
+                    break;
+                }
+
+                body.BuildQueue[i] = build;
+                break;
             }
         }
     }

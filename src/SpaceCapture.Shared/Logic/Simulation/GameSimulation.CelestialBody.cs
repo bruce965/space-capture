@@ -22,12 +22,18 @@ partial class GameSimulation<TData>
             configuration.Resources.FirstOrDefault(c => c.Type == r.Rules.Type, new(r.Rules.Type))
         ));
         Structure[] _structures = rules.Structures.ToArray(s => new Structure(s));
+        TData _data = default!;
+        List<BuildQueueSlot>? _buildQueue;
 
         /// <summary>
         /// Custom data attached to this celestial body.
         /// </summary>
         [MaybeNull]
-        public TData Data { get; set; }
+        public TData Data
+        {
+            readonly get => _data;
+            set => _data = value;
+        }
 
         public readonly CelestialBodyConfiguration Configuration => _configuration;
 
@@ -52,6 +58,11 @@ partial class GameSimulation<TData>
         public readonly Accessor<Structure, StructureType, StructureTypeIndex> Structures =>
             new(_structures, _rules.StructureTypeToIndex);
 
+        /// <summary>
+        /// Build queue for structures.
+        /// </summary>
+        public List<BuildQueueSlot> BuildQueue => _buildQueue ??= [];
+
         /// <inheritdoc/>
         public readonly CelestialBody Clone() =>
             new()
@@ -61,6 +72,8 @@ partial class GameSimulation<TData>
                 _player = _player,
                 _resources = _resources.DeepClone(),
                 _structures = _structures.DeepClone(),
+                _data = _data,
+                _buildQueue = _buildQueue?.DeepClone(),
             };
 
         public void CopyFrom(CelestialBody other)
@@ -70,6 +83,8 @@ partial class GameSimulation<TData>
             _player = other._player;
             TransferHelper.Copy(ref _resources, other._resources);
             TransferHelper.Copy(ref _structures, other._structures);
+            _data = other._data;
+            TransferHelper.Copy(ref _buildQueue, other._buildQueue);
         }
     }
 }

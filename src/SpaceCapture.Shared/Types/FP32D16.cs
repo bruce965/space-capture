@@ -36,7 +36,11 @@ public readonly partial struct FP32D16
             Utf8JsonWriter writer,
             FP32D16 value,
             JsonSerializerOptions options
-        ) => writer.WriteNumberValue((decimal)value / 1.000000000000000000000000000000000m);
+        ) =>
+            writer.WriteNumberValue(
+                Math.Round((decimal)value, s_approximateDecimalPrecision)
+                    / 1.000000000000000000000000000000000m
+            );
     }
 
     const int BinaryDecimalDigits = 16;
@@ -47,12 +51,11 @@ public readonly partial struct FP32D16
     const int ValuePi = (int)(Math.PI * ValueOne + .5);
     const int ValueHalfPi = (int)(Math.PI / 2 * ValueOne + .5);
     const int ValueTau = (int)(Math.Tau * ValueOne + .5);
+    const double EpsilonDouble = 1d / ValueOne;
+    const decimal EpsilonDecimal = 1m / ValueOne;
 
     static readonly int s_approximateDecimalPrecision =
-        ((decimal)1 / ValueOne)
-            .ToString(CultureInfo.InvariantCulture)
-            .AsSpan(2)
-            .IndexOfAnyExcept('0') + 1;
+        (1m / ValueOne).ToString(CultureInfo.InvariantCulture).AsSpan(2).IndexOfAnyExcept('0') + 1;
 
     readonly int _v;
 
@@ -233,14 +236,21 @@ public readonly partial struct FP32D16
     public int GetShortestBitLength() => throw new NotImplementedException();
 
     public string ToString(string? format, IFormatProvider? formatProvider) =>
-        throw new NotImplementedException();
+        (
+            Math.Round((decimal)this, s_approximateDecimalPrecision)
+            / 1.000000000000000000000000000000000m
+        ).ToString(format, formatProvider);
 
     public bool TryFormat(
         Span<char> destination,
         out int charsWritten,
         ReadOnlySpan<char> format,
         IFormatProvider? provider
-    ) => throw new NotImplementedException();
+    ) =>
+        (
+            Math.Round((decimal)this, s_approximateDecimalPrecision)
+            / 1.000000000000000000000000000000000m
+        ).TryFormat(destination, out charsWritten, format, provider);
 
     public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten) =>
         throw new NotImplementedException();
@@ -273,7 +283,10 @@ public readonly partial struct FP32D16
     public float ToSingle(IFormatProvider? provider) => (float)this;
 
     public string ToString(IFormatProvider? provider) =>
-        Math.Round((decimal)this).ToString(provider);
+        (
+            Math.Round((decimal)this, s_approximateDecimalPrecision)
+            / 1.000000000000000000000000000000000m
+        ).ToString(provider);
 
     public object ToType(Type conversionType, IFormatProvider? provider) =>
         throw new NotImplementedException();
@@ -409,14 +422,11 @@ public readonly partial struct FP32D16
     public static explicit operator ulong(FP32D16 value) =>
         (ulong)(value._v >> BinaryDecimalDigits);
 
-    public static implicit operator float(FP32D16 value) =>
-        (float)Math.Round((double)value._v / One._v, s_approximateDecimalPrecision);
+    public static implicit operator float(FP32D16 value) => (float)(value._v * EpsilonDouble);
 
-    public static implicit operator double(FP32D16 value) =>
-        Math.Round((double)value._v / One._v, s_approximateDecimalPrecision);
+    public static implicit operator double(FP32D16 value) => value._v * EpsilonDouble;
 
-    public static implicit operator decimal(FP32D16 value) =>
-        Math.Round((decimal)value._v / One._v, s_approximateDecimalPrecision);
+    public static implicit operator decimal(FP32D16 value) => value._v * EpsilonDecimal;
 
     public static implicit operator FP32D16(byte value) => new(value << BinaryDecimalDigits);
 

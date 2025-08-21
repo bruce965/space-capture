@@ -41,7 +41,7 @@ public readonly struct StructureRule(StructureType type) : IImmutable
     /// <summary>
     /// How many ticks are required to build this structure.
     /// </summary>
-    public long BuildTicks { get; init; }
+    public long BuildTicks { get; init; } = 1;
 
     /// <summary>
     /// Resources required to build this structure, or <see langword="null"/> to forbid building.

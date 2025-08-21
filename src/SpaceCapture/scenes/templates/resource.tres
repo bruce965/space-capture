@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=4 format=3 uid="uid://cp0dudi0f5r62"]
+[gd_resource type="Resource" load_steps=4 format=3 uid="uid://bwlojf7gxqdql"]
 
 [ext_resource type="PackedScene" uid="uid://ku6vttanajtg" path="res://scenes/celestial_bodies/yellow_dwarf.tscn" id="1_p4e56"]
 [ext_resource type="Script" uid="uid://cijv5ci7fv0ec" path="res://scenes/templates/Templates.cs" id="1_r20rn"]
