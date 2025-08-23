@@ -23,7 +23,7 @@ app.Run();
 
 [JsonSerializable(typeof(GameSimulation))]
 [JsonSerializable(typeof(GameStage))]
-[JsonSerializable(typeof(ReadOnlyMemory<FP32D16>))]
+[JsonSerializable(typeof(ReadOnlyMemory<FP48D16>))]
 [JsonSerializable(typeof(CelestialBodyResource[]))]
 [JsonSerializable(typeof(IEnumerable<CelestialBodyResource>))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext;

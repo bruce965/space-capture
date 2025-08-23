@@ -25,7 +25,7 @@ public readonly struct ResourceRule(ResourceType type) : IImmutable
     /// <remarks>
     /// Damage is applied to structures first, and then to resources.
     /// </remarks>
-    public FP32D16 DamageAbsorbtion { get; init; }
+    public FP48D16 DamageAbsorbtion { get; init; }
 
     /// <summary>
     /// If <see langword="true"/>, clestial bodies will remain under control of the player as long

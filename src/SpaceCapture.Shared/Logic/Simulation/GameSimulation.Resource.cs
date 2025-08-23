@@ -28,7 +28,7 @@ partial class GameSimulation<TData>
         /// <summary>
         /// Amount.
         /// </summary>
-        public FP32D16 Count { get; set; }
+        public FP48D16 Count { get; set; }
 
         public readonly Resource Clone() => this;
 

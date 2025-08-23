@@ -17,14 +17,14 @@ partial class RulesSet
             [
                 new(ResourceType.Population)
                 {
-                    DamageAbsorbtion = (FP32D16)1 / 10,
+                    DamageAbsorbtion = (FP48D16)1 / 10,
                     IsActive = true,
                 },
-                new(ResourceType.Food) { DamageAbsorbtion = (FP32D16)1 / 1000 },
-                new(ResourceType.Metal) { DamageAbsorbtion = (FP32D16)1 / 1000 },
-                new(ResourceType.Gas) { DamageAbsorbtion = (FP32D16)1 / 1000 },
-                new(ResourceType.Ammunitions) { DamageAbsorbtion = (FP32D16)1 / 100 },
-                new(ResourceType.Bombs) { DamageAbsorbtion = (FP32D16)1 / 100 },
+                new(ResourceType.Food) { DamageAbsorbtion = (FP48D16)1 / 1000 },
+                new(ResourceType.Metal) { DamageAbsorbtion = (FP48D16)1 / 1000 },
+                new(ResourceType.Gas) { DamageAbsorbtion = (FP48D16)1 / 1000 },
+                new(ResourceType.Ammunitions) { DamageAbsorbtion = (FP48D16)1 / 100 },
+                new(ResourceType.Bombs) { DamageAbsorbtion = (FP48D16)1 / 100 },
             ],
             Structures =
             [
@@ -32,7 +32,7 @@ partial class RulesSet
                 new(StructureType.House)
                 {
                     MaxHealth = 2,
-                    DamageAbsorbtion = (FP32D16)1 / 20,
+                    DamageAbsorbtion = (FP48D16)1 / 20,
                     BuildTicks = GameConstants.TicksPerSecond * 3,
                     BuildCost = [new(ResourceType.Metal) { Count = 10 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 5 }],
@@ -48,7 +48,7 @@ partial class RulesSet
                 new(StructureType.Farm)
                 {
                     MaxHealth = 2,
-                    DamageAbsorbtion = (FP32D16)1 / 30,
+                    DamageAbsorbtion = (FP48D16)1 / 30,
                     BuildTicks = GameConstants.TicksPerSecond * 5,
                     BuildCost =
                     [
@@ -70,7 +70,7 @@ partial class RulesSet
                 new(StructureType.MetalMine)
                 {
                     MaxHealth = 2,
-                    DamageAbsorbtion = (FP32D16)1 / 20,
+                    DamageAbsorbtion = (FP48D16)1 / 20,
                     BuildTicks = GameConstants.TicksPerSecond * 5,
                     BuildCost = [new(ResourceType.Food) { Count = 10 }],
                     RepairCost = [new(ResourceType.Food) { Count = 5 }],
@@ -88,7 +88,7 @@ partial class RulesSet
                 new(StructureType.GasMine)
                 {
                     MaxHealth = 2,
-                    DamageAbsorbtion = (FP32D16)1 / 20,
+                    DamageAbsorbtion = (FP48D16)1 / 20,
                     BuildTicks = GameConstants.TicksPerSecond * 5,
                     BuildCost =
                     [
@@ -114,14 +114,14 @@ partial class RulesSet
                 new(StructureType.WallsI)
                 {
                     MaxHealth = 100,
-                    DamageAbsorbtion = (FP32D16)7 / 10,
+                    DamageAbsorbtion = (FP48D16)7 / 10,
                     BuildCost = [new(ResourceType.Metal) { Count = 100 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 100 }],
                 },
                 new(StructureType.WallsII)
                 {
                     MaxHealth = 200,
-                    DamageAbsorbtion = (FP32D16)8 / 10,
+                    DamageAbsorbtion = (FP48D16)8 / 10,
                     UpgradeOf = StructureType.WallsI,
                     BuildCost = [new(ResourceType.Metal) { Count = 300 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 200 }],
@@ -129,7 +129,7 @@ partial class RulesSet
                 new(StructureType.WallsIII)
                 {
                     MaxHealth = 300,
-                    DamageAbsorbtion = (FP32D16)9 / 10,
+                    DamageAbsorbtion = (FP48D16)9 / 10,
                     UpgradeOf = StructureType.WallsII,
                     BuildCost = [new(ResourceType.Metal) { Count = 1000 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 300 }],
@@ -137,7 +137,7 @@ partial class RulesSet
                 new(StructureType.AntiAirI)
                 {
                     MaxHealth = 10,
-                    DamageAbsorbtion = (FP32D16)1 / 20,
+                    DamageAbsorbtion = (FP48D16)1 / 20,
                     BuildCost =
                     [
                         new(ResourceType.Metal) { Count = 20 },
@@ -150,7 +150,7 @@ partial class RulesSet
                 new(StructureType.AntiAirII)
                 {
                     MaxHealth = 10,
-                    DamageAbsorbtion = (FP32D16)1 / 20,
+                    DamageAbsorbtion = (FP48D16)1 / 20,
                     UpgradeOf = StructureType.AntiAirI,
                     BuildCost =
                     [
@@ -164,7 +164,7 @@ partial class RulesSet
                 new(StructureType.AntiAirIII)
                 {
                     MaxHealth = 10,
-                    DamageAbsorbtion = (FP32D16)1 / 20,
+                    DamageAbsorbtion = (FP48D16)1 / 20,
                     UpgradeOf = StructureType.AntiAirII,
                     BuildCost =
                     [

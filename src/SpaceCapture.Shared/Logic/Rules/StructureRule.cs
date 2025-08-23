@@ -24,12 +24,12 @@ public readonly struct StructureRule(StructureType type) : IImmutable
     /// <summary>
     /// Full health level of this structure.
     /// </summary>
-    public FP32D16 MaxHealth { get; init; }
+    public FP48D16 MaxHealth { get; init; }
 
     /// <summary>
     /// Damage absorbtion coefficient (<c>0</c> to absorbe no damage; <c>1</c> to absorbe all damage).
     /// </summary>
-    public FP32D16 DamageAbsorbtion { get; init; }
+    public FP48D16 DamageAbsorbtion { get; init; }
 
     #region Build
 

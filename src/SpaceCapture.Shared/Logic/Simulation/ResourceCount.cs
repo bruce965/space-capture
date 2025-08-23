@@ -27,7 +27,7 @@ public struct ResourceCount(ResourceType type)
     /// Amount.
     /// </summary>
     [JsonPropertyName("count")]
-    public FP32D16 Count { get; set; }
+    public FP48D16 Count { get; set; }
 
     public readonly ResourceCount Clone() => this;
 

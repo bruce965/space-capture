@@ -24,12 +24,12 @@ public readonly struct CelestialBodyResource(ResourceType type) : IImmutable
     /// Production multiplier for this resource on this celestial body.
     /// </summary>
     [JsonIgnore]
-    public FP32D16 ProductionMultiplier { get; init; } = 1;
+    public FP48D16 ProductionMultiplier { get; init; } = 1;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [JsonPropertyName("multiplier")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public FP32D16? ProductionMultiplierJson
+    public FP48D16? ProductionMultiplierJson
     {
         get => ProductionMultiplier == 1 ? null : ProductionMultiplier;
         init => ProductionMultiplier = value ?? 1;

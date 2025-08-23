@@ -18,5 +18,5 @@ public static class GameConstants
     /// <summary>
     /// How many real-time seconds does a game tick cover (approximate).
     /// </summary>
-    public static readonly FP32D16 SecondsPerTick = (FP32D16)1 / (FP32D16)TicksPerSecond;
+    public static readonly FP48D16 SecondsPerTick = (FP48D16)1 / (FP48D16)TicksPerSecond;
 }

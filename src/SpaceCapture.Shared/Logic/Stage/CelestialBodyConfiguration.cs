@@ -15,7 +15,7 @@ namespace SpaceCapture.Shared.Logic.Stage;
 public readonly struct CelestialBodyConfiguration(
     CelestialBodyType type,
     string name,
-    Vector2<FP32D16> location
+    Vector2<FP48D16> location
 ) : IImmutable
 {
     /// <summary>
@@ -34,8 +34,8 @@ public readonly struct CelestialBodyConfiguration(
     /// Location of this celestial body in global space.
     /// </summary>
     [JsonPropertyName("location")]
-    [JsonConverter(typeof(Vector2<FP32D16>.JsonConverter))]
-    public Vector2<FP32D16> Location => location;
+    [JsonConverter(typeof(Vector2<FP48D16>.JsonConverter))]
+    public Vector2<FP48D16> Location => location;
 
     /// <summary>
     /// Resources provided by this celestial body.

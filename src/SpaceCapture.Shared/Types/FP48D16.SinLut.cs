@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace SpaceCapture.Shared.Types;
 
-partial struct FP32D16
+partial struct FP48D16
 {
     static class StaticLutBuffer
     {
@@ -19,17 +19,17 @@ partial struct FP32D16
     [InlineArray(102945)]
     struct LutBuffer
     {
-        FP32D16 _v;
+        FP48D16 _v;
     }
 
     static void InitSinLut(ref LutBuffer sinLut)
     {
         // csharpier-ignore
-        ReadOnlySpan<int> source = [
+        ReadOnlySpan<long> source = [
             /*
             // Generated with the following code:
             for (int i = 0; i <= ValueHalfPi; i++)
-                Console.Write($"{(int)(Math.Round(Math.Sin((double)i / ValueOne) * ValueOne))}, ");
+                Console.Write($"{(long)(Math.Round(Math.Sin((double)i / ValueOne) * ValueOne))}, ");
             */
 
             /**/
@@ -6779,7 +6779,7 @@ partial struct FP32D16
             /**/
         ];
 
-        Span<int> buffer = MemoryMarshal.Cast<FP32D16, int>(sinLut);
+        Span<long> buffer = MemoryMarshal.Cast<FP48D16, long>(sinLut);
 
         Debug.Assert(buffer.Length == source.Length);
 

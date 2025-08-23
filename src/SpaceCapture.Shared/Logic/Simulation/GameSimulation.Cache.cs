@@ -80,7 +80,7 @@ partial class GameSimulation<TData>
                     {
                         Index = rules.Resources.Index().First(r => r.Item.Type == c.Type).Index,
                     },
-                    CostPerTick = c.Count / (FP32D16)ticks,
+                    CostPerTick = c.Count / (FP48D16)ticks,
                 }),
             ];
     }
@@ -109,6 +109,6 @@ partial class GameSimulation<TData>
     public readonly record struct ResourceCountCache(
         ResourceCount Data,
         ResourceTypeIndex Index,
-        FP32D16 CostPerTick
+        FP48D16 CostPerTick
     );
 }
