@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbxdfpv4ydye6"]
+
+[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://old/icons/character.svg" id="1_bvqvm"]
+[ext_resource type="Script" uid="uid://bmh2a8txqpq4" path="res://ui/ResourceControl.cs" id="1_prh6k"]
+
+[node name="ResourceControl" type="HBoxContainer" node_paths=PackedStringArray("_iconRect", "_countLabel")]
+script = ExtResource("1_prh6k")
+_iconRect = NodePath("AspectRatioContainer/TextureRect")
+_countLabel = NodePath("Label")
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TextureRect" type="TextureRect" parent="AspectRatioContainer"]
+layout_mode = 2
+texture = ExtResource("1_bvqvm")
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
+text = "0"

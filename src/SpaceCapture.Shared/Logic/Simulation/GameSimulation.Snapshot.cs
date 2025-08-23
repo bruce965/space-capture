@@ -58,7 +58,11 @@ partial class GameSimulation<TData>
         {
             CelestialBody[] celestialBodies = new CelestialBody[game._stage.CelestialBodies.Length];
             for (int i = 0; i < celestialBodies.Length; i++)
-                celestialBodies[i] = new(game._rules, game._stage.CelestialBodies[i]);
+                celestialBodies[i] = new(
+                    game._rules,
+                    game._stage.CelestialBodies[i],
+                    new() { Index = i }
+                );
 
             return celestialBodies;
         }

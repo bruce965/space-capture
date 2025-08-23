@@ -13,11 +13,11 @@ namespace SpaceCapture;
 
 public partial class GameLogic : Node
 {
-    /// <summary>
-    /// Container for planets.
-    /// </summary>
     [Export]
-    public Node2D CelestialBodiesContainer { get; set; }
+    Node2D _celestialBodiesContainer { get; set; }
+
+    [Export]
+    InfoPanel _infoPanel { get; set; }
 
     public GameSimulation<Node2D> Simulation { get; private set; }
 
@@ -45,11 +45,9 @@ public partial class GameLogic : Node
         {
             ref var body = ref Simulation.CelestialBodies.Span[i];
 
-            CelestialBody instance = Templates
-                .Scenes.CelestialBodies[body.Configuration.Type]
-                .Instantiate<CelestialBody>();
+            CelestialBody instance = Templates.Instantiate(body.Configuration.Type);
 
-            CelestialBodiesContainer.AddChild(instance);
+            _celestialBodiesContainer.AddChild(instance);
 
             instance.Game = this;
 
@@ -70,5 +68,7 @@ public partial class GameLogic : Node
 
         foreach (ref var body in Simulation.CelestialBodies)
             ((CelestialBody)body.Data).Sync(body);
+
+        _infoPanel.Show(Simulation, Simulation.CelestialBodies.Span[1].Index);
     }
 }

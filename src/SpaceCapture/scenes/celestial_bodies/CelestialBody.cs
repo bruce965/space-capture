@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
-using System;
 using System.Text;
 using Godot;
 using SpaceCapture.Shared;
@@ -22,9 +21,14 @@ public partial class CelestialBody : Node2D
     public void Sync(GameSimulation<Node2D>.CelestialBody data)
     {
         StringBuilder sb = new();
+
+        sb.AppendLine(data.Configuration.Name);
+
         foreach (ref var resource in data.Resources)
             if (resource.Count > 0)
-                sb.AppendLine($"{resource.TypeData.Rules.Type}: {resource.Count}");
+                sb.AppendLine(
+                    $"{resource.TypeData.Rules.Type}: {Utility.ToShortString(resource.Count)}"
+                );
 
         foreach (ref var structure in data.Structures)
             if (structure.Count > 0)

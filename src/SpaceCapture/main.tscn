@@ -1,14 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdaf4bh0jaa45"]
+[gd_scene load_steps=5 format=3 uid="uid://cdaf4bh0jaa45"]
 
 [ext_resource type="Script" uid="uid://bpcc2lsys1ole" path="res://GameLogic.cs" id="1_h2yge"]
+[ext_resource type="PackedScene" uid="uid://cggug2rht05v3" path="res://ui/info_panel/info_panel.tscn" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/backgrounds/nebula.tscn" id="7_sv4lv"]
 [ext_resource type="PackedScene" uid="uid://b0ec8jbenscpp" path="res://scenes/backgrounds/stars.tscn" id="9_lum1l"]
 
 [node name="Main" type="Node"]
 
-[node name="GameLogic" type="Node" parent="." node_paths=PackedStringArray("CelestialBodiesContainer")]
+[node name="GameLogic" type="Node" parent="." node_paths=PackedStringArray("_celestialBodiesContainer", "_infoPanel")]
 script = ExtResource("1_h2yge")
-CelestialBodiesContainer = NodePath("../CelestialBodies")
+_celestialBodiesContainer = NodePath("../CelestialBodies")
+_infoPanel = NodePath("../GameplayUI/InfoPanel")
 
 [node name="Stars" parent="." instance=ExtResource("9_lum1l")]
 
@@ -16,3 +18,15 @@ CelestialBodiesContainer = NodePath("../CelestialBodies")
 
 [node name="CelestialBodies" type="Node2D" parent="."]
 position = Vector2(576, 324)
+
+[node name="GameplayUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+
+[node name="InfoPanel" parent="GameplayUI" instance=ExtResource("4_1bvp3")]
+layout_mode = 0

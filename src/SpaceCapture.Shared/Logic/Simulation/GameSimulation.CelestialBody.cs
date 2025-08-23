@@ -10,12 +10,15 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 
 partial class GameSimulation<TData>
 {
-    public struct CelestialBody(RulesCache rules, CelestialBodyConfiguration configuration)
-        : ICloneable<CelestialBody>,
-            ITransferable<CelestialBody>
+    public struct CelestialBody(
+        RulesCache rules,
+        CelestialBodyConfiguration configuration,
+        CelestialBodyIndex index
+    ) : ICloneable<CelestialBody>, ITransferable<CelestialBody>
     {
         RulesCache _rules = rules;
         CelestialBodyConfiguration _configuration = configuration;
+        CelestialBodyIndex _index = index;
         PlayerIndex? _player;
         Resource[] _resources = rules.Resources.ToArray(r => new Resource(
             r,
@@ -36,6 +39,8 @@ partial class GameSimulation<TData>
         }
 
         public readonly CelestialBodyConfiguration Configuration => _configuration;
+
+        public CelestialBodyIndex Index => _index;
 
         /// <summary>
         /// Index of the player that currently owns this celestial body.
@@ -69,6 +74,7 @@ partial class GameSimulation<TData>
             {
                 _rules = _rules,
                 _configuration = _configuration,
+                _index = _index,
                 _player = _player,
                 _resources = _resources.DeepClone(),
                 _structures = _structures.DeepClone(),
@@ -80,6 +86,7 @@ partial class GameSimulation<TData>
         {
             _rules = other._rules;
             _configuration = other._configuration;
+            _index = other._index;
             _player = other._player;
             TransferHelper.Copy(ref _resources, other._resources);
             TransferHelper.Copy(ref _structures, other._structures);

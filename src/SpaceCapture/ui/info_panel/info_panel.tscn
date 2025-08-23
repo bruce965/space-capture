@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=3 uid="uid://cggug2rht05v3"]
+
+[ext_resource type="Script" uid="uid://bjwltbtv25y5g" path="res://ui/info_panel/InfoPanel.cs" id="1_lrlkj"]
+[ext_resource type="PackedScene" uid="uid://b5yb2nqg5d88q" path="res://ui/structure_control.tscn" id="2_xf6ct"]
+[ext_resource type="PackedScene" uid="uid://comktmj5shmjd" path="res://ui/queue_slot_control.tscn" id="3_tov4y"]
+[ext_resource type="PackedScene" uid="uid://cbxdfpv4ydye6" path="res://ui/resource_control.tscn" id="4_tov4y"]
+
+[node name="InfoPanel" type="Panel" node_paths=PackedStringArray("_nameLabel", "_resourcesContainer", "_structuresContainer", "_queueContainer")]
+offset_right = 320.0
+offset_bottom = 190.0
+theme_type_variation = &"InfoPanel"
+script = ExtResource("1_lrlkj")
+_nameLabel = NodePath("MarginContainer/VBoxContainer/NameLabel")
+_resourcesContainer = NodePath("MarginContainer/VBoxContainer/ResourcesContainer")
+_structuresContainer = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/StructuresContainer")
+_queueContainer = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer2/QueueContainer")
+_resourceControlTemplate = ExtResource("4_tov4y")
+_structureControlTemplate = ExtResource("2_xf6ct")
+_queueSlotTemplate = ExtResource("3_tov4y")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"InfoPanelMarginContainer"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+text = "Name"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ResourcesContainer" type="HFlowContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ResourceControl" parent="MarginContainer/VBoxContainer/ResourcesContainer" instance_placeholder="res://ui/resource_control.tscn"]
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="StructuresContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer"]
+layout_mode = 2
+
+[node name="StructureControl" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer/StructuresContainer" instance_placeholder="res://ui/structure_control.tscn"]
+layout_mode = 2
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="QueueContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="QueueSlotControl" parent="MarginContainer/VBoxContainer/HBoxContainer/ScrollContainer2/QueueContainer" instance_placeholder="res://ui/queue_slot_control.tscn"]
+layout_mode = 2

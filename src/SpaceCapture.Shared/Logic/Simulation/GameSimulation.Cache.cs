@@ -106,5 +106,9 @@ partial class GameSimulation<TData>
     );
 
     [DebuggerDisplay($"{{{nameof(Data)},nq}}")]
-    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index, FP32D16 CostPerTick);
+    public readonly record struct ResourceCountCache(
+        ResourceCount Data,
+        ResourceTypeIndex Index,
+        FP32D16 CostPerTick
+    );
 }

@@ -357,7 +357,7 @@ public readonly partial struct FP32D16
     public static FP32D16 operator --(FP32D16 value) => new(value._v - ValueOne);
 
     public static FP32D16 operator *(FP32D16 left, FP32D16 right) =>
-        new((int)(((long)left._v * right._v) >> BinaryDecimalDigits));
+        new(checked((int)(((long)left._v * right._v) >> BinaryDecimalDigits)));
 
     public static FP32D16 operator /(FP32D16 left, FP32D16 right)
     {
@@ -365,7 +365,7 @@ public readonly partial struct FP32D16
         long n = (long)left._v << BinaryDecimalDigits;
         long d = right._v;
         long v = ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d);
-        return new((int)v);
+        return new(checked((int)v));
     }
 
     public static FP32D16 operator %(FP32D16 left, FP32D16 right) => new(left._v % right._v);
@@ -436,16 +436,18 @@ public readonly partial struct FP32D16
 
     public static implicit operator FP32D16(int value) => new(value << BinaryDecimalDigits);
 
-    public static explicit operator FP32D16(long value) => new((int)(value << BinaryDecimalDigits));
+    public static explicit operator FP32D16(long value) =>
+        new(checked((int)(value << BinaryDecimalDigits)));
 
     public static implicit operator FP32D16(sbyte value) => new(value << BinaryDecimalDigits);
 
     public static implicit operator FP32D16(ushort value) => new(value << BinaryDecimalDigits);
 
-    public static explicit operator FP32D16(uint value) => new((int)(value << BinaryDecimalDigits));
+    public static explicit operator FP32D16(uint value) =>
+        new(checked((int)(value << BinaryDecimalDigits)));
 
     public static explicit operator FP32D16(ulong value) =>
-        new((int)(value << BinaryDecimalDigits));
+        new(checked((int)(value << BinaryDecimalDigits)));
 
     public static explicit operator FP32D16(float value) => new(Convert.ToInt32(value * ValueOne));
 

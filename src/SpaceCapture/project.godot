@@ -23,6 +23,10 @@ GameServices="*res://old/scripts/GameServices.cs"
 
 project/assembly_name="SpaceCapture"
 
+[gui]
+
+theme/custom="uid://bwbtb3pghw4mo"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

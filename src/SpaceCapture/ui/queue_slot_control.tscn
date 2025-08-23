@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3 uid="uid://comktmj5shmjd"]
+
+[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://old/icons/character.svg" id="1_pfslo"]
+
+[node name="QueueSlotControl" type="PanelContainer"]
+clip_contents = true
+offset_right = 109.0
+offset_bottom = 28.0
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"QueueProgressBar"
+value = 75.0
+show_percentage = false
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/AspectRatioContainer"]
+layout_mode = 2
+texture = ExtResource("1_pfslo")
+
+[node name="NameLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Name"
+text_overrun_behavior = 3

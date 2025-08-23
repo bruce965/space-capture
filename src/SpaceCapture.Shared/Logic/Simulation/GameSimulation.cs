@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 using SpaceCapture.Shared.Logic.Stage;
+using SpaceCapture.Shared.Types;
 using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
@@ -30,6 +31,10 @@ public partial class GameSimulation<TData>
     ref Snapshot Current => ref _snapshots[5]; // Current state.
 
     public long Tick => Current.Tick;
+
+    public RulesCache Rules => _rules;
+
+    public GameStage Stage => _stage;
 
     public Accessor<Player, PlayerIndex> Players => Current.Players;
 
