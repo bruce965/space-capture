@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cdaf4bh0jaa45"]
+[gd_scene load_steps=5 format=3 uid="uid://dmr2g58i4rrys"]
 
 [ext_resource type="Script" uid="uid://bpcc2lsys1ole" path="res://GameLogic.cs" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://cggug2rht05v3" path="res://ui/info_panel/info_panel.tscn" id="4_1bvp3"]

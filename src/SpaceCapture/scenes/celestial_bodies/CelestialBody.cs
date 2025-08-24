@@ -16,7 +16,7 @@ public partial class CelestialBody : Node2D
     public int Index { get; set; }
 
     [Export]
-    public Label Label { get; set; }
+    Label _label;
 
     public void Sync(GameSimulation<Node2D>.CelestialBody data)
     {
@@ -24,20 +24,10 @@ public partial class CelestialBody : Node2D
 
         sb.AppendLine(data.Configuration.Name);
 
-        foreach (ref var resource in data.Resources)
-            if (resource.Count > 0)
-                sb.AppendLine(
-                    $"{resource.TypeData.Rules.Type}: {Utility.ToShortString(resource.Count)}"
-                );
-
-        foreach (ref var structure in data.Structures)
-            if (structure.Count > 0)
-                sb.AppendLine($"{structure.TypeData.Rules.Type}: {structure.Count}");
-
         if (data.BuildQueue.Count > 0)
             sb.AppendLine($"Building {data.BuildQueue[0].Type} {data.BuildQueue[0].Progress}/?");
 
-        Label.Text = sb.ToString().TrimEnd();
+        _label.Text = sb.ToString().TrimEnd();
     }
 
     public void OnGuiInput(InputEvent evt)

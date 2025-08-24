@@ -1,8 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://b5yb2nqg5d88q"]
+[gd_scene load_steps=7 format=3 uid="uid://b5yb2nqg5d88q"]
 
-[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://old/icons/character.svg" id="1_8rbqn"]
+[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://ui/icons/character.svg" id="1_8rbqn"]
+[ext_resource type="Script" uid="uid://noc5oixwubh6" path="res://ui/StructureControl.cs" id="1_oy1sm"]
+[ext_resource type="Texture2D" uid="uid://bld17t4xcxb7w" path="res://ui/icons/line_horizontal.svg" id="3_33vgh"]
+[ext_resource type="Texture2D" uid="uid://llfc3bewxaiq" path="res://ui/icons/line_cross.svg" id="4_igc4s"]
+[ext_resource type="Texture2D" uid="uid://vsk7dacgw30g" path="res://ui/icons/hammer.svg" id="5_1sgtp"]
+[ext_resource type="Texture2D" uid="uid://p47hjlspoxt" path="res://ui/icons/tool_wrench.svg" id="6_ho61r"]
 
-[node name="StructureControl" type="HBoxContainer"]
+[node name="StructureControl" type="HBoxContainer" node_paths=PackedStringArray("_iconRect", "_activeCountLabel", "_totalCountLabel", "_decrementButton", "_incrementButton")]
+script = ExtResource("1_oy1sm")
+_iconRect = NodePath("AspectRatioContainer/TextureRect")
+_activeCountLabel = NodePath("ActiveCountLabel")
+_totalCountLabel = NodePath("TotalCountLabel")
+_decrementButton = NodePath("DecrementButton")
+_incrementButton = NodePath("IncrementButton")
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
 custom_minimum_size = Vector2(24, 24)
@@ -17,7 +28,7 @@ texture = ExtResource("1_8rbqn")
 [node name="DecrementButton" type="Button" parent="."]
 layout_mode = 2
 tooltip_text = "Deactivate 1"
-icon = ExtResource("1_8rbqn")
+icon = ExtResource("3_33vgh")
 
 [node name="ActiveCountLabel" type="Label" parent="."]
 custom_minimum_size = Vector2(18, 0)
@@ -42,4 +53,20 @@ horizontal_alignment = 1
 [node name="IncrementButton" type="Button" parent="."]
 layout_mode = 2
 tooltip_text = "Activate 1"
-icon = ExtResource("1_8rbqn")
+icon = ExtResource("4_igc4s")
+
+[node name="BuildButton" type="Button" parent="."]
+layout_mode = 2
+tooltip_text = "Build 1"
+icon = ExtResource("5_1sgtp")
+
+[node name="RepairButton" type="Button" parent="."]
+layout_mode = 2
+tooltip_text = "Repair"
+toggle_mode = true
+icon = ExtResource("6_ho61r")
+
+[connection signal="pressed" from="DecrementButton" to="." method="OnDecrementButtonPressed"]
+[connection signal="pressed" from="IncrementButton" to="." method="OnIncrementButtonPressed"]
+[connection signal="pressed" from="BuildButton" to="." method="OnBuildButtonPressed"]
+[connection signal="toggled" from="RepairButton" to="." method="OnRepairButtonToggled"]

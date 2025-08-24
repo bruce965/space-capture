@@ -1,11 +1,17 @@
-[gd_resource type="Resource" load_steps=7 format=3 uid="uid://bwlojf7gxqdql"]
+[gd_resource type="Resource" load_steps=13 format=3 uid="uid://bwlojf7gxqdql"]
 
 [ext_resource type="PackedScene" uid="uid://ku6vttanajtg" path="res://scenes/celestial_bodies/yellow_dwarf.tscn" id="1_p4e56"]
 [ext_resource type="Script" uid="uid://cijv5ci7fv0ec" path="res://scenes/templates/Templates.cs" id="1_r20rn"]
 [ext_resource type="PackedScene" uid="uid://0qu0jgvo01su" path="res://scenes/celestial_bodies/terra.tscn" id="2_naxym"]
-[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://old/icons/character.svg" id="3_hhj7d"]
-[ext_resource type="Texture2D" uid="uid://bydmcc5d53ldx" path="res://old/icons/paw_print.svg" id="4_6thi8"]
-[ext_resource type="Texture2D" uid="uid://dx1wjviioa8u5" path="res://old/icons/chip.svg" id="5_ya7mr"]
+[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://ui/icons/character.svg" id="3_hhj7d"]
+[ext_resource type="Texture2D" uid="uid://dvm8dj0sxw5ij" path="res://ui/icons/resource_wheat.svg" id="4_8nfxm"]
+[ext_resource type="Texture2D" uid="uid://2odmhcbf0lf2" path="res://ui/icons/resource_iron.svg" id="5_d6nyd"]
+[ext_resource type="Texture2D" uid="uid://dx1wjviioa8u5" path="res://ui/icons/chip.svg" id="5_ya7mr"]
+[ext_resource type="Texture2D" uid="uid://t16t5ixyq6du" path="res://ui/icons/fire.svg" id="6_jt5aa"]
+[ext_resource type="Texture2D" uid="uid://blk1avkg0ahl4" path="res://ui/icons/structure_house.svg" id="8_lgo0u"]
+[ext_resource type="Texture2D" uid="uid://bnjw2juxb8i5i" path="res://ui/icons/structure_farm.svg" id="9_bhdv0"]
+[ext_resource type="Texture2D" uid="uid://dkm2kao2bt6ls" path="res://ui/icons/mine_metal.svg" id="10_ouoom"]
+[ext_resource type="Texture2D" uid="uid://dosycjj4v6axb" path="res://ui/icons/mine_gas.svg" id="11_6dq3b"]
 
 [resource]
 script = ExtResource("1_r20rn")
@@ -15,9 +21,21 @@ _celestialBodies = Dictionary[int, PackedScene]({
 })
 _resourceIcons = Dictionary[int, Texture2D]({
 0: ExtResource("3_hhj7d"),
-1: ExtResource("4_6thi8"),
-2: ExtResource("5_ya7mr"),
-3: ExtResource("3_hhj7d"),
-4: ExtResource("3_hhj7d"),
-5: ExtResource("3_hhj7d")
+1: ExtResource("4_8nfxm"),
+2: ExtResource("5_d6nyd"),
+3: ExtResource("6_jt5aa"),
+4: ExtResource("5_ya7mr"),
+5: ExtResource("5_ya7mr")
+})
+_structureIcons = Dictionary[int, Texture2D]({
+0: ExtResource("8_lgo0u"),
+1: ExtResource("9_bhdv0"),
+2: ExtResource("10_ouoom"),
+3: ExtResource("11_6dq3b"),
+4: ExtResource("5_ya7mr"),
+5: ExtResource("5_ya7mr"),
+6: ExtResource("5_ya7mr"),
+7: ExtResource("5_ya7mr"),
+8: ExtResource("5_ya7mr"),
+9: ExtResource("5_ya7mr")
 })

@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dl3gls1hlrlh1" path="res://scenes/celestial_bodies/CelestialBody.cs" id="1_uxu4s"]
 
-[node name="CelestialBody" type="Node2D" node_paths=PackedStringArray("Label")]
+[node name="CelestialBody" type="Node2D" node_paths=PackedStringArray("_label")]
 script = ExtResource("1_uxu4s")
-Label = NodePath("Label")
+_label = NodePath("Label")
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 8

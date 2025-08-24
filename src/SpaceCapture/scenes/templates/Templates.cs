@@ -14,6 +14,8 @@ public partial class Templates : Resource
     public readonly struct IconTemplates
     {
         public Texture2D this[ResourceType type] => s_instance._resourceIcons[type];
+
+        public Texture2D this[StructureType type] => s_instance._structureIcons[type];
     }
 
     static readonly Templates s_instance = ResourceLoader.Load<Templates>(
@@ -27,6 +29,9 @@ public partial class Templates : Resource
 
     [Export]
     Dictionary<ResourceType, Texture2D> _resourceIcons;
+
+    [Export]
+    Dictionary<StructureType, Texture2D> _structureIcons;
 
     public static CelestialBody Instantiate(CelestialBodyType type) =>
         s_instance._celestialBodies[type].Instantiate<CelestialBody>();

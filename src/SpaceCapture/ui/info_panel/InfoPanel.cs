@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using Godot;
+using SpaceCapture.Shared.Logic;
 using SpaceCapture.Shared.Logic.Simulation;
 
 namespace SpaceCapture;
@@ -30,9 +32,9 @@ public partial class InfoPanel : Control
     [Export]
     PackedScene _queueSlotTemplate;
 
-    ResourceControl[] _resourceControls;
-
     GameSimulation<Node2D> _lastGame;
+    ResourceControl[] _resourceControls;
+    StructureControl[] _structureControls;
 
     public void Show(GameSimulation<Node2D> game, GameSimulation<Node2D>.CelestialBodyIndex index)
     {
@@ -45,11 +47,13 @@ public partial class InfoPanel : Control
         for (int i = 0; i < celestialBody.Resources.Span.Length; i++)
             _resourceControls[i].Count = (float)celestialBody.Resources.Span[i].Count;
 
-        // TODO: structures.
+        for (int i = 0; i < celestialBody.Structures.Span.Length; i++)
+        {
+            _structureControls[i].ActiveCount = celestialBody.Structures.Span[i].ActiveCount;
+            _structureControls[i].TotalCount = celestialBody.Structures.Span[i].Count;
+        }
 
         // TODO: build queue.
-
-        _structuresContainer.GetChildren();
     }
 
     [MemberNotNull(nameof(_resourceControls))]
@@ -75,7 +79,33 @@ public partial class InfoPanel : Control
             _resourcesContainer.AddChild(control);
         }
 
-        // TODO: structures.
+        foreach (Node child in _structuresContainer.GetChildren())
+        {
+            _structuresContainer.RemoveChild(child);
+            child.QueueFree();
+        }
+
+        _structureControls = new StructureControl[game.Rules.Structures.Length];
+        for (int i = 0; i < _structureControls.Length; i++)
+        {
+            Shared.StructureType type = game.Rules.Structures[i].Rules.Type;
+
+            StructureControl control = _structureControlTemplate.Instantiate<StructureControl>();
+            control.Text = type.ToString();
+            control.Icon = Templates.Icons[type];
+
+            // TODO: decrement active count.
+
+            // TODO: increment active count.
+
+            // TODO: celestial body index.
+            control.Build += () => game.ExecuteAction(new BuildStructureAction(game.Tick, 1, type));
+
+            // TODO: toggle repair.
+
+            _structureControls[i] = control;
+            _structuresContainer.AddChild(control);
+        }
 
         _lastGame = game;
     }

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bydmcc5d53ldx"
-path="res://.godot/imported/paw_print.svg-443fe5abd87c4a9f395385423cc5716a.ctex"
+uid="uid://bld17t4xcxb7w"
+path="res://.godot/imported/line_horizontal.svg-7368c508537fa067f1bc3cd56c9ab81a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://old/icons/paw_print.svg"
-dest_files=["res://.godot/imported/paw_print.svg-443fe5abd87c4a9f395385423cc5716a.ctex"]
+source_file="res://ui/icons/line_horizontal.svg"
+dest_files=["res://.godot/imported/line_horizontal.svg-7368c508537fa067f1bc3cd56c9ab81a.ctex"]
 
 [params]
 
@@ -32,6 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=0.01
+svg/scale=0.52
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false

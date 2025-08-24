@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dx1wjviioa8u5"
-path="res://.godot/imported/chip.svg-6272c10d6ddf0e82635c83a76f3256b8.ctex"
+uid="uid://bydmcc5d53ldx"
+path="res://.godot/imported/paw_print.svg-dc14de24144bf82ea4cecaed007c33a0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://old/icons/chip.svg"
-dest_files=["res://.godot/imported/chip.svg-6272c10d6ddf0e82635c83a76f3256b8.ctex"]
+source_file="res://ui/icons/paw_print.svg"
+dest_files=["res://.godot/imported/paw_print.svg-dc14de24144bf82ea4cecaed007c33a0.ctex"]
 
 [params]
 
@@ -32,6 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=0.35
+svg/scale=0.01
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false
