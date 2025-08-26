@@ -73,10 +73,7 @@ public static class TransferHelper
             to = [.. from];
     }
 
-    public static void CopyImmutable<T>(
-        [NotNullIfNotNull(nameof(from))] ref List<T>? to,
-        List<T>? from
-    )
+    public static void CopyImmutable<T>([NotNullIfNotNull(nameof(from))] ref List<T>? to, List<T>? from)
         where T : IImmutable
     {
         if (from is null)

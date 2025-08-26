@@ -9,9 +9,7 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 partial class GameSimulation<TData>
 {
     [DebuggerDisplay($"{{{nameof(TypeData)},nq}}")]
-    public struct Structure(StructureRuleCache rule)
-        : ICloneable<Structure>,
-            ITransferable<Structure>
+    public struct Structure(StructureRuleCache rule) : ICloneable<Structure>, ITransferable<Structure>
     {
         /// <summary>
         /// Data for this structure type.

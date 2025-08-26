@@ -19,16 +19,16 @@ public static class Utils
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T Damp<T>(T current, T target, float smoothing, double deltaTime)
-        where T : IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T>
-        => Lerp(current, target, (float)(1d - Math.Pow(smoothing, deltaTime)));
+        where T : IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T> =>
+        Lerp(current, target, (float)(1d - Math.Pow(smoothing, deltaTime)));
 
     /// <inheritdoc cref="Damp{T}(T, T, float, double)" />
-    public static Godot.Vector2 Damp(Godot.Vector2 current, Godot.Vector2 target, float smoothing, double deltaTime)
-        => current.Lerp(target, (float)(1d - Math.Pow(smoothing, deltaTime)));
+    public static Godot.Vector2 Damp(Godot.Vector2 current, Godot.Vector2 target, float smoothing, double deltaTime) =>
+        current.Lerp(target, (float)(1d - Math.Pow(smoothing, deltaTime)));
 
     /// <inheritdoc cref="Mathf.Lerp(double, double, double)"/>
     /// <typeparam name="T"></typeparam>
     public static T Lerp<T>(T from, T to, float weight)
-        where T : IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T>
-        => from + (to - from) * weight;
+        where T : IAdditionOperators<T, T, T>, ISubtractionOperators<T, T, T>, IMultiplyOperators<T, float, T> =>
+        from + (to - from) * weight;
 }

@@ -15,11 +15,7 @@ partial class RulesSet
         {
             Resources =
             [
-                new(ResourceType.Population)
-                {
-                    DamageAbsorbtion = (FP48D16)1 / 10,
-                    IsActive = true,
-                },
+                new(ResourceType.Population) { DamageAbsorbtion = (FP48D16)1 / 10, IsActive = true },
                 new(ResourceType.Food) { DamageAbsorbtion = (FP48D16)1 / 1000 },
                 new(ResourceType.Metal) { DamageAbsorbtion = (FP48D16)1 / 1000 },
                 new(ResourceType.Gas) { DamageAbsorbtion = (FP48D16)1 / 1000 },
@@ -36,10 +32,7 @@ partial class RulesSet
                     BuildTicks = GameConstants.TicksPerSecond * 3,
                     BuildCost = [new(ResourceType.Metal) { Count = 10 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 5 }],
-                    ActiveCost =
-                    [
-                        new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick },
-                    ],
+                    ActiveCost = [new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick }],
                     Stores = [new(ResourceType.Population) { Count = 10 }],
                 },
                 #endregion
@@ -50,21 +43,10 @@ partial class RulesSet
                     MaxHealth = 2,
                     DamageAbsorbtion = (FP48D16)1 / 30,
                     BuildTicks = GameConstants.TicksPerSecond * 5,
-                    BuildCost =
-                    [
-                        new(ResourceType.Food) { Count = 2 },
-                        new(ResourceType.Metal) { Count = 10 },
-                    ],
-                    RepairCost =
-                    [
-                        new(ResourceType.Food) { Count = 1 },
-                        new(ResourceType.Metal) { Count = 5 },
-                    ],
+                    BuildCost = [new(ResourceType.Food) { Count = 2 }, new(ResourceType.Metal) { Count = 10 }],
+                    RepairCost = [new(ResourceType.Food) { Count = 1 }, new(ResourceType.Metal) { Count = 5 }],
                     CommitCost = [new(ResourceType.Population) { Count = 1 }],
-                    Produces =
-                    [
-                        new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick },
-                    ],
+                    Produces = [new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick }],
                     Stores = [new(ResourceType.Food) { Count = 10 }],
                 },
                 new(StructureType.MetalMine)
@@ -75,14 +57,8 @@ partial class RulesSet
                     BuildCost = [new(ResourceType.Food) { Count = 10 }],
                     RepairCost = [new(ResourceType.Food) { Count = 5 }],
                     CommitCost = [new(ResourceType.Population) { Count = 10 }],
-                    ActiveCost =
-                    [
-                        new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick },
-                    ],
-                    Produces =
-                    [
-                        new(ResourceType.Metal) { Count = 1 * GameConstants.SecondsPerTick },
-                    ],
+                    ActiveCost = [new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick }],
+                    Produces = [new(ResourceType.Metal) { Count = 1 * GameConstants.SecondsPerTick }],
                     Stores = [new(ResourceType.Metal) { Count = 10 }],
                 },
                 new(StructureType.GasMine)
@@ -90,21 +66,10 @@ partial class RulesSet
                     MaxHealth = 2,
                     DamageAbsorbtion = (FP48D16)1 / 20,
                     BuildTicks = GameConstants.TicksPerSecond * 5,
-                    BuildCost =
-                    [
-                        new(ResourceType.Food) { Count = 6 },
-                        new(ResourceType.Metal) { Count = 10 },
-                    ],
-                    RepairCost =
-                    [
-                        new(ResourceType.Food) { Count = 3 },
-                        new(ResourceType.Metal) { Count = 5 },
-                    ],
+                    BuildCost = [new(ResourceType.Food) { Count = 6 }, new(ResourceType.Metal) { Count = 10 }],
+                    RepairCost = [new(ResourceType.Food) { Count = 3 }, new(ResourceType.Metal) { Count = 5 }],
                     CommitCost = [new(ResourceType.Population) { Count = 10 }],
-                    ActiveCost =
-                    [
-                        new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick },
-                    ],
+                    ActiveCost = [new(ResourceType.Food) { Count = 1 * GameConstants.SecondsPerTick }],
                     Produces = [new(ResourceType.Gas) { Count = 1 * GameConstants.SecondsPerTick }],
                     Stores = [new(ResourceType.Gas) { Count = 10 }],
                 },
@@ -138,11 +103,7 @@ partial class RulesSet
                 {
                     MaxHealth = 10,
                     DamageAbsorbtion = (FP48D16)1 / 20,
-                    BuildCost =
-                    [
-                        new(ResourceType.Metal) { Count = 20 },
-                        new(ResourceType.Bombs) { Count = 10 },
-                    ],
+                    BuildCost = [new(ResourceType.Metal) { Count = 20 }, new(ResourceType.Bombs) { Count = 10 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 20 }],
                     CommitCost = [new(ResourceType.Population) { Count = 10 }],
                     // TODO: shooting.
@@ -152,11 +113,7 @@ partial class RulesSet
                     MaxHealth = 10,
                     DamageAbsorbtion = (FP48D16)1 / 20,
                     UpgradeOf = StructureType.AntiAirI,
-                    BuildCost =
-                    [
-                        new(ResourceType.Metal) { Count = 50 },
-                        new(ResourceType.Bombs) { Count = 30 },
-                    ],
+                    BuildCost = [new(ResourceType.Metal) { Count = 50 }, new(ResourceType.Bombs) { Count = 30 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 50 }],
                     CommitCost = [new(ResourceType.Population) { Count = 20 }],
                     // TODO: shooting.
@@ -166,11 +123,7 @@ partial class RulesSet
                     MaxHealth = 10,
                     DamageAbsorbtion = (FP48D16)1 / 20,
                     UpgradeOf = StructureType.AntiAirII,
-                    BuildCost =
-                    [
-                        new(ResourceType.Metal) { Count = 150 },
-                        new(ResourceType.Bombs) { Count = 100 },
-                    ],
+                    BuildCost = [new(ResourceType.Metal) { Count = 150 }, new(ResourceType.Bombs) { Count = 100 }],
                     RepairCost = [new(ResourceType.Metal) { Count = 150 }],
                     CommitCost = [new(ResourceType.Population) { Count = 30 }],
                     // TODO: shooting.

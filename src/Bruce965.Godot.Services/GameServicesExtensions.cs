@@ -10,8 +10,7 @@ namespace Godot;
 
 public static class GameServicesExtensions
 {
-    public static IServiceProvider GetServiceProvider(this Node node) =>
-        GetSingletonInstance(node).Provider;
+    public static IServiceProvider GetServiceProvider(this Node node) => GetSingletonInstance(node).Provider;
 
     /// <inheritdoc cref="ServiceProviderServiceExtensions.GetService{T}(IServiceProvider)"/>
     public static T GetService<T>(this Node node) => node.GetServiceProvider().GetService<T>();

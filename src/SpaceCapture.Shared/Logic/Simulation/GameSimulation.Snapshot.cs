@@ -12,9 +12,7 @@ partial class GameSimulation<TData>
     /// Hot snapshot of a running game.
     /// </summary>
     /// <param name="game"></param>
-    sealed class Snapshot(GameSimulation<TData> game)
-        : ICloneable<Snapshot>,
-            ITransferable<Snapshot>
+    sealed class Snapshot(GameSimulation<TData> game) : ICloneable<Snapshot>, ITransferable<Snapshot>
     {
         public GameSimulation<TData> Game { get; private set; } = game;
 
@@ -58,11 +56,7 @@ partial class GameSimulation<TData>
         {
             CelestialBody[] celestialBodies = new CelestialBody[game._stage.CelestialBodies.Length];
             for (int i = 0; i < celestialBodies.Length; i++)
-                celestialBodies[i] = new(
-                    game._rules,
-                    game._stage.CelestialBodies[i],
-                    new() { Index = i }
-                );
+                celestialBodies[i] = new(game._rules, game._stage.CelestialBodies[i], new() { Index = i });
 
             return celestialBodies;
         }

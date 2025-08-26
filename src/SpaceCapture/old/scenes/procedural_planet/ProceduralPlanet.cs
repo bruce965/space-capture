@@ -8,7 +8,6 @@ namespace SpaceCapture;
 public partial class ProceduralPlanet : Node2D
 {
     [ExportGroup("Planet")]
-
     /// <summary>
     /// Size of the planet in pixels.
     /// </summary>
@@ -36,7 +35,6 @@ public partial class ProceduralPlanet : Node2D
     }
 
     [ExportGroup("Weather")]
-
     /// <summary>
     /// Size of clouds between 0 (no clouds) and 1 (covered in clouds completely).
     /// </summary>
@@ -82,7 +80,6 @@ public partial class ProceduralPlanet : Node2D
     }
 
     [ExportGroup("Atmosphere")]
-
     /// <summary>
     /// Size of the atmosphere halo around the planet.
     /// </summary>
@@ -118,5 +115,4 @@ public partial class ProceduralPlanet : Node2D
         AtmosphereSize = .3f;
         AtmosphereColor = new(0f, .3f, 1f, .3f);
     }
-
 }

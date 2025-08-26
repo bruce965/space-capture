@@ -18,9 +18,7 @@ public partial class Templates : Resource
         public Texture2D this[StructureType type] => s_instance._structureIcons[type];
     }
 
-    static readonly Templates s_instance = ResourceLoader.Load<Templates>(
-        "res://scenes/templates/resource.tres"
-    );
+    static readonly Templates s_instance = ResourceLoader.Load<Templates>("res://scenes/templates/resource.tres");
 
     public static IconTemplates Icons => default;
 

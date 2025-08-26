@@ -5,5 +5,4 @@ namespace SpaceCapture.Shared.Logic;
 
 public abstract record class GameAction(long Tick);
 
-public record class BuildStructureAction(long Tick, int CelestialBody, StructureType Structure)
-    : GameAction(Tick);
+public record class BuildStructureAction(long Tick, int CelestialBody, StructureType Structure) : GameAction(Tick);

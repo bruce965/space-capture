@@ -218,18 +218,10 @@ public class MarkovChain
         int minLength = samples.Min(s => s.Length);
         int maxLength = samples.Max(s => s.Length);
 
-        (string Sequence, int Count)[] starters =
-        [
-            .. rawStarters.Select(kvp => (kvp.Key, kvp.Value)),
-        ];
+        (string Sequence, int Count)[] starters = [.. rawStarters.Select(kvp => (kvp.Key, kvp.Value))];
 
         Dictionary<string, (char Next, int Count)[]> sequences = rawCounts
-            .Select(kvp =>
-                KeyValuePair.Create(
-                    kvp.Key,
-                    kvp.Value.Select(kvp2 => (kvp2.Key, kvp2.Value)).ToArray()
-                )
-            )
+            .Select(kvp => KeyValuePair.Create(kvp.Key, kvp.Value.Select(kvp2 => (kvp2.Key, kvp2.Value)).ToArray()))
             .ToDictionary();
 
         return Serialize(minLength, maxLength, starters, sequences);

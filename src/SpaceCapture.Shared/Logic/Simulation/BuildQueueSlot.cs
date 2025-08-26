@@ -7,9 +7,7 @@ using SpaceCapture.Shared.Types;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
-public struct BuildQueueSlot(StructureType type)
-    : ICloneable<BuildQueueSlot>,
-        ITransferable<BuildQueueSlot>
+public struct BuildQueueSlot(StructureType type) : ICloneable<BuildQueueSlot>, ITransferable<BuildQueueSlot>
 {
     /// <summary>
     /// Structure type.

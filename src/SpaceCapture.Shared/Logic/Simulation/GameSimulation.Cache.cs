@@ -43,21 +43,13 @@ partial class GameSimulation<TData>
 
         internal ImmutableDictionary<ResourceType, ResourceTypeIndex> ResourceTypeToIndex = rules
             .Resources.Select(
-                (r, i) =>
-                    KeyValuePair.Create<ResourceType, ResourceTypeIndex>(
-                        r.Type,
-                        new() { Index = i }
-                    )
+                (r, i) => KeyValuePair.Create<ResourceType, ResourceTypeIndex>(r.Type, new() { Index = i })
             )
             .ToImmutableDictionary();
 
         internal ImmutableDictionary<StructureType, StructureTypeIndex> StructureTypeToIndex = rules
             .Structures.Select(
-                (s, i) =>
-                    KeyValuePair.Create<StructureType, StructureTypeIndex>(
-                        s.Type,
-                        new() { Index = i }
-                    )
+                (s, i) => KeyValuePair.Create<StructureType, StructureTypeIndex>(s.Type, new() { Index = i })
             )
             .ToImmutableDictionary();
 
@@ -76,10 +68,7 @@ partial class GameSimulation<TData>
                 .. count.Select(c => new ResourceCountCache
                 {
                     Data = c,
-                    Index = new()
-                    {
-                        Index = rules.Resources.Index().First(r => r.Item.Type == c.Type).Index,
-                    },
+                    Index = new() { Index = rules.Resources.Index().First(r => r.Item.Type == c.Type).Index },
                     CostPerTick = c.Count / (FP48D16)ticks,
                 }),
             ];
@@ -106,9 +95,5 @@ partial class GameSimulation<TData>
     );
 
     [DebuggerDisplay($"{{{nameof(Data)},nq}}")]
-    public readonly record struct ResourceCountCache(
-        ResourceCount Data,
-        ResourceTypeIndex Index,
-        FP48D16 CostPerTick
-    );
+    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index, FP48D16 CostPerTick);
 }

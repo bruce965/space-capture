@@ -32,23 +32,28 @@ public partial class Ship : Node2D
     {
         Vector2 targetVelocity = (TargetPosition - GlobalPosition).Normalized() * MaxSpeed;
         Vector2 adjustedTargetVelocity = targetVelocity - Velocity;
-        Vector2 acceleration = adjustedTargetVelocity == Vector2.Zero ? Vector2.Zero : adjustedTargetVelocity.Normalized() * Acceleration;
+        Vector2 acceleration =
+            adjustedTargetVelocity == Vector2.Zero ? Vector2.Zero : adjustedTargetVelocity.Normalized() * Acceleration;
 
         float decelerateAtDistance = Velocity.LengthSquared() / (2f * Acceleration);
         float distanceSquared = GlobalPosition.DistanceSquaredTo(TargetPosition);
-        bool slow_down = distanceSquared < decelerateAtDistance*decelerateAtDistance;
+        bool slow_down = distanceSquared < decelerateAtDistance * decelerateAtDistance;
         if (slow_down)
             acceleration = Velocity.Normalized() * -Acceleration;
 
         Velocity += acceleration * (float)delta;
 
         float speedSquared = Velocity.LengthSquared();
-        if (speedSquared > MaxSpeed*MaxSpeed)
+        if (speedSquared > MaxSpeed * MaxSpeed)
             Velocity = Velocity / MathF.Sqrt(speedSquared) * MaxSpeed;
 
         GlobalPosition += Velocity * (float)delta;
 
-        Rotation = Mathf.RotateToward(Rotation, GlobalPosition.AngleToPoint(TargetPosition), Math.Min(1f, (float)delta) * RotationSpeed);
+        Rotation = Mathf.RotateToward(
+            Rotation,
+            GlobalPosition.AngleToPoint(TargetPosition),
+            Math.Min(1f, (float)delta) * RotationSpeed
+        );
     }
 
     void UpdateColor(Color shipColor)

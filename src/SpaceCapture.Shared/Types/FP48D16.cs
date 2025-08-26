@@ -22,27 +22,16 @@ namespace SpaceCapture.Shared.Types;
 /// </remarks>
 [JsonConverter(typeof(JsonConverter))]
 [DebuggerDisplay($"{{{nameof(ToString)}(),nq}}")]
-public readonly partial struct FP48D16
-    : IBinaryInteger<FP48D16>,
-        ITrigonometricFunctions<FP48D16>,
-        IConvertible
+public readonly partial struct FP48D16 : IBinaryInteger<FP48D16>, ITrigonometricFunctions<FP48D16>, IConvertible
 {
     public class JsonConverter : JsonConverter<FP48D16>
     {
-        public override FP48D16 Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        ) => (FP48D16)reader.GetDecimal();
+        public override FP48D16 Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+            (FP48D16)reader.GetDecimal();
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            FP48D16 value,
-            JsonSerializerOptions options
-        ) =>
+        public override void Write(Utf8JsonWriter writer, FP48D16 value, JsonSerializerOptions options) =>
             writer.WriteNumberValue(
-                Math.Round((decimal)value, s_approximateDecimalPrecision)
-                    / 1.000000000000000000000000000000000m
+                Math.Round((decimal)value, s_approximateDecimalPrecision) / 1.000000000000000000000000000000000m
             );
     }
 
@@ -97,8 +86,7 @@ public readonly partial struct FP48D16
 
     public static bool IsComplexNumber(FP48D16 value) => false;
 
-    public static bool IsEvenInteger(FP48D16 value) =>
-        (value._v & (ValueOne | DecimalBitsMask)) is ValueOne;
+    public static bool IsEvenInteger(FP48D16 value) => (value._v & (ValueOne | DecimalBitsMask)) is ValueOne;
 
     public static bool IsFinite(FP48D16 value) => true;
 
@@ -116,8 +104,7 @@ public readonly partial struct FP48D16
 
     public static bool IsNormal(FP48D16 value) => value._v is not 0;
 
-    public static bool IsOddInteger(FP48D16 value) =>
-        (value._v & (ValueOne | DecimalBitsMask)) is 0;
+    public static bool IsOddInteger(FP48D16 value) => (value._v & (ValueOne | DecimalBitsMask)) is 0;
 
     public static bool IsPositive(FP48D16 value) => value._v >= 0;
 
@@ -142,60 +129,36 @@ public readonly partial struct FP48D16
 
     public static FP48D16 MinMagnitudeNumber(FP48D16 x, FP48D16 y) => MinMagnitudeNumber(x, y);
 
-    public static FP48D16 Parse(
-        ReadOnlySpan<char> s,
-        NumberStyles style,
-        IFormatProvider? provider
-    ) => throw new NotImplementedException();
+    public static FP48D16 Parse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider) =>
+        throw new NotImplementedException();
 
     public static FP48D16 Parse(string s, NumberStyles style, IFormatProvider? provider) =>
         throw new NotImplementedException();
 
-    public static FP48D16 Parse(ReadOnlySpan<char> s, IFormatProvider? provider) =>
-        throw new NotImplementedException();
+    public static FP48D16 Parse(ReadOnlySpan<char> s, IFormatProvider? provider) => throw new NotImplementedException();
 
-    public static FP48D16 Parse(string s, IFormatProvider? provider) =>
-        throw new NotImplementedException();
+    public static FP48D16 Parse(string s, IFormatProvider? provider) => throw new NotImplementedException();
 
     public static FP48D16 PopCount(FP48D16 value) => (FP48D16)long.PopCount(value._v);
 
-    public static FP48D16 TrailingZeroCount(FP48D16 value) =>
-        (FP48D16)long.TrailingZeroCount(value._v);
+    public static FP48D16 TrailingZeroCount(FP48D16 value) => (FP48D16)long.TrailingZeroCount(value._v);
 
-    public static bool TryConvertFromChecked<TOther>(
-        TOther value,
-        [MaybeNullWhen(false)] out FP48D16 result
-    )
+    public static bool TryConvertFromChecked<TOther>(TOther value, [MaybeNullWhen(false)] out FP48D16 result)
         where TOther : INumberBase<TOther> => throw new NotImplementedException();
 
-    public static bool TryConvertFromSaturating<TOther>(
-        TOther value,
-        [MaybeNullWhen(false)] out FP48D16 result
-    )
+    public static bool TryConvertFromSaturating<TOther>(TOther value, [MaybeNullWhen(false)] out FP48D16 result)
         where TOther : INumberBase<TOther> => throw new NotImplementedException();
 
-    public static bool TryConvertFromTruncating<TOther>(
-        TOther value,
-        [MaybeNullWhen(false)] out FP48D16 result
-    )
+    public static bool TryConvertFromTruncating<TOther>(TOther value, [MaybeNullWhen(false)] out FP48D16 result)
         where TOther : INumberBase<TOther> => throw new NotImplementedException();
 
-    public static bool TryConvertToChecked<TOther>(
-        FP48D16 value,
-        [MaybeNullWhen(false)] out TOther result
-    )
+    public static bool TryConvertToChecked<TOther>(FP48D16 value, [MaybeNullWhen(false)] out TOther result)
         where TOther : INumberBase<TOther> => throw new NotImplementedException();
 
-    public static bool TryConvertToSaturating<TOther>(
-        FP48D16 value,
-        [MaybeNullWhen(false)] out TOther result
-    )
+    public static bool TryConvertToSaturating<TOther>(FP48D16 value, [MaybeNullWhen(false)] out TOther result)
         where TOther : INumberBase<TOther> => throw new NotImplementedException();
 
-    public static bool TryConvertToTruncating<TOther>(
-        FP48D16 value,
-        [MaybeNullWhen(false)] out TOther result
-    )
+    public static bool TryConvertToTruncating<TOther>(FP48D16 value, [MaybeNullWhen(false)] out TOther result)
         where TOther : INumberBase<TOther> => throw new NotImplementedException();
 
     public static bool TryParse(
@@ -224,17 +187,11 @@ public readonly partial struct FP48D16
         [MaybeNullWhen(false)] out FP48D16 result
     ) => throw new NotImplementedException();
 
-    public static bool TryReadBigEndian(
-        ReadOnlySpan<byte> source,
-        bool isUnsigned,
-        out FP48D16 value
-    ) => throw new NotImplementedException();
+    public static bool TryReadBigEndian(ReadOnlySpan<byte> source, bool isUnsigned, out FP48D16 value) =>
+        throw new NotImplementedException();
 
-    public static bool TryReadLittleEndian(
-        ReadOnlySpan<byte> source,
-        bool isUnsigned,
-        out FP48D16 value
-    ) => throw new NotImplementedException();
+    public static bool TryReadLittleEndian(ReadOnlySpan<byte> source, bool isUnsigned, out FP48D16 value) =>
+        throw new NotImplementedException();
 
     public int CompareTo(object? obj) => throw new NotImplementedException();
 
@@ -251,10 +208,10 @@ public readonly partial struct FP48D16
     public int GetShortestBitLength() => throw new NotImplementedException();
 
     public string ToString(string? format, IFormatProvider? formatProvider) =>
-        (
-            Math.Round((decimal)this, s_approximateDecimalPrecision)
-            / 1.000000000000000000000000000000000m
-        ).ToString(format, formatProvider);
+        (Math.Round((decimal)this, s_approximateDecimalPrecision) / 1.000000000000000000000000000000000m).ToString(
+            format,
+            formatProvider
+        );
 
     public bool TryFormat(
         Span<char> destination,
@@ -262,13 +219,14 @@ public readonly partial struct FP48D16
         ReadOnlySpan<char> format,
         IFormatProvider? provider
     ) =>
-        (
-            Math.Round((decimal)this, s_approximateDecimalPrecision)
-            / 1.000000000000000000000000000000000m
-        ).TryFormat(destination, out charsWritten, format, provider);
+        (Math.Round((decimal)this, s_approximateDecimalPrecision) / 1.000000000000000000000000000000000m).TryFormat(
+            destination,
+            out charsWritten,
+            format,
+            provider
+        );
 
-    public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten) =>
-        throw new NotImplementedException();
+    public bool TryWriteBigEndian(Span<byte> destination, out int bytesWritten) => throw new NotImplementedException();
 
     public bool TryWriteLittleEndian(Span<byte> destination, out int bytesWritten) =>
         throw new NotImplementedException();
@@ -298,13 +256,11 @@ public readonly partial struct FP48D16
     public float ToSingle(IFormatProvider? provider) => (float)this;
 
     public string ToString(IFormatProvider? provider) =>
-        (
-            Math.Round((decimal)this, s_approximateDecimalPrecision)
-            / 1.000000000000000000000000000000000m
-        ).ToString(provider);
+        (Math.Round((decimal)this, s_approximateDecimalPrecision) / 1.000000000000000000000000000000000m).ToString(
+            provider
+        );
 
-    public object ToType(Type conversionType, IFormatProvider? provider) =>
-        throw new NotImplementedException();
+    public object ToType(Type conversionType, IFormatProvider? provider) => throw new NotImplementedException();
 
     public ushort ToUInt16(IFormatProvider? provider) => (ushort)this;
 
@@ -346,8 +302,7 @@ public readonly partial struct FP48D16
 
     public static (FP48D16 Sin, FP48D16 Cos) SinCos(FP48D16 x) => (Sin(x), Cos(x));
 
-    public static (FP48D16 SinPi, FP48D16 CosPi) SinCosPi(FP48D16 x) =>
-        throw new NotImplementedException();
+    public static (FP48D16 SinPi, FP48D16 CosPi) SinCosPi(FP48D16 x) => throw new NotImplementedException();
 
     public static FP48D16 SinPi(FP48D16 x) => throw new NotImplementedException();
 
@@ -371,8 +326,7 @@ public readonly partial struct FP48D16
 
     public static FP48D16 operator --(FP48D16 value) => new(value._v - ValueOne);
 
-    public static FP48D16 operator *(FP48D16 left, FP48D16 right) =>
-        new((left._v * right._v) >> DecimalBits);
+    public static FP48D16 operator *(FP48D16 left, FP48D16 right) => new((left._v * right._v) >> DecimalBits);
 
     public static FP48D16 operator /(FP48D16 left, FP48D16 right)
     {
@@ -394,14 +348,11 @@ public readonly partial struct FP48D16
 
     public static FP48D16 operator |(FP48D16 left, FP48D16 right) => new(left._v | right._v);
 
-    public static FP48D16 operator ^(FP48D16 left, FP48D16 right) =>
-        throw new NotImplementedException();
+    public static FP48D16 operator ^(FP48D16 left, FP48D16 right) => throw new NotImplementedException();
 
-    public static FP48D16 operator <<(FP48D16 value, int shiftAmount) =>
-        new(value._v << shiftAmount);
+    public static FP48D16 operator <<(FP48D16 value, int shiftAmount) => new(value._v << shiftAmount);
 
-    public static FP48D16 operator >>(FP48D16 value, int shiftAmount) =>
-        new(value._v >> shiftAmount);
+    public static FP48D16 operator >>(FP48D16 value, int shiftAmount) => new(value._v >> shiftAmount);
 
     public static bool operator ==(FP48D16 left, FP48D16 right) => left._v == right._v;
 
@@ -415,8 +366,7 @@ public readonly partial struct FP48D16
 
     public static bool operator >=(FP48D16 left, FP48D16 right) => left._v >= right._v;
 
-    public static FP48D16 operator >>>(FP48D16 value, int shiftAmount) =>
-        new(value._v >>> shiftAmount);
+    public static FP48D16 operator >>>(FP48D16 value, int shiftAmount) => new(value._v >>> shiftAmount);
 
     public static explicit operator bool(FP48D16 value) => value._v is not 0;
 
@@ -480,6 +430,5 @@ public readonly partial struct FP48D16
 
     public static explicit operator FP48D16(double value) => new(Convert.ToInt32(value * ValueOne));
 
-    public static explicit operator FP48D16(decimal value) =>
-        new(Convert.ToInt32(value * ValueOne));
+    public static explicit operator FP48D16(decimal value) => new(Convert.ToInt32(value * ValueOne));
 }

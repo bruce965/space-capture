@@ -60,7 +60,7 @@ public partial class PlanetsUI : Control
         {
             // The trail disappears when no longer dragging.
             _draggingFromPlanet = false;
-            
+
             // Detect mouse released on a planet and spawn a fleet.
             if (_selectedPlanet?.Player is PlayerLocal && _pointedPlanet is not null)
                 EmitSignal(SignalName.FleetDispatched, _selectedPlanet, _pointedPlanet);
@@ -110,7 +110,9 @@ public partial class PlanetsUI : Control
             _trail.Color = _selectedPlanet.Player.Color;
             var targetPosition = _pointedPlanet?.GlobalPosition ?? _lastCursorPosition;
             _trail.StartPosition = _selectedPlanet.GlobalPosition;
-            _trail.EndPosition = snapPosition ? targetPosition : Utils.Damp(_trail.EndPosition, targetPosition, 1e-20f, delta);
+            _trail.EndPosition = snapPosition
+                ? targetPosition
+                : Utils.Damp(_trail.EndPosition, targetPosition, 1e-20f, delta);
         }
     }
 

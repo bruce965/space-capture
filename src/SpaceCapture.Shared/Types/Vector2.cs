@@ -12,20 +12,12 @@ public readonly struct Vector2<T>(T x, T y) : IImmutable
 {
     public class JsonConverter : JsonConverter<Vector2<T>>
     {
-        public override Vector2<T> Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        ) =>
+        public override Vector2<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             JsonSerializer.Deserialize<T[]>(ref reader, options) is { Length: >= 1 } v
                 ? new(v[0], v[1])
                 : throw new JsonException("Invalid Vector2<T>.");
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            Vector2<T> value,
-            JsonSerializerOptions options
-        )
+        public override void Write(Utf8JsonWriter writer, Vector2<T> value, JsonSerializerOptions options)
         {
             T[] v = ArrayPool<T>.Shared.Rent(2);
             v[0] = value.X;

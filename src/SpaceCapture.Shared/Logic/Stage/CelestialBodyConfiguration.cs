@@ -12,11 +12,8 @@ namespace SpaceCapture.Shared.Logic.Stage;
 /// <summary>
 /// Celestial body configuration.
 /// </summary>
-public readonly struct CelestialBodyConfiguration(
-    CelestialBodyType type,
-    string name,
-    Vector2<FP48D16> location
-) : IImmutable
+public readonly struct CelestialBodyConfiguration(CelestialBodyType type, string name, Vector2<FP48D16> location)
+    : IImmutable
 {
     /// <summary>
     /// Type of this celestial body.

@@ -202,11 +202,7 @@ public partial class GameSimulation<TData>
     /// <param name="self"></param>
     /// <param name="current"></param>
     /// <param name="history"></param>
-    static void ProcessActions(
-        GameSimulation<TData> self,
-        ref Snapshot current,
-        List<GameAction> history
-    )
+    static void ProcessActions(GameSimulation<TData> self, ref Snapshot current, List<GameAction> history)
     {
         for (; current.ActionsCount < history.Count; current.ActionsCount++)
         {
@@ -247,8 +243,7 @@ public partial class GameSimulation<TData>
 
                 // Use up resources.
                 foreach (ResourceCountCache resource in structure.TypeData.ActiveCost)
-                    body.Resources[resource.Index].Count -=
-                        resource.Data.Count * enoughResourcesForActiveCount;
+                    body.Resources[resource.Index].Count -= resource.Data.Count * enoughResourcesForActiveCount;
 
                 // Increase structure products.
                 foreach (ResourceCountCache resource in structure.TypeData.Produces)
@@ -278,9 +273,7 @@ public partial class GameSimulation<TData>
             {
                 BuildQueueSlot build = body.BuildQueue[i];
 
-                StructureRuleCache structure = rules.Structures[
-                    rules.StructureTypeToIndex[build.Type].Index
-                ];
+                StructureRuleCache structure = rules.Structures[rules.StructureTypeToIndex[build.Type].Index];
 
                 if (structure.BuildCost is not { } cost)
                 {
@@ -319,12 +312,7 @@ public partial class GameSimulation<TData>
         }
     }
 
-    static void RollSnapshots(
-        long ticksInterval,
-        ref Snapshot prev,
-        ref Snapshot next,
-        ref Snapshot current
-    )
+    static void RollSnapshots(long ticksInterval, ref Snapshot prev, ref Snapshot next, ref Snapshot current)
     {
         if (current.Tick - next.Tick <= ticksInterval)
             return;

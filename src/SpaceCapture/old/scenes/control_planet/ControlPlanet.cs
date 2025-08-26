@@ -74,9 +74,7 @@ public partial class ControlPlanet : Node2D
             EmitSignal(SignalName.Selected, this);
     }
 
-    void OnInputListenerMouseEntered()
-        => EmitSignal(SignalName.PointerEntered, this);
+    void OnInputListenerMouseEntered() => EmitSignal(SignalName.PointerEntered, this);
 
-    void OnInputListenerMouseExited()
-        => EmitSignal(SignalName.PointerExited, this);
+    void OnInputListenerMouseExited() => EmitSignal(SignalName.PointerExited, this);
 }

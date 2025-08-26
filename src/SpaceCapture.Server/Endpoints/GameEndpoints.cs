@@ -12,10 +12,7 @@ namespace SpaceCapture.Server.Endpoints;
 
 public static class GameEndpoints
 {
-    public static IResult NewGame(
-        [FromQuery] DeterministicRandom? seed = null,
-        [FromQuery] int ticks = 0
-    )
+    public static IResult NewGame([FromQuery] DeterministicRandom? seed = null, [FromQuery] int ticks = 0)
     {
         DeterministicRandom gameSeed = seed ?? new DeterministicRandom();
 

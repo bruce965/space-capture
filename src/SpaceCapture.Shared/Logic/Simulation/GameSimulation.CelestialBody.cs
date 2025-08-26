@@ -10,11 +10,9 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 
 partial class GameSimulation<TData>
 {
-    public struct CelestialBody(
-        RulesCache rules,
-        CelestialBodyConfiguration configuration,
-        CelestialBodyIndex index
-    ) : ICloneable<CelestialBody>, ITransferable<CelestialBody>
+    public struct CelestialBody(RulesCache rules, CelestialBodyConfiguration configuration, CelestialBodyIndex index)
+        : ICloneable<CelestialBody>,
+            ITransferable<CelestialBody>
     {
         RulesCache _rules = rules;
         CelestialBodyConfiguration _configuration = configuration;

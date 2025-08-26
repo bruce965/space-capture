@@ -99,7 +99,7 @@ public partial class GameLogicOld : Node
     public override void _Process(double delta)
     {
         _extraTime += delta;
-        
+
         while (_extraTime > LogicSecondsPerTick)
         {
             _extraTime -= LogicSecondsPerTick;
@@ -109,13 +109,18 @@ public partial class GameLogicOld : Node
 
     #region Graphics
 
-    void SetPlanetPlayer(int planetId, int playerId)
-        => _planetControls[planetId].Player = Players[playerId];
+    void SetPlanetPlayer(int planetId, int playerId) => _planetControls[planetId].Player = Players[playerId];
 
-    void SetPlanetPopulation(int planetId, int population)
-        => _planetControls[planetId].Population = population;
+    void SetPlanetPopulation(int planetId, int population) => _planetControls[planetId].Population = population;
 
-    void ShowDispatchedFleet(int fromPlanetId, int toPlanetId, int count, int playerId, int departedAtTick, int arrivesAtTick)
+    void ShowDispatchedFleet(
+        int fromPlanetId,
+        int toPlanetId,
+        int count,
+        int playerId,
+        int departedAtTick,
+        int arrivesAtTick
+    )
     {
         Trail trail = SceneTemplates.Scenes.Trail.Instantiate<Trail>();
         trail.StartPosition = Planets[fromPlanetId].Location;

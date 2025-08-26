@@ -13,10 +13,7 @@ namespace SpaceCapture.Shared.Utilities;
 /// <typeparam name="TValue"></typeparam>
 /// <param name="source"></param>
 /// <param name="getter"></param>
-public readonly struct ReadOnlyIndexer<TSource, TKey, TValue>(
-    TSource source,
-    Func<TSource, TKey, TValue> getter
-)
+public readonly struct ReadOnlyIndexer<TSource, TKey, TValue>(TSource source, Func<TSource, TKey, TValue> getter)
 {
     readonly TSource _source = source;
     readonly Func<TSource, TKey, TValue> _getter = getter;

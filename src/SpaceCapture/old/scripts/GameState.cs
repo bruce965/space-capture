@@ -64,7 +64,14 @@ public partial class GameState : Resource
     public delegate void PlanetPlayerChangedEventHandler(int planetId, int playerId);
 
     [Signal]
-    public delegate void FleetDispatchedEventHandler(int fromPlanetId, int toPlanetId, int count, int playerId, int departedAtTick, int arrivesAtTick);
+    public delegate void FleetDispatchedEventHandler(
+        int fromPlanetId,
+        int toPlanetId,
+        int count,
+        int playerId,
+        int departedAtTick,
+        int arrivesAtTick
+    );
 
     List<PlayerData> _players = [];
     List<PlanetData> _planets = [];
@@ -158,12 +165,16 @@ public partial class GameState : Resource
     /// <param name="fromPlanetId"></param>
     /// <param name="toPlanetId"></param>
     /// <param name="maxCount"></param>
-    public void DispatchFleet(int playerId, int fromPlanetId, int toPlanetId, int maxCount)
-        => IssueCommand(playerId, new DispatchFleetCommand() {
-            FromPlanetId = fromPlanetId,
-            ToPlanetId = toPlanetId,
-            MaxCount = maxCount,
-        });
+    public void DispatchFleet(int playerId, int fromPlanetId, int toPlanetId, int maxCount) =>
+        IssueCommand(
+            playerId,
+            new DispatchFleetCommand()
+            {
+                FromPlanetId = fromPlanetId,
+                ToPlanetId = toPlanetId,
+                MaxCount = maxCount,
+            }
+        );
 
     void IssueCommand(int player_id, Command command)
     {
@@ -184,11 +195,15 @@ public partial class GameState : Resource
             from.Population -= count;
             EmitSignal(SignalName.PlanetPopulationChanged, dispatch.FromPlanetId, from.Population);
 
-            FleetData fleet = new() {
+            FleetData fleet = new()
+            {
                 Count = count,
                 PlayerId = playerId,
                 ToPlanetId = dispatch.ToPlanetId,
-                ArrivesAtTick = CurrentTick + FleetTakeoffPlusLandingTime + Mathf.CeilToInt(from.Position.DistanceTo(to.Position) / FleetSpeed),
+                ArrivesAtTick =
+                    CurrentTick
+                    + FleetTakeoffPlusLandingTime
+                    + Mathf.CeilToInt(from.Position.DistanceTo(to.Position) / FleetSpeed),
             };
 
             int index = _fleets.Select(x => x.ArrivesAtTick).ToList().BinarySearch(fleet.ArrivesAtTick);
@@ -196,7 +211,15 @@ public partial class GameState : Resource
                 index = ~index;
             _fleets.Insert(index, fleet);
 
-            EmitSignal(SignalName.FleetDispatched, dispatch.FromPlanetId, fleet.ToPlanetId, fleet.Count, fleet.PlayerId, CurrentTick, fleet.ArrivesAtTick);
+            EmitSignal(
+                SignalName.FleetDispatched,
+                dispatch.FromPlanetId,
+                fleet.ToPlanetId,
+                fleet.Count,
+                fleet.PlayerId,
+                CurrentTick,
+                fleet.ArrivesAtTick
+            );
         }
     }
 

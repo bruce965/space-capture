@@ -66,10 +66,10 @@ public partial class Trail : Sprite2D
     {
         GlobalPosition = (start + end) * .5f;
         LookAt(end);
-        
+
         if (float.IsNaN(s_invTextureWidth))
             s_invTextureWidth = 1f / Texture.GetWidth();
-            
+
         Scale = new Vector2((end - start).Length() * s_invTextureWidth, 1f);
     }
 

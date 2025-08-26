@@ -15,9 +15,6 @@ public class ImmutableArrayJsonConverter<T> : JsonConverter<ImmutableArray<T>>
         JsonSerializerOptions options
     ) => JsonSerializer.Deserialize<T[]>(ref reader, options)?.ToImmutableArray() ?? [];
 
-    public override void Write(
-        Utf8JsonWriter writer,
-        ImmutableArray<T> value,
-        JsonSerializerOptions options
-    ) => JsonSerializer.Serialize(writer, value.AsEnumerable(), options);
+    public override void Write(Utf8JsonWriter writer, ImmutableArray<T> value, JsonSerializerOptions options) =>
+        JsonSerializer.Serialize(writer, value.AsEnumerable(), options);
 }

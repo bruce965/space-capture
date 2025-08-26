@@ -45,11 +45,7 @@ public struct DeterministicRandom
             return Parse(buffer[..length], null);
         }
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            DeterministicRandom value,
-            JsonSerializerOptions options
-        )
+        public override void Write(Utf8JsonWriter writer, DeterministicRandom value, JsonSerializerOptions options)
         {
             Span<byte> buffer = stackalloc byte[22];
             bool ok = value.TryFormat(buffer, out int length, "", null);
@@ -117,9 +113,8 @@ public struct DeterministicRandom
         {
             b = b switch
             {
-                (>= (byte)'0' and <= (byte)'9')
-                or (>= (byte)'a' and <= (byte)'z')
-                or (>= (byte)'A' and <= (byte)'Z') => b,
+                (>= (byte)'0' and <= (byte)'9') or (>= (byte)'a' and <= (byte)'z') or (>= (byte)'A' and <= (byte)'Z') =>
+                    b,
                 (byte)'-' => (byte)'+',
                 (byte)'_' => (byte)'/',
                 _ => (byte)'A',
@@ -161,11 +156,7 @@ public struct DeterministicRandom
 
         UInt32Buffer4 buffer = default;
 
-        bool ok = Convert.TryFromBase64Chars(
-            base64,
-            MemoryMarshal.AsBytes<uint>(buffer),
-            out int length
-        );
+        bool ok = Convert.TryFromBase64Chars(base64, MemoryMarshal.AsBytes<uint>(buffer), out int length);
 
         Debug.Assert(ok);
         Debug.Assert(length is 16);
@@ -218,17 +209,14 @@ public struct DeterministicRandom
     }
 
     /// <inheritdoc/>
-    public bool Equals(DeterministicRandom other) =>
-        ((Span<uint>)_buffer).SequenceEqual(other._buffer);
+    public bool Equals(DeterministicRandom other) => ((Span<uint>)_buffer).SequenceEqual(other._buffer);
 
     /// <inheritdoc/>
     public override bool Equals(object? obj) => obj is DeterministicRandom seed && Equals(seed);
 
-    public static bool operator ==(DeterministicRandom left, DeterministicRandom right) =>
-        left.Equals(right);
+    public static bool operator ==(DeterministicRandom left, DeterministicRandom right) => left.Equals(right);
 
-    public static bool operator !=(DeterministicRandom left, DeterministicRandom right) =>
-        !(left == right);
+    public static bool operator !=(DeterministicRandom left, DeterministicRandom right) => !(left == right);
 
     /// <inheritdoc/>
     public bool TryFormat(
@@ -325,8 +313,7 @@ public static class DeterministicRandomExtensions
         }
 
         public readonly int Current =>
-            (_buffer ?? throw new ObjectDisposedException(nameof(SequenceEnumerator)))[_i]
-            + _offset;
+            (_buffer ?? throw new ObjectDisposedException(nameof(SequenceEnumerator)))[_i] + _offset;
 
         readonly object IEnumerator.Current => Current;
 
@@ -413,8 +400,7 @@ public static class DeterministicRandomExtensions
     }
 
     /// <inheritdoc cref="Random.Next(int)"/>
-    public static int Next(this ref DeterministicRandom rand, int maxValue) =>
-        rand.Next(stackalloc int[1], maxValue);
+    public static int Next(this ref DeterministicRandom rand, int maxValue) => rand.Next(stackalloc int[1], maxValue);
 
     /// <inheritdoc cref="Random.Next(int, int)"/>
     public static int Next(this ref DeterministicRandom rand, int minValue, int maxValue) =>
@@ -468,9 +454,7 @@ public static class DeterministicRandomExtensions
 
         // Skip the initial always-zero bytes and bits.
         bytes = bytes[..^(zeroBitsCount / 8)];
-        byte zeroBitsMask = unchecked(
-            (byte)(0b11111111 >> (zeroBitsCount - zeroBitsCount / 8 * 8))
-        );
+        byte zeroBitsMask = unchecked((byte)(0b11111111 >> (zeroBitsCount - zeroBitsCount / 8 * 8)));
 
         do
         {
@@ -501,11 +485,8 @@ public static class DeterministicRandomExtensions
     /// <param name="minValue"></param>
     /// <param name="maxValue"></param>
     /// <returns></returns>
-    public static SequenceEnumerable Sequence(
-        this ref DeterministicRandom rand,
-        int minValue,
-        int maxValue
-    ) => new(ref rand, minValue, maxValue - minValue);
+    public static SequenceEnumerable Sequence(this ref DeterministicRandom rand, int minValue, int maxValue) =>
+        new(ref rand, minValue, maxValue - minValue);
 
     /// <summary>
     /// Pick all items in a random order from a set of values, without repetitions.
@@ -514,10 +495,8 @@ public static class DeterministicRandomExtensions
     /// <param name="rand"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public static ShuffledEnumerable<T> Shuffled<T>(
-        this ref DeterministicRandom rand,
-        Span<T> values
-    ) => new(ref rand, values);
+    public static ShuffledEnumerable<T> Shuffled<T>(this ref DeterministicRandom rand, Span<T> values) =>
+        new(ref rand, values);
 
     #endregion
 }

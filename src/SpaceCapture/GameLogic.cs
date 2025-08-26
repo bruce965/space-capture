@@ -53,10 +53,7 @@ public partial class GameLogic : Node
 
             instance.Index = i;
 
-            instance.Position = new Vector2(
-                body.Configuration.Location.X,
-                body.Configuration.Location.Y
-            );
+            instance.Position = new Vector2(body.Configuration.Location.X, body.Configuration.Location.Y);
 
             body.Data = instance;
         }

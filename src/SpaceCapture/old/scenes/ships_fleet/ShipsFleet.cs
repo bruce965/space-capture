@@ -100,7 +100,12 @@ public partial class ShipsFleet : Node2D
             int clampedTick = Math.Clamp(tick, DepartedAt, ArrivesAt);
             float progress = (clampedTick - DepartedAt) / (float)(ArrivesAt - DepartedAt);
             Vector2 fleetPosition = From.Lerp(To, Math.Clamp(progress, 0f, 1f));
-            float dispersiveness = Math.Clamp(MathF.Sqrt(Math.Min(fleetPosition.DistanceSquaredTo(From), fleetPosition.DistanceSquaredTo(To))) / DisperseAtDistance, 0f, 1f);
+            float dispersiveness = Math.Clamp(
+                MathF.Sqrt(Math.Min(fleetPosition.DistanceSquaredTo(From), fleetPosition.DistanceSquaredTo(To)))
+                    / DisperseAtDistance,
+                0f,
+                1f
+            );
 
             float angle = From.AngleToPoint(To);
             int ranksCount = Mathf.CeilToInt((float)_ships.Count / RankSize);
@@ -109,8 +114,16 @@ public partial class ShipsFleet : Node2D
                 int rank = Mathf.FloorToInt((float)i / RankSize);
                 int positionInRank = i % RankSize;
                 var shipsInRank = rank != ranksCount - 1 ? RankSize : (_ships.Count - (ranksCount - 1) * RankSize);
-                Vector2 assignedPosition = new(rank * -RanksDistance - Math.Abs(positionInRank - shipsInRank / 2f) * 5f, (float)(positionInRank - (shipsInRank - 1) * .5f) * ShoulderDistance);
-                _ships[i].TargetPosition = fleetPosition + Vector2.Zero.Lerp(assignedPosition.Rotated(angle) + Vector2.FromAngle(MathF.Sin(i + tick / 10f)) * 2f, dispersiveness);
+                Vector2 assignedPosition = new(
+                    rank * -RanksDistance - Math.Abs(positionInRank - shipsInRank / 2f) * 5f,
+                    (float)(positionInRank - (shipsInRank - 1) * .5f) * ShoulderDistance
+                );
+                _ships[i].TargetPosition =
+                    fleetPosition
+                    + Vector2.Zero.Lerp(
+                        assignedPosition.Rotated(angle) + Vector2.FromAngle(MathF.Sin(i + tick / 10f)) * 2f,
+                        dispersiveness
+                    );
             }
 
             if (tick >= ArrivesAt)

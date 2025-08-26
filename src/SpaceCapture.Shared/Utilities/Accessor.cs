@@ -22,10 +22,7 @@ public readonly ref struct Accessor<T, TIndex>(Span<T> span)
     public static implicit operator Span<T>(Accessor<T, TIndex> accessor) => accessor.Span;
 }
 
-public readonly ref struct Accessor<T, TType, TIndex>(
-    Span<T> span,
-    ImmutableDictionary<TType, TIndex> typeToIndex
-)
+public readonly ref struct Accessor<T, TType, TIndex>(Span<T> span, ImmutableDictionary<TType, TIndex> typeToIndex)
     where TType : notnull
     where TIndex : IIndex
 {
