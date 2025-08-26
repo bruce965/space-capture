@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Collections.Immutable;
 using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Types;
 using SpaceCapture.Shared.Utilities;
@@ -174,6 +175,7 @@ public partial class GameSimulation<TData>
         // Produce resources on all celestial bodies that have factories.
         ProcessStructures(in _rules, in Current);
 
+        // Repair damaged structures and process build queues.
         ProcessBuildQueue(in _rules, in Current);
 
         // Take a "near" snapshot if enough time has passed since last one.
@@ -187,8 +189,22 @@ public partial class GameSimulation<TData>
     {
         switch (action)
         {
+            case ActivateStructureAction act:
+                ref Structure s1 = ref Current.CelestialBodies[act.CelestialBody].Structures[act.Structure];
+                s1.ActiveCount = Math.Min(s1.Count, s1.ActiveCount + 1);
+                break;
+
+            case DeactivateStructureAction act:
+                ref Structure s2 = ref Current.CelestialBodies[act.CelestialBody].Structures[act.Structure];
+                s2.ActiveCount = Math.Max(0, s2.ActiveCount - 1);
+                break;
+
             case BuildStructureAction act:
                 Current.CelestialBodies[act.CelestialBody].BuildQueue.Add(new(act.Structure));
+                break;
+
+            case ToggleRepairStructureAction act:
+                Current.CelestialBodies[act.CelestialBody].Structures[act.Structure].RepairDamaged = act.Enabled;
                 break;
 
             default:
@@ -213,7 +229,7 @@ public partial class GameSimulation<TData>
     }
 
     /// <summary>
-    /// Process all active structures.
+    /// Produce resources on all celestial bodies that have factories.
     /// </summary>
     /// <param name="rules"></param>
     /// <param name="current"></param>
@@ -256,7 +272,7 @@ public partial class GameSimulation<TData>
     }
 
     /// <summary>
-    /// Process build queues.
+    /// Repair damaged structures and process build queues.
     /// </summary>
     /// <param name="rules"></param>
     /// <param name="current"></param>
@@ -264,43 +280,61 @@ public partial class GameSimulation<TData>
     {
         // Iterate all celestial bodies. The order does not matter, each
         // celestial body is isolated from the others.
-        foreach (CelestialBody body in current.CelestialBodies)
+        foreach (ref CelestialBody body in current.CelestialBodies)
         {
-            if (body.BuildQueue.Count is 0)
+            // Repair damaged structures in random order, one per-tick.
+            bool somethingHasBeenRepaired = false;
+            foreach (ref Structure structure in current.Random.Shuffled(body.Structures.Span))
+            {
+                if (!structure.RepairDamaged || structure.Damage == 0)
+                    continue;
+
+                // Some structures cannot be repaired, in which case they are simply skipped.
+                if (structure.TypeData.RepairCost is not { } repairCost)
+                    continue;
+
+                // Make sure that there are enough resources to process one repair tick for this structure.
+                if (!TryTakeResources(ref body, repairCost))
+                    break;
+
+                // Repair.
+                structure.Damage = FP48D16.Max(0, structure.Damage - structure.TypeData.RepairedDamagePerTick);
+
+                somethingHasBeenRepaired = true;
+                break;
+            }
+
+            // Either repair or build something on each tick, but not both.
+            if (somethingHasBeenRepaired)
                 continue;
 
+            // Build the first structure in the queue.
             for (int i = 0; i < body.BuildQueue.Count; i++)
             {
                 BuildQueueSlot build = body.BuildQueue[i];
 
-                StructureRuleCache structure = rules.Structures[rules.StructureTypeToIndex[build.Type].Index];
+                StructureRuleCache structureRule = rules.Structures[rules.StructureTypeToIndex[build.Type].Index];
 
-                if (structure.BuildCost is not { } cost)
+                // Some structures cannot be built, in which case they are simply removed from the build queue.
+                if (structureRule.BuildCost is not { } buildCost)
                 {
                     body.BuildQueue.RemoveAt(i--);
                     continue;
                 }
 
-                bool canBuild = true;
-                foreach (ResourceCountCache resource in cost)
-                {
-                    if (body.Resources[resource.Index].Count < resource.CostPerTick)
-                    {
-                        canBuild = false;
-                        break;
-                    }
-                }
-
-                if (!canBuild)
+                // Make sure that there are enough resources to process one build tick for this structure.
+                if (!TryTakeResources(ref body, buildCost))
                     break;
 
-                foreach (ResourceCountCache resource in cost)
-                    body.Resources[resource.Index].Count -= resource.CostPerTick;
-
-                if (++build.Progress >= structure.Rules.BuildTicks)
+                // Increase the build progress and check if the build process is complete.
+                if (++build.Progress >= structureRule.Rules.BuildTicks)
                 {
-                    body.Structures[structure.Index].Count++;
-                    body.Structures[structure.Index].ActiveCount++;
+                    ref Structure structure = ref body.Structures[structureRule.Index];
+
+                    if (structure.ActiveCount == structure.Count)
+                        structure.ActiveCount++;
+
+                    structure.Count++;
 
                     body.BuildQueue.RemoveAt(i);
                     break;
@@ -310,6 +344,20 @@ public partial class GameSimulation<TData>
                 break;
             }
         }
+    }
+
+    static bool TryTakeResources(ref CelestialBody body, ImmutableArray<ResourceCountCache> resources)
+    {
+        // Ensure that there are enough resources available.
+        foreach (ResourceCountCache resource in resources)
+            if (body.Resources[resource.Index].Count < resource.CostPerTick)
+                return false;
+
+        // Take the necessary resources.
+        foreach (ResourceCountCache resource in resources)
+            body.Resources[resource.Index].Count -= resource.CostPerTick;
+
+        return true;
     }
 
     static void RollSnapshots(long ticksInterval, ref Snapshot prev, ref Snapshot next, ref Snapshot current)

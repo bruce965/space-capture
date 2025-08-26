@@ -22,7 +22,11 @@ namespace SpaceCapture.Shared.Types;
 /// </remarks>
 [JsonConverter(typeof(JsonConverter))]
 [DebuggerDisplay($"{{{nameof(ToString)}(),nq}}")]
-public readonly partial struct FP48D16 : IBinaryInteger<FP48D16>, ITrigonometricFunctions<FP48D16>, IConvertible
+public readonly partial struct FP48D16
+    : IBinaryInteger<FP48D16>,
+        ITrigonometricFunctions<FP48D16>,
+        IMinMaxValue<FP48D16>,
+        IConvertible
 {
     public class JsonConverter : JsonConverter<FP48D16>
     {
@@ -60,9 +64,15 @@ public readonly partial struct FP48D16 : IBinaryInteger<FP48D16>, ITrigonometric
 
     private FP48D16(long raw) => _v = raw;
 
+    /// <inheritdoc cref="IMinMaxValue{TSelf}.MinValue"/>
     public static readonly FP48D16 MinValue = new(ValueMin);
 
+    static FP48D16 IMinMaxValue<FP48D16>.MinValue => MinValue;
+
+    /// <inheritdoc cref="IMinMaxValue{TSelf}.MaxValue"/>
     public static readonly FP48D16 MaxValue = new(ValueMax);
+
+    static FP48D16 IMinMaxValue<FP48D16>.MaxValue => MaxValue;
 
     public static FP48D16 AdditiveIdentity => new(0);
 
@@ -309,6 +319,10 @@ public readonly partial struct FP48D16 : IBinaryInteger<FP48D16>, ITrigonometric
     public static FP48D16 Tan(FP48D16 x) => throw new NotImplementedException();
 
     public static FP48D16 TanPi(FP48D16 x) => throw new NotImplementedException();
+
+    public static FP48D16 Min(FP48D16 val1, FP48D16 val2) => val1 < val2 ? val1 : val2;
+
+    public static FP48D16 Max(FP48D16 val1, FP48D16 val2) => val1 > val2 ? val1 : val2;
 
     public override string ToString() => ToString(CultureInfo.InvariantCulture);
 

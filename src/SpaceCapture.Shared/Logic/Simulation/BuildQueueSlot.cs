@@ -3,7 +3,6 @@
 
 using System.Text.Json.Serialization;
 using SpaceCapture.Shared.Abstractions;
-using SpaceCapture.Shared.Types;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 

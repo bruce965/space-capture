@@ -83,11 +83,11 @@ public partial class StructureControl : Control
         _incrementButton.Disabled = _activeCount >= _totalCount;
     }
 
-    void OnDecrementButtonPressed() => EmitSignalActivate();
+    void OnDecrementButtonPressed() => EmitSignalDeactivate();
 
-    void OnIncrementButtonPressed() => EmitSignalDeactivate();
+    void OnIncrementButtonPressed() => EmitSignalActivate();
 
     void OnBuildButtonPressed() => EmitSignalBuild();
 
-    void OnRepairButtonToggled(bool toggledOn) => EmitSignalBuild();
+    void OnRepairButtonToggled(bool toggledOn) => EmitSignalToggleRepair(toggledOn);
 }

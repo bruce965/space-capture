@@ -37,6 +37,7 @@ partial class GameSimulation<TData>
                         ActiveCost = Cache(s.ActiveCost, rules),
                         Produces = Cache(s.Produces, rules),
                         Stores = Cache(s.Stores, rules),
+                        RepairedDamagePerTick = s.MaxHealth / (FP48D16)s.BuildTicks,
                     }
             ),
         ];
@@ -91,7 +92,8 @@ partial class GameSimulation<TData>
         ImmutableArray<ResourceCountCache> CommitCost,
         ImmutableArray<ResourceCountCache> ActiveCost,
         ImmutableArray<ResourceCountCache> Produces,
-        ImmutableArray<ResourceCountCache> Stores
+        ImmutableArray<ResourceCountCache> Stores,
+        FP48D16 RepairedDamagePerTick
     );
 
     [DebuggerDisplay($"{{{nameof(Data)},nq}}")]

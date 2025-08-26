@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
 using Godot;
 using SpaceCapture.Shared.Logic;
 using SpaceCapture.Shared.Logic.Simulation;
@@ -94,14 +93,11 @@ public partial class InfoPanel : Control
             control.Text = type.ToString();
             control.Icon = Templates.Icons[type];
 
-            // TODO: decrement active count.
-
-            // TODO: increment active count.
-
-            // TODO: celestial body index.
+            // TODO: use currently selected celestial body index.
+            control.Activate += () => game.ExecuteAction(new ActivateStructureAction(game.Tick, 1, type));
+            control.Deactivate += () => game.ExecuteAction(new DeactivateStructureAction(game.Tick, 1, type));
             control.Build += () => game.ExecuteAction(new BuildStructureAction(game.Tick, 1, type));
-
-            // TODO: toggle repair.
+            control.ToggleRepair += x => game.ExecuteAction(new ToggleRepairStructureAction(game.Tick, 1, type, x));
 
             _structureControls[i] = control;
             _structuresContainer.AddChild(control);
