@@ -1,17 +1,23 @@
-[gd_scene load_steps=2 format=3 uid="uid://comktmj5shmjd"]
+[gd_scene load_steps=3 format=3 uid="uid://comktmj5shmjd"]
 
-[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://old/icons/character.svg" id="1_pfslo"]
+[ext_resource type="Script" uid="uid://db23usncolelb" path="res://ui/QueueSlotControl.cs" id="1_03hhu"]
+[ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://ui/icons/character.svg" id="1_pfslo"]
 
-[node name="QueueSlotControl" type="PanelContainer"]
+[node name="QueueSlotControl" type="PanelContainer" node_paths=PackedStringArray("_iconRect", "_nameLabel", "_progressBar")]
 clip_contents = true
 offset_right = 109.0
 offset_bottom = 28.0
+script = ExtResource("1_03hhu")
+_iconRect = NodePath("MarginContainer/HBoxContainer/AspectRatioContainer/TextureRect")
+_nameLabel = NodePath("MarginContainer/HBoxContainer/NameLabel")
+_progressBar = NodePath("ProgressBar")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 layout_mode = 2
 size_flags_vertical = 8
 theme_type_variation = &"QueueProgressBar"
-value = 75.0
+max_value = 1.0
+value = 0.75
 show_percentage = false
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

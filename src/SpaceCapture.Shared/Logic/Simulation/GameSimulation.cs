@@ -313,7 +313,7 @@ public partial class GameSimulation<TData>
             {
                 BuildQueueSlot build = body.BuildQueue[i];
 
-                StructureRuleCache structureRule = rules.Structures[rules.StructureTypeToIndex[build.Type].Index];
+                StructureRuleCache structureRule = rules.Structures[build.Type];
 
                 // Some structures cannot be built, in which case they are simply removed from the build queue.
                 if (structureRule.BuildCost is not { } buildCost)

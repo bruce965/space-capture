@@ -18,11 +18,11 @@ partial class GameSimulation<TData>
         CelestialBodyConfiguration _configuration = configuration;
         CelestialBodyIndex _index = index;
         PlayerIndex? _player;
-        Resource[] _resources = rules.Resources.ToArray(r => new Resource(
+        Resource[] _resources = rules.Resources.Span.ToArray(r => new Resource(
             r,
             configuration.Resources.FirstOrDefault(c => c.Type == r.Rules.Type, new(r.Rules.Type))
         ));
-        Structure[] _structures = rules.Structures.ToArray(s => new Structure(s));
+        Structure[] _structures = rules.Structures.Span.ToArray(s => new Structure(s));
         TData _data = default!;
         List<BuildQueueSlot>? _buildQueue;
 

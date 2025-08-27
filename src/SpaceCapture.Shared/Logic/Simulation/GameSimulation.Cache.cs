@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using SpaceCapture.Shared.Logic.Rules;
 using SpaceCapture.Shared.Types;
+using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Shared.Logic.Simulation;
 
@@ -18,12 +19,12 @@ partial class GameSimulation<TData>
     {
         public RulesSet Rules => rules;
 
-        public ImmutableArray<ResourceRuleCache> Resources =
+        readonly ResourceRuleCache[] _resources =
         [
             .. rules.Resources.Select((r, i) => new ResourceRuleCache(r, new() { Index = i })),
         ];
 
-        public ImmutableArray<StructureRuleCache> Structures =
+        readonly StructureRuleCache[] _structures =
         [
             .. rules.Structures.Select(
                 (s, i) =>
@@ -41,6 +42,12 @@ partial class GameSimulation<TData>
                     }
             ),
         ];
+
+        public ReadOnlyAccessor<ResourceRuleCache, ResourceType, ResourceTypeIndex> Resources =>
+            new(_resources, ResourceTypeToIndex);
+
+        public ReadOnlyAccessor<StructureRuleCache, StructureType, StructureTypeIndex> Structures =>
+            new(_structures, StructureTypeToIndex);
 
         internal ImmutableDictionary<ResourceType, ResourceTypeIndex> ResourceTypeToIndex = rules
             .Resources.Select(

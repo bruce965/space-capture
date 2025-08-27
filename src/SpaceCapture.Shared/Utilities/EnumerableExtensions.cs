@@ -19,4 +19,17 @@ public static class EnumerableExtensions
 
         return result;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static TResult[] ToArray<TSource, TResult>(
+        this ReadOnlySpan<TSource> source,
+        Func<TSource, TResult> converter
+    )
+    {
+        TResult[] result = new TResult[source.Length];
+        for (int i = 0; i < result.Length && i < source.Length; i++)
+            result[i] = converter(source[i]);
+
+        return result;
+    }
 }
