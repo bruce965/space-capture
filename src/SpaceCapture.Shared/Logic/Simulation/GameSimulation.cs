@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Types;
 using SpaceCapture.Shared.Utilities;
@@ -53,7 +55,7 @@ public partial class GameSimulation<TData>
     readonly List<GameEvent> _eventsHistory; // Occurred events, excluding cancelled.
 
     /// <summary>
-    /// Initialize a new simuation from the specified state.
+    /// Initialize a new simulation from the specified state.
     /// </summary>
     /// <param name="state"></param>
     public GameSimulation(GameStage stage)
@@ -166,7 +168,7 @@ public partial class GameSimulation<TData>
         Current.Tick++;
 
         // Process actions.
-        ProcessActions(this, ref Current, _actionsHistory);
+        ProcessActions(in _rules, ref Current, _actionsHistory);
 
         // TODO: move fleets.
 
@@ -179,52 +181,54 @@ public partial class GameSimulation<TData>
         ProcessBuildQueue(in _rules, in Current);
 
         // Take a "near" snapshot if enough time has passed since last one.
-        RollSnapshots(NearSnapshotTicks, ref PrevNearSnapshot, ref NextNearSnapshot, ref Current);
+        ShiftSnapshots(NearSnapshotTicks, ref PrevNearSnapshot, ref NextNearSnapshot, ref Current);
 
         // Take a "far" snapshot if enough time has passed since last one.
-        RollSnapshots(FarSnapshotTicks, ref PrevFarSnapshot, ref NextFarSnapshot, ref Current);
-    }
-
-    void ProcessAction(GameAction action)
-    {
-        switch (action)
-        {
-            case ActivateStructureAction act:
-                ref Structure s1 = ref Current.CelestialBodies[act.CelestialBody].Structures[act.Structure];
-                s1.ActiveCount = Math.Min(s1.Count, s1.ActiveCount + 1);
-                break;
-
-            case DeactivateStructureAction act:
-                ref Structure s2 = ref Current.CelestialBodies[act.CelestialBody].Structures[act.Structure];
-                s2.ActiveCount = Math.Max(0, s2.ActiveCount - 1);
-                break;
-
-            case BuildStructureAction act:
-                Current.CelestialBodies[act.CelestialBody].BuildQueue.Add(new(act.Structure));
-                break;
-
-            case ToggleRepairStructureAction act:
-                Current.CelestialBodies[act.CelestialBody].Structures[act.Structure].RepairDamaged = act.Enabled;
-                break;
-
-            default:
-                throw new NotImplementedException();
-        }
+        ShiftSnapshots(FarSnapshotTicks, ref PrevFarSnapshot, ref NextFarSnapshot, ref Current);
     }
 
     /// <summary>
     /// Process all actions scheduled for the current tick.
     /// </summary>
-    /// <param name="self"></param>
     /// <param name="current"></param>
     /// <param name="history"></param>
-    static void ProcessActions(GameSimulation<TData> self, ref Snapshot current, List<GameAction> history)
+    static void ProcessActions(in RulesCache rules, ref Snapshot current, List<GameAction> history)
     {
         for (; current.ActionsCount < history.Count; current.ActionsCount++)
         {
-            self.ProcessAction(history[current.ActionsCount]);
+            ProcessAction(in rules, ref current, history[current.ActionsCount]);
 
             // TODO: validate past events and revert the ones that are no longer valid.
+        }
+    }
+
+    /// <summary>
+    /// Process a single action.
+    /// </summary>
+    /// <param name="current"></param>
+    /// <param name="action"></param>
+    static void ProcessAction(in RulesCache rules, ref Snapshot current, GameAction action)
+    {
+        switch (action)
+        {
+            case ActivateStructureAction act:
+                _ = TryActivateStructure(in rules, ref current.CelestialBodies[act.CelestialBody], act.Structure);
+                break;
+
+            case DeactivateStructureAction act:
+                _ = TryDeactivateStructure(in rules, ref current.CelestialBodies[act.CelestialBody], act.Structure);
+                break;
+
+            case BuildStructureAction act:
+                current.CelestialBodies[act.CelestialBody].BuildQueue.Add(new(act.Structure));
+                break;
+
+            case ToggleRepairStructureAction act:
+                current.CelestialBodies[act.CelestialBody].Structures[act.Structure].RepairDamaged = act.Enabled;
+                break;
+
+            default:
+                throw new NotImplementedException();
         }
     }
 
@@ -331,10 +335,11 @@ public partial class GameSimulation<TData>
                 {
                     ref Structure structure = ref body.Structures[structureRule.Index];
 
-                    if (structure.ActiveCount == structure.Count)
-                        structure.ActiveCount++;
-
                     structure.Count++;
+
+                    // If all structures of this type are active, try activating the new one right away.
+                    if (structure.ActiveCount == structure.Count - 1)
+                        TryActivateStructure(in rules, ref body, ref structure);
 
                     body.BuildQueue.RemoveAt(i);
                     break;
@@ -346,6 +351,12 @@ public partial class GameSimulation<TData>
         }
     }
 
+    /// <summary>
+    /// Try to take some resources from a celestial body.
+    /// </summary>
+    /// <param name="body"></param>
+    /// <param name="resources"></param>
+    /// <returns></returns>
     static bool TryTakeResources(ref CelestialBody body, ImmutableArray<ResourceCountCache> resources)
     {
         // Ensure that there are enough resources available.
@@ -360,7 +371,81 @@ public partial class GameSimulation<TData>
         return true;
     }
 
-    static void RollSnapshots(long ticksInterval, ref Snapshot prev, ref Snapshot next, ref Snapshot current)
+    /// <summary>
+    /// Add resources to a celestial body.
+    /// </summary>
+    /// <param name="body"></param>
+    /// <param name="resources"></param>
+    static void AddResources(ref CelestialBody body, ImmutableArray<ResourceCountCache> resources)
+    {
+        // Add the specified resources, without exceeding the limit.
+        foreach (ResourceCountCache resource in resources)
+        {
+            ref Resource r = ref body.Resources[resource.Index];
+
+            r.Count += resource.Data.Count;
+
+            if (r.Configuration.HardLimit is { } limit && r.Count > limit)
+                r.Count = limit;
+        }
+    }
+
+    /// <summary>
+    /// Try activating a structure if it exists and the necessary resources are available.
+    /// </summary>
+    /// <param name="rules"></param>
+    /// <param name="body"></param>
+    /// <param name="structure"></param>
+    /// <returns></returns>
+    static bool TryActivateStructure(in RulesCache rules, ref CelestialBody body, StructureType structure) =>
+        TryActivateStructure(in rules, ref body, ref body.Structures[structure]);
+
+    /// <inheritdoc cref="TryActivateStructure(in RulesCache, ref CelestialBody, StructureType)"/>
+    static bool TryActivateStructure(in RulesCache rules, ref CelestialBody body, ref Structure structure)
+    {
+        Debug.Assert(Unsafe.AreSame(ref structure, ref body.Structures[structure.TypeData.Index]));
+
+        if (
+            structure.Count <= structure.ActiveCount
+            || !TryTakeResources(ref body, rules.Structures[structure.TypeData.Index].ActivationCost)
+        )
+            return false;
+
+        structure.ActiveCount++;
+        return true;
+    }
+
+    /// <summary>
+    /// Try deactivating a structure if it exists.
+    /// </summary>
+    /// <param name="rules"></param>
+    /// <param name="body"></param>
+    /// <param name="structure"></param>
+    /// <returns></returns>
+    static bool TryDeactivateStructure(in RulesCache rules, ref CelestialBody body, StructureType structure) =>
+        TryDeactivateStructure(in rules, ref body, ref body.Structures[structure]);
+
+    /// <inheritdoc cref="TryActivateStructure(in RulesCache, ref CelestialBody, StructureType)"/>
+    static bool TryDeactivateStructure(in RulesCache rules, ref CelestialBody body, ref Structure structure)
+    {
+        Debug.Assert(Unsafe.AreSame(ref structure, ref body.Structures[structure.TypeData.Index]));
+
+        if (structure.ActiveCount <= 0)
+            return false;
+
+        structure.ActiveCount--;
+        AddResources(ref body, rules.Structures[structure.TypeData.Index].ActivationCost);
+        return true;
+    }
+
+    /// <summary>
+    /// Shift snapshots down by one position, and make <paramref name="current"/> a new snapshot.
+    /// </summary>
+    /// <param name="ticksInterval">How many ticks since last snapshot to wait before shifting.</param>
+    /// <param name="prev">Becomes <paramref name="next"/>.</param>
+    /// <param name="next">Becomes <paramref name="current"/>.</param>
+    /// <param name="current">Becomes a new copy of <paramref name="current"/>.</param>
+    static void ShiftSnapshots(long ticksInterval, ref Snapshot prev, ref Snapshot next, ref Snapshot current)
     {
         if (current.Tick - next.Tick <= ticksInterval)
             return;

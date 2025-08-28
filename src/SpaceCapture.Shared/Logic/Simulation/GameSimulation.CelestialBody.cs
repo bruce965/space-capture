@@ -53,13 +53,13 @@ partial class GameSimulation<TData>
         /// Resources on this celestial body.
         /// </summary>
         public readonly Accessor<Resource, ResourceType, ResourceTypeIndex> Resources =>
-            new(_resources, _rules.ResourceTypeToIndex);
+            new(_resources, _rules._resourceTypeToIndex);
 
         /// <summary>
         /// Structures on this celestial body.
         /// </summary>
         public readonly Accessor<Structure, StructureType, StructureTypeIndex> Structures =>
-            new(_structures, _rules.StructureTypeToIndex);
+            new(_structures, _rules._structureTypeToIndex);
 
         /// <summary>
         /// Build queue for structures.

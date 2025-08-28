@@ -42,7 +42,7 @@ public readonly struct CelestialBodyResource(ResourceType type) : IImmutable
     /// </summary>
     [JsonPropertyName("soft-limit")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public int? SoftLimit { get; init; }
+    public FP48D16? SoftLimit { get; init; }
 
     /// <summary>
     /// Maximum amount of this resource that can be store on this celestial body.
@@ -51,5 +51,5 @@ public readonly struct CelestialBodyResource(ResourceType type) : IImmutable
     /// </summary>
     [JsonPropertyName("hard-limit")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public int? HardLimit { get; init; }
+    public FP48D16? HardLimit { get; init; }
 }

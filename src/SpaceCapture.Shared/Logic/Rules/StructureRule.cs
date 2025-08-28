@@ -57,8 +57,9 @@ public readonly struct StructureRule(StructureType type) : IImmutable
     /// <summary>
     /// Resources locked inside this structure when active. Not consumed, but
     /// cannot be used for anything else until this structure is active.
+    /// Refunded when the structure is deactivated.
     /// </summary>
-    public ImmutableArray<ResourceCount> CommitCost { get; init; } = [];
+    public ImmutableArray<ResourceCount> ActivationCost { get; init; } = [];
 
     /// <summary>
     /// Resources required to keep this structure active for one tick.
