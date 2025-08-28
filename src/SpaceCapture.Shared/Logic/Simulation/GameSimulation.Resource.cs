@@ -30,6 +30,16 @@ partial class GameSimulation<TData>
         /// </summary>
         public FP48D16 Count { get; set; }
 
+        /// <summary>
+        /// <see cref="CelestialBodyResource.SoftLimit"/>, plus bonus by active structures.
+        /// </summary>
+        public FP48D16? SoftLimit { get; set; } = configuration.SoftLimit;
+
+        /// <summary>
+        /// <see cref="CelestialBodyResource.HardLimit"/>, plus bonus by active structures.
+        /// </summary>
+        public FP48D16? HardLimit { get; set; } = configuration.HardLimit;
+
         public readonly Resource Clone() => this;
 
         public void CopyFrom(Resource other) => this = other;

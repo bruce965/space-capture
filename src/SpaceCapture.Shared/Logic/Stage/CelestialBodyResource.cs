@@ -38,7 +38,8 @@ public readonly struct CelestialBodyResource(ResourceType type) : IImmutable
     /// <summary>
     /// Maximum amount of this resource that can be stored on this celestial body.
     /// When this limit is reached, no more of this resource can be produced, but
-    /// more can still be imported from other celestial bodies.
+    /// more can still be imported from other celestial bodies or recovered by
+    /// deactivating structures.
     /// </summary>
     [JsonPropertyName("soft-limit")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

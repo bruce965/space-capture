@@ -45,7 +45,7 @@ public readonly partial struct FP48D16
     const int UnusedBitsExceptSignBit = TotalBits - IntegerBits - DecimalBits;
     const long ValueOne = 1L << DecimalBits;
     const long DecimalBitsMask = ValueOne - 1;
-    const long IntegerBitsMask = ~DecimalBitsMask & (~0 >> UnusedBitsExceptSignBit);
+    const long IntegerBitsMask = ~DecimalBitsMask & unchecked((long)(~0UL >> UnusedBitsExceptSignBit));
     const long SignBitMask = long.MinValue;
     const long UnusedBitsMask = ~(DecimalBitsMask | IntegerBitsMask | SignBitMask);
     const long ValueE = (long)(Math.E * ValueOne + .5);
@@ -320,9 +320,21 @@ public readonly partial struct FP48D16
 
     public static FP48D16 TanPi(FP48D16 x) => throw new NotImplementedException();
 
-    public static FP48D16 Min(FP48D16 val1, FP48D16 val2) => val1 < val2 ? val1 : val2;
+    /// <inheritdoc cref="double.Min"/>
+    public static FP48D16 Min(FP48D16 x, FP48D16 y) => x < y ? x : y;
 
-    public static FP48D16 Max(FP48D16 val1, FP48D16 val2) => val1 > val2 ? val1 : val2;
+    /// <inheritdoc cref="double.Max"/>
+    public static FP48D16 Max(FP48D16 x, FP48D16 y) => x > y ? x : y;
+
+    /// <inheritdoc cref="double.Floor"/>
+    public static FP48D16 Floor(FP48D16 v) => new(v._v & ~DecimalBitsMask);
+
+    /// <inheritdoc cref="double.Ceiling"/>
+    public static FP48D16 Ceiling(FP48D16 v) =>
+        new(
+            (v._v & ~DecimalBitsMask)
+                + ((v._v & DecimalBitsMask) is 0 ? 0 : ((v._v & SignBitMask) is 0 ? ValueOne : -ValueOne))
+        );
 
     public override string ToString() => ToString(CultureInfo.InvariantCulture);
 
@@ -346,14 +358,15 @@ public readonly partial struct FP48D16
     {
         // https://stackoverflow.com/a/18067292/1135019
         // TODO: is the sign preserved correctly? Probably not for numbers < 2^31. To be tested and fixed if necessary.
-        long n = (left._v << DecimalBits) | (left._v & SignBitMask);
-        long d = right._v;
-        long v = ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d);
+        ulong n = unchecked((ulong)Math.Abs(left._v) << DecimalBits & ~SignBitMask);
+        ulong d = unchecked((ulong)Math.Abs(right._v));
+        ulong v = ((n < 0) == (d < 0)) ? ((n + d / 2) / d) : ((n - d / 2) / d);
 
-        if ((n & UnusedBitsMask) is not 0)
+        if ((v & UnusedBitsMask) is not 0)
             throw new OverflowException();
 
-        return new(v);
+        long vWithSign = ((left._v ^ right._v) & SignBitMask) is 0 ? (long)v : -(long)v;
+        return new(vWithSign);
     }
 
     public static FP48D16 operator %(FP48D16 left, FP48D16 right) => new(left._v % right._v);

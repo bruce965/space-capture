@@ -80,7 +80,7 @@ partial class GameSimulation<TData>
                 {
                     Data = c,
                     Index = new() { Index = rules.Resources.Index().First(r => r.Item.Type == c.Type).Index },
-                    CostPerTick = c.Count / (FP48D16)ticks,
+                    CountPerTick = c.Count / (FP48D16)ticks,
                 }),
             ];
     }
@@ -124,7 +124,7 @@ partial class GameSimulation<TData>
     /// </summary>
     /// <param name="Data"><inheritdoc cref="ResourceCount" path="/summary"/></param>
     /// <param name="Index">Index of this resource in arrays.</param>
-    /// <param name="CostPerTick">How many resources of this type in one tick.</param>
+    /// <param name="CountPerTick">How many resources of this type in one tick.</param>
     [DebuggerDisplay($"{{{nameof(Data)},nq}}")]
-    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index, FP48D16 CostPerTick);
+    public readonly record struct ResourceCountCache(ResourceCount Data, ResourceTypeIndex Index, FP48D16 CountPerTick);
 }

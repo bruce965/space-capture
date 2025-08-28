@@ -250,27 +250,45 @@ public partial class GameSimulation<TData>
             // starvation, all structure types have equal chance to activate.
             foreach (ref Structure structure in current.Random.Shuffled(body.Structures.Span))
             {
+                int enoughResourcesFor = structure.ActiveCount;
+                if (enoughResourcesFor is 0)
+                    continue;
+
                 // Check how many active structures have enough resources to run.
-                int enoughResourcesForActiveCount = structure.ActiveCount;
                 foreach (ResourceCountCache resource in structure.TypeData.ActiveCost)
                 {
-                    int max = (int)(body.Resources[resource.Index].Count / resource.Data.Count);
-                    if (max < enoughResourcesForActiveCount)
-                        enoughResourcesForActiveCount = max;
-
-                    // TODO: take storage limits into consideration.
+                    int max = (int)(body.Resources[resource.Index].Count / resource.CountPerTick);
+                    enoughResourcesFor = Math.Min(enoughResourcesFor, max);
                 }
 
+                if (enoughResourcesFor is 0)
+                    continue;
+
+                // Ensure that there is enough space on the planet to store the products.
+                foreach (ResourceCountCache product in structure.TypeData.Produces)
+                {
+                    ref Resource r = ref body.Resources[product.Index];
+
+                    if (r.SoftLimit is not { } limit)
+                        continue;
+
+                    int max = (int)FP48D16.Ceiling((limit - r.Count) / product.CountPerTick);
+                    enoughResourcesFor = Math.Clamp(max, 0, enoughResourcesFor);
+                }
+
+                if (enoughResourcesFor is 0)
+                    continue;
+
                 // Use up resources.
-                foreach (ResourceCountCache resource in structure.TypeData.ActiveCost)
-                    body.Resources[resource.Index].Count -= resource.Data.Count * enoughResourcesForActiveCount;
+                foreach (ResourceCountCache cost in structure.TypeData.ActiveCost)
+                    body.Resources[cost.Index].Count -= cost.CountPerTick * enoughResourcesFor;
 
                 // Increase structure products.
-                foreach (ResourceCountCache resource in structure.TypeData.Produces)
-                    body.Resources[resource.Index].Count +=
-                        resource.Data.Count
-                        * enoughResourcesForActiveCount
-                        * body.Resources[resource.Index].Configuration.ProductionMultiplier;
+                foreach (ResourceCountCache product in structure.TypeData.Produces)
+                    body.Resources[product.Index].Count +=
+                        product.CountPerTick
+                        * enoughResourcesFor
+                        * body.Resources[product.Index].Configuration.ProductionMultiplier;
             }
         }
     }
@@ -361,12 +379,12 @@ public partial class GameSimulation<TData>
     {
         // Ensure that there are enough resources available.
         foreach (ResourceCountCache resource in resources)
-            if (body.Resources[resource.Index].Count < resource.CostPerTick)
+            if (body.Resources[resource.Index].Count < resource.CountPerTick)
                 return false;
 
         // Take the necessary resources.
         foreach (ResourceCountCache resource in resources)
-            body.Resources[resource.Index].Count -= resource.CostPerTick;
+            body.Resources[resource.Index].Count -= resource.CountPerTick;
 
         return true;
     }
@@ -411,7 +429,20 @@ public partial class GameSimulation<TData>
         )
             return false;
 
+        ref readonly StructureRuleCache rule = ref rules.Structures[structure.TypeData.Index];
+
         structure.ActiveCount++;
+
+        foreach (ResourceCountCache storedResource in rule.Stores)
+        {
+            ref Resource r = ref body.Resources[storedResource.Index];
+            r.SoftLimit += storedResource.Data.Count;
+            r.HardLimit += storedResource.Data.Count;
+
+            if (r.HardLimit is { } limit)
+                r.Count = FP48D16.Min(r.Count, limit);
+        }
+
         return true;
     }
 
@@ -433,8 +464,22 @@ public partial class GameSimulation<TData>
         if (structure.ActiveCount <= 0)
             return false;
 
+        ref readonly StructureRuleCache rule = ref rules.Structures[structure.TypeData.Index];
+
         structure.ActiveCount--;
-        AddResources(ref body, rules.Structures[structure.TypeData.Index].ActivationCost);
+
+        AddResources(ref body, rule.ActivationCost);
+
+        foreach (ResourceCountCache storedResource in rule.Stores)
+        {
+            ref Resource r = ref body.Resources[storedResource.Index];
+            r.SoftLimit -= storedResource.Data.Count;
+            r.HardLimit -= storedResource.Data.Count;
+
+            if (r.HardLimit is { } limit)
+                r.Count = FP48D16.Min(r.Count, limit);
+        }
+
         return true;
     }
 
