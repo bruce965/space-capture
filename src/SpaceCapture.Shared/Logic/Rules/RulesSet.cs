@@ -20,4 +20,9 @@ public partial class RulesSet : IImmutable
     /// Types of structures in this game.
     /// </summary>
     public ImmutableArray<StructureRule> Structures { get; init; } = [];
+
+    /// <summary>
+    /// Types of ship in this game.
+    /// </summary>
+    public ImmutableArray<ShipRule> Ships { get; init; } = [];
 }

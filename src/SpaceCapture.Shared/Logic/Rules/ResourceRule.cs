@@ -32,4 +32,9 @@ public readonly struct ResourceRule(ResourceType type) : IImmutable
     /// as there are some resources of this type left.
     /// </summary>
     public bool IsActive { get; init; }
+
+    /// <summary>
+    /// Forbid this resource to be stored as cargo on a ship.
+    /// </summary>
+    public bool DisallowCargo { get; init; }
 }
