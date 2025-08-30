@@ -10,19 +10,21 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 
 partial class GameSimulation<TData>
 {
-    public struct CelestialBody(RulesCache rules, CelestialBodyConfiguration configuration, CelestialBodyIndex index)
-        : ICloneable<CelestialBody>,
-            ITransferable<CelestialBody>
+    public struct CelestialBody(
+        GameSimulation<TData> game,
+        CelestialBodyConfiguration configuration,
+        CelestialBodyIndex index
+    ) : ICloneable<CelestialBody>, ITransferable<CelestialBody>
     {
-        RulesCache _rules = rules;
+        GameSimulation<TData> _game = game;
         CelestialBodyConfiguration _configuration = configuration;
         CelestialBodyIndex _index = index;
         PlayerIndex? _player;
-        Resource[] _resources = rules.Resources.Span.ToArray(r => new Resource(
+        Resource[] _resources = game._rules.Resources.Span.ToArray(r => new Resource(
             r,
             configuration.Resources.FirstOrDefault(c => c.Type == r.Rules.Type, new(r.Rules.Type))
         ));
-        Structure[] _structures = rules.Structures.Span.ToArray(s => new Structure(s));
+        Structure[] _structures = game._rules.Structures.Span.ToArray(s => new Structure(s));
         TData _data = default!;
         List<BuildQueueSlot>? _buildQueue;
 
@@ -36,9 +38,11 @@ partial class GameSimulation<TData>
             set => _data = value;
         }
 
+        public readonly GameSimulation<TData> Game => _game;
+
         public readonly CelestialBodyConfiguration Configuration => _configuration;
 
-        public CelestialBodyIndex Index => _index;
+        public readonly CelestialBodyIndex Index => _index;
 
         /// <summary>
         /// Index of the player that currently owns this celestial body.
@@ -53,13 +57,13 @@ partial class GameSimulation<TData>
         /// Resources on this celestial body.
         /// </summary>
         public readonly Accessor<Resource, ResourceType, ResourceTypeIndex> Resources =>
-            new(_resources, _rules._resourceTypeToIndex);
+            new(_resources, _game._rules._resourceTypeToIndex);
 
         /// <summary>
         /// Structures on this celestial body.
         /// </summary>
         public readonly Accessor<Structure, StructureType, StructureTypeIndex> Structures =>
-            new(_structures, _rules._structureTypeToIndex);
+            new(_structures, _game._rules._structureTypeToIndex);
 
         /// <summary>
         /// Build queue for structures.
@@ -70,7 +74,7 @@ partial class GameSimulation<TData>
         public readonly CelestialBody Clone() =>
             new()
             {
-                _rules = _rules,
+                _game = _game,
                 _configuration = _configuration,
                 _index = _index,
                 _player = _player,
@@ -82,7 +86,7 @@ partial class GameSimulation<TData>
 
         public void CopyFrom(CelestialBody other)
         {
-            _rules = other._rules;
+            _game = other._game;
             _configuration = other._configuration;
             _index = other._index;
             _player = other._player;

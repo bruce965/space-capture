@@ -4,6 +4,8 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using SpaceCapture.Shared.Logic.Actions;
+using SpaceCapture.Shared.Logic.Events;
 using SpaceCapture.Shared.Logic.Stage;
 using SpaceCapture.Shared.Types;
 using SpaceCapture.Shared.Utilities;
@@ -16,6 +18,7 @@ public class GameSimulation(GameStage stage) : GameSimulation<Empty>(stage);
 /// <summary>
 /// Executes all the game logic.
 /// </summary>
+/// <typeparam name="TData">Data associated to objects and actors in this simulation.</typeparam>
 public partial class GameSimulation<TData>
 {
     const long FarSnapshotTicks = GameConstants.TicksPerSecond * 60 * 5; // 5 minutes
@@ -44,15 +47,14 @@ public partial class GameSimulation<TData>
     public Accessor<CelestialBody, CelestialBodyIndex> CelestialBodies => Current.CelestialBodies;
 
     /// <summary>
-    /// Something happened in the game. This might also be an event that reverts
-    /// another event that occurred previously, for instance when executing an
-    /// action in the past invalidates another action that came afterwards.
+    /// Actions that have been executed or planned in the game simulation.
     /// </summary>
-    public event Action<GameEvent>? Event;
+    readonly List<GameAction> _actionsHistory;
 
-    readonly List<GameAction> _actionsHistory; // Executed or planned actions.
-
-    readonly List<GameEvent> _eventsHistory; // Occurred events, excluding cancelled.
+    /// <summary>
+    /// <see cref="Snapshot.ActionsCount"/> of the first item in <see cref="_actionsHistory"/>.
+    /// </summary>
+    int _actionsCountStart;
 
     /// <summary>
     /// Initialize a new simulation from the specified state.
@@ -67,7 +69,7 @@ public partial class GameSimulation<TData>
         _snapshots = [c, c.Clone(), c.Clone(), c.Clone(), c.Clone(), c.Clone()];
 
         _actionsHistory = new(65536);
-        _eventsHistory = new(65536);
+        _actionsCountStart = 0;
     }
 
     /// <summary>
@@ -76,19 +78,28 @@ public partial class GameSimulation<TData>
     /// </summary>
     public void Commit()
     {
-        _actionsHistory.RemoveRange(0, Current.ActionsCount);
-        _eventsHistory.RemoveRange(0, Current.EventsCount);
+        _actionsHistory.RemoveRange(0, Current.ActionsCount - _actionsCountStart);
+        _actionsCountStart = Current.ActionsCount;
+
+        CommitEvents();
 
         for (int i = 0; i < _snapshots.Length - 1; i++)
             _snapshots[i].CopyFrom(Current);
     }
 
     /// <summary>
-    /// Emit events to initialize the game stage.
+    /// Emit events to initialize an external game UI with all object and actors
+    /// currently in the game simulation.
     /// </summary>
     public void Initialize()
     {
-        // TODO
+        Event?.Invoke(new StageUpdateEvent(Current.Tick));
+
+        foreach (ref Player player in Players)
+            Event?.Invoke(new PlayerAddEvent(Current.Tick, player.Index.Index));
+
+        foreach (ref CelestialBody body in CelestialBodies)
+            Event?.Invoke(new CelestialBodyAddEvent(Current.Tick, body.Index.Index));
     }
 
     /// <summary>
@@ -102,9 +113,12 @@ public partial class GameSimulation<TData>
     public void ExecuteAction(GameAction action)
     {
         long currentTick = Current.Tick;
-        if (action.Tick < currentTick)
-            MoveClock(action.Tick);
 
+        // If this action is in the past, rollback time.
+        if (action.Tick < currentTick)
+            MoveClockHoldPendingEvents(action.Tick);
+
+        // Insert this action in the right spot in the timeline.
         bool done = false;
         for (int i = _actionsHistory.Count - 1; i >= 0; i--)
         {
@@ -119,24 +133,47 @@ public partial class GameSimulation<TData>
         if (!done)
             _actionsHistory.Insert(0, action);
 
+        // If this action was in the past, return to present time.
         if (action.Tick < currentTick)
-            MoveClock(currentTick);
+        {
+            MoveClockHoldPendingEvents(currentTick);
+            EmitPendingEvents(forceDiscardFutureEvents: false);
+        }
     }
 
     /// <summary>
     /// Move the clock back or forward to the specified tick.
     /// </summary>
-    /// <param name="tick"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public void MoveClock(long tick)
+    /// <remarks>
+    /// Moving the clock backwards emits counter-events that cancel all events
+    /// that would have happened after <paramref name="tick"/>.
+    /// </remarks>
+    /// <param name="forceDiscardFutureEvents"><inheritdoc cref="EmitPendingEvents" path="/param[@name='forceDiscardFutureEvents']"/></param>
+    /// <exception cref="ArgumentOutOfRangeException"><inheritdoc cref="MoveClockHoldPendingEvents" path="/exception[@cref='ArgumentOutOfRangeException']"/></exception>
+    public void MoveClock(long tick, bool forceDiscardFutureEvents)
     {
+        MoveClockHoldPendingEvents(tick);
+        EmitPendingEvents(forceDiscardFutureEvents);
+    }
+
+    /// <summary>
+    /// Move the clock back or forward to the specified tick, adding events to
+    /// the pending events queue.
+    /// </summary>
+    /// <param name="tick"></param>
+    /// <exception cref="ArgumentOutOfRangeException">Unable to rollback to before last commit or the start of the game.</exception>
+    void MoveClockHoldPendingEvents(long tick)
+    {
+        // Ensure there are no pending events at or after the target tick.
+        Debug.Assert(_pendingEvents.Count is 0 || _pendingEvents[^1].Tick < tick);
+
         // The requested tick is in the past, a rollback is necessary.
         if (tick < Current.Tick)
         {
             if (tick < Initial.Tick)
                 throw new ArgumentOutOfRangeException(
                     nameof(tick),
-                    "Unable to rollback to before the start of the game."
+                    "Unable to rollback to before last commit or the start of the game."
                 );
 
             for (int i = _snapshots.Length - 1; i >= 0; i--)
@@ -156,13 +193,22 @@ public partial class GameSimulation<TData>
 
         // Fast-forward to the requested tick.
         while (Current.Tick < tick)
-            TickClock();
+            TickClockHoldPendingEvents();
     }
 
     /// <summary>
     /// Advance the clock by one tick.
     /// </summary>
     public void TickClock()
+    {
+        TickClockHoldPendingEvents();
+        EmitPendingEvents(forceDiscardFutureEvents: false);
+    }
+
+    /// <summary>
+    /// Advance the clock by one tick, adding events to the pending events queue.
+    /// </summary>
+    void TickClockHoldPendingEvents()
     {
         // Step into the next tick.
         Current.Tick++;
@@ -195,11 +241,7 @@ public partial class GameSimulation<TData>
     static void ProcessActions(in RulesCache rules, ref Snapshot current, List<GameAction> history)
     {
         for (; current.ActionsCount < history.Count; current.ActionsCount++)
-        {
             ProcessAction(in rules, ref current, history[current.ActionsCount]);
-
-            // TODO: validate past events and revert the ones that are no longer valid.
-        }
     }
 
     /// <summary>
@@ -228,7 +270,7 @@ public partial class GameSimulation<TData>
                 break;
 
             default:
-                throw new NotImplementedException();
+                throw new NotImplementedException($"Unknown game action: {action.GetType().FullName}");
         }
     }
 

@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Godot;
-using SpaceCapture.Shared.Logic;
+using SpaceCapture.Shared.Logic.Actions;
 using SpaceCapture.Shared.Logic.Simulation;
 
 namespace SpaceCapture;

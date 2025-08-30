@@ -7,6 +7,20 @@ namespace SpaceCapture.Shared.Utilities;
 
 public static class EnumerableExtensions
 {
+    public static int FindIndex<T, TSource>(
+        this IReadOnlyList<TSource> source,
+        T data,
+        int startIndex,
+        Func<TSource, T, bool> match
+    )
+    {
+        for (int i = startIndex; i < source.Count; i++)
+            if (match(source[i], data))
+                return i;
+
+        return -1;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TResult[] ToArray<TSource, TResult>(
         this IReadOnlyList<TSource> source,

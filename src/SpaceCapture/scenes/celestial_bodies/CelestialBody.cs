@@ -4,7 +4,7 @@
 using System.Text;
 using Godot;
 using SpaceCapture.Shared;
-using SpaceCapture.Shared.Logic;
+using SpaceCapture.Shared.Logic.Actions;
 using SpaceCapture.Shared.Logic.Simulation;
 
 namespace SpaceCapture;
