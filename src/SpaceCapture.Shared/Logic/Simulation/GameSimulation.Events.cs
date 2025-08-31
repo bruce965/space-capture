@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Diagnostics;
 using SpaceCapture.Shared.Logic.Events;
 using SpaceCapture.Shared.Utilities;
 
@@ -8,25 +9,27 @@ namespace SpaceCapture.Shared.Logic.Simulation;
 
 partial class GameSimulation<TData>
 {
+    record struct GameEventData(long Tick, GameEvent Event);
+
     /// <summary>
     /// Something happened in the game. This might also be a counter-event that
     /// reverts en event that was emitted previously, for instance when
     /// executing an action in the past makes another later action invalid thus
     /// making the related future event never happen at all.
     /// </summary>
-    public event Action<GameEvent>? Event;
+    public event GameEventHandler? Event;
 
     /// <summary>
     /// Events that occurred in the game simulation, not emitted yet.
     /// </summary>
-    readonly List<GameEvent> _pendingEvents = [];
+    readonly List<GameEventData> _pendingEvents = [];
 
     /// <summary>
     /// Events that have been emitted, excluding events reverted by counter-events.
     /// If a rollback occurred, this list may include already-emitted events that
     /// may happen in the future and haven't been reverted by counter-events yet.
     /// </summary>
-    readonly List<GameEvent> _emittedEventsHistory = new(65536);
+    readonly List<GameEventData> _emittedEventsHistory = new(65536);
 
     /// <summary>
     /// <see cref="Snapshot.EventsCount"/> of the first item in <see cref="_emittedEventsHistory"/>.
@@ -43,7 +46,7 @@ partial class GameSimulation<TData>
     }
 
     /// <summary>
-    /// Emit events up to the current tick that haven't been emitted yet,
+    /// Emit events up to the current tick if they haven't been emitted yet,
     /// removing duplicates and producing counter-events for events that have
     /// already been emitted but are no longer valid due to changes in history.
     /// </summary>
@@ -81,18 +84,14 @@ partial class GameSimulation<TData>
         // invalidate all future events starting at the first mismatch in
         // chronological order. History has been rewritten!
         if (forceDiscardFutureEvents || iPresent != _pendingEvents.Count || iEmitted != Current.EventsCount)
-        {
             DiscardFutureEvents(iEmitted);
-            _pendingEvents.RemoveRange(iPresent, _pendingEvents.Count - iPresent);
-        }
 
         // Emit new events.
         for (int i = iPresent; i < _pendingEvents.Count; i++)
         {
-            if (Event is { } emit)
-                emit(_pendingEvents[i]);
-
+            Emit(_pendingEvents[i]);
             _emittedEventsHistory.Add(_pendingEvents[i]);
+            Current.EventsCount++;
         }
 
         _pendingEvents.Clear();
@@ -100,17 +99,9 @@ partial class GameSimulation<TData>
 
     void DiscardFutureEvents(int emittedEventsHistoryIndex)
     {
-        if (Event is { } emit)
-        {
-            // Revert all emitted events backwards starting at the specified index.
-            // TODO: ignore duplicates, such as two updates to the same entity.
-            // TODO: ignore invalid, such as updates to an entity that doesn't exist yet.
-            for (int i = _emittedEventsHistory.Count - 1; i >= emittedEventsHistoryIndex; i--)
-            {
-                GameEvent counterEvent = BuildCounterEvent(_emittedEventsHistory[i]);
-                emit(counterEvent);
-            }
-        }
+        // Revert all emitted events backwards starting at the specified index.
+        for (int i = _emittedEventsHistory.Count - 1; i >= emittedEventsHistoryIndex; i--)
+            Emit(_emittedEventsHistory[i], revert: true);
 
         _emittedEventsHistory.RemoveRange(
             emittedEventsHistoryIndex,
@@ -118,9 +109,15 @@ partial class GameSimulation<TData>
         );
     }
 
-    GameEvent BuildCounterEvent(GameEvent evt)
+    void AddPendingEvent(GameEvent ev) => _pendingEvents.Add(new(Current.Tick, ev));
+
+    void Emit(GameEventData data, bool revert = false)
     {
-        // TODO
-        return evt;
+        // Events should only be emitted in the present so that the consumer of
+        // has a chance to read the state of the simulation at time of emission.
+        // Unfortunately we lack this privilege when emitting counter-events.
+        Debug.Assert(data.Tick == Current.Tick || revert);
+
+        Event?.Invoke(data.Event, revert);
     }
 }

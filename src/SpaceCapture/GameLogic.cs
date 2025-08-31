@@ -41,6 +41,10 @@ public partial class GameLogic : Node
 
         Simulation.Commit();
 
+        Simulation.Event += (ev, revert) => GD.Print(revert ? $"Reverting event: {ev}" : $"Event: {ev}");
+
+        Simulation.Initialize();
+
         for (int i = 0; i < Simulation.CelestialBodies.Span.Length; i++)
         {
             ref var body = ref Simulation.CelestialBodies.Span[i];

@@ -159,34 +159,28 @@ public class MarkovChain
 
     public string Generate(ref DeterministicRandom rand)
     {
-        char[] result = ArrayPool<char>.Shared.Rent(_maxLength + 1);
-        try
+        using BufferLease<char> result = BufferPool.Rent<char>(_maxLength + 1);
+
+        while (true)
         {
-            while (true)
+            string current = Get(ref rand, _starters);
+            current.CopyTo(result);
+            int resultIndex = current.Length;
+
+            while (resultIndex <= _maxLength)
             {
-                string current = Get(ref rand, _starters);
-                current.CopyTo(result);
-                int resultIndex = current.Length;
-
-                while (resultIndex <= _maxLength)
+                char chr = Get(ref rand, _weights[current]);
+                if (chr == '\0')
                 {
-                    char chr = Get(ref rand, _weights[current]);
-                    if (chr == '\0')
-                    {
-                        if (resultIndex >= _minLength)
-                            return new(result[..resultIndex]);
+                    if (resultIndex >= _minLength)
+                        return new(result.Span[..resultIndex]);
 
-                        break;
-                    }
-
-                    result[resultIndex++] = chr;
-                    current = new(result, resultIndex - current.Length, current.Length);
+                    break;
                 }
+
+                result[resultIndex++] = chr;
+                current = new(result, resultIndex - current.Length, current.Length);
             }
-        }
-        finally
-        {
-            ArrayPool<char>.Shared.Return(result);
         }
     }
 

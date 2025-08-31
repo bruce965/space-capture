@@ -27,6 +27,7 @@ partial class GameSimulation<TData>
         Structure[] _structures = game._rules.Structures.Span.ToArray(s => new Structure(s));
         TData _data = default!;
         List<BuildQueueSlot>? _buildQueue;
+        bool _updatedDuringLastTick;
 
         /// <summary>
         /// Custom data attached to this celestial body.
@@ -70,6 +71,15 @@ partial class GameSimulation<TData>
         /// </summary>
         public List<BuildQueueSlot> BuildQueue => _buildQueue ??= [];
 
+        /// <summary>
+        /// Whether this celestial body was updated during last tick.
+        /// </summary>
+        public bool UpdatedDuringLastTick
+        {
+            readonly get => _updatedDuringLastTick;
+            set => _updatedDuringLastTick = value;
+        }
+
         /// <inheritdoc/>
         public readonly CelestialBody Clone() =>
             new()
@@ -82,6 +92,7 @@ partial class GameSimulation<TData>
                 _structures = _structures.DeepClone(),
                 _data = _data,
                 _buildQueue = _buildQueue?.DeepClone(),
+                _updatedDuringLastTick = _updatedDuringLastTick,
             };
 
         public void CopyFrom(CelestialBody other)
@@ -94,6 +105,7 @@ partial class GameSimulation<TData>
             TransferHelper.Copy(ref _structures, other._structures);
             _data = other._data;
             TransferHelper.Copy(ref _buildQueue, other._buildQueue);
+            _updatedDuringLastTick = other._updatedDuringLastTick;
         }
     }
 }

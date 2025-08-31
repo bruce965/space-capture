@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Buffers;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -93,13 +94,13 @@ public partial class GameSimulation<TData>
     /// </summary>
     public void Initialize()
     {
-        Event?.Invoke(new StageUpdateEvent(Current.Tick));
+        Event?.Invoke(new StageUpdateEvent());
 
         foreach (ref Player player in Players)
-            Event?.Invoke(new PlayerAddEvent(Current.Tick, player.Index.Index));
+            Event?.Invoke(new PlayerAddEvent(player.Index.Index));
 
         foreach (ref CelestialBody body in CelestialBodies)
-            Event?.Invoke(new CelestialBodyAddEvent(Current.Tick, body.Index.Index));
+            Event?.Invoke(new CelestialBodyAddEvent(body.Index.Index));
     }
 
     /// <summary>
@@ -116,7 +117,7 @@ public partial class GameSimulation<TData>
 
         // If this action is in the past, rollback time.
         if (action.Tick < currentTick)
-            MoveClockHoldPendingEvents(action.Tick);
+            MoveClock(action.Tick, forceDiscardFutureEvents: false);
 
         // Insert this action in the right spot in the timeline.
         bool done = false;
@@ -135,34 +136,20 @@ public partial class GameSimulation<TData>
 
         // If this action was in the past, return to present time.
         if (action.Tick < currentTick)
-        {
-            MoveClockHoldPendingEvents(currentTick);
-            EmitPendingEvents(forceDiscardFutureEvents: false);
-        }
+            MoveClock(currentTick, forceDiscardFutureEvents: false);
     }
 
     /// <summary>
     /// Move the clock back or forward to the specified tick.
     /// </summary>
     /// <remarks>
-    /// Moving the clock backwards emits counter-events that cancel all events
-    /// that would have happened after <paramref name="tick"/>.
+    /// Moving the clock backwards may emit counter-events that cancel all
+    /// events that would have happened after <paramref name="tick"/>.
     /// </remarks>
-    /// <param name="forceDiscardFutureEvents"><inheritdoc cref="EmitPendingEvents" path="/param[@name='forceDiscardFutureEvents']"/></param>
-    /// <exception cref="ArgumentOutOfRangeException"><inheritdoc cref="MoveClockHoldPendingEvents" path="/exception[@cref='ArgumentOutOfRangeException']"/></exception>
-    public void MoveClock(long tick, bool forceDiscardFutureEvents)
-    {
-        MoveClockHoldPendingEvents(tick);
-        EmitPendingEvents(forceDiscardFutureEvents);
-    }
-
-    /// <summary>
-    /// Move the clock back or forward to the specified tick, adding events to
-    /// the pending events queue.
-    /// </summary>
     /// <param name="tick"></param>
+    /// <param name="forceDiscardFutureEvents"><inheritdoc cref="EmitPendingEvents" path="/param[@name='forceDiscardFutureEvents']"/></param>
     /// <exception cref="ArgumentOutOfRangeException">Unable to rollback to before last commit or the start of the game.</exception>
-    void MoveClockHoldPendingEvents(long tick)
+    public void MoveClock(long tick, bool forceDiscardFutureEvents)
     {
         // Ensure there are no pending events at or after the target tick.
         Debug.Assert(_pendingEvents.Count is 0 || _pendingEvents[^1].Tick < tick);
@@ -193,7 +180,12 @@ public partial class GameSimulation<TData>
 
         // Fast-forward to the requested tick.
         while (Current.Tick < tick)
-            TickClockHoldPendingEvents();
+            TickClock();
+
+        Debug.Assert(_pendingEvents.Count is 0);
+
+        if (forceDiscardFutureEvents)
+            EmitPendingEvents(forceDiscardFutureEvents: true);
     }
 
     /// <summary>
@@ -201,17 +193,11 @@ public partial class GameSimulation<TData>
     /// </summary>
     public void TickClock()
     {
-        TickClockHoldPendingEvents();
-        EmitPendingEvents(forceDiscardFutureEvents: false);
-    }
-
-    /// <summary>
-    /// Advance the clock by one tick, adding events to the pending events queue.
-    /// </summary>
-    void TickClockHoldPendingEvents()
-    {
         // Step into the next tick.
         Current.Tick++;
+
+        // Mark all entities as not "updated during last tick".
+        ResetUpdateFlags();
 
         // Process actions.
         ProcessActions(in _rules, ref Current, _actionsHistory);
@@ -221,22 +207,51 @@ public partial class GameSimulation<TData>
         // TODO: resolve conflicts.
 
         // Produce resources on all celestial bodies that have factories.
-        ProcessStructures(in _rules, in Current);
+        ProcessStructures(in _rules, ref Current);
 
         // Repair damaged structures and process build queues.
-        ProcessBuildQueue(in _rules, in Current);
+        ProcessBuildQueue(in _rules, ref Current);
 
         // Take a "near" snapshot if enough time has passed since last one.
         ShiftSnapshots(NearSnapshotTicks, ref PrevNearSnapshot, ref NextNearSnapshot, ref Current);
 
         // Take a "far" snapshot if enough time has passed since last one.
         ShiftSnapshots(FarSnapshotTicks, ref PrevFarSnapshot, ref NextFarSnapshot, ref Current);
+
+        // Generate an update event for each entity that was "updated during last tick".
+        AddUpdateFlagEvents();
+
+        // Emit events produced during this tick.
+        EmitPendingEvents(forceDiscardFutureEvents: false);
+    }
+
+    /// <summary>
+    /// Reset <see cref="CelestialBody.UpdatedDuringLastTick"/>.
+    /// </summary>
+    /// <param name="current"></param>
+    void ResetUpdateFlags()
+    {
+        foreach (ref CelestialBody body in Current.CelestialBodies)
+            body.UpdatedDuringLastTick = false;
+    }
+
+    /// <summary>
+    /// Add a pending update event for each <see cref="CelestialBody.UpdatedDuringLastTick"/>.
+    /// </summary>
+    /// <param name="current"></param>
+    void AddUpdateFlagEvents()
+    {
+        foreach (ref CelestialBody body in Current.CelestialBodies)
+            if (body.UpdatedDuringLastTick)
+                AddPendingEvent(new CelestialBodyUpdateEvent(body.Index.Index));
     }
 
     /// <summary>
     /// Process all actions scheduled for the current tick.
     /// </summary>
+    /// <param name="rules"></param>
     /// <param name="current"></param>
+    /// <param name="changedCelestialBodies"></param>
     /// <param name="history"></param>
     static void ProcessActions(in RulesCache rules, ref Snapshot current, List<GameAction> history)
     {
@@ -247,6 +262,7 @@ public partial class GameSimulation<TData>
     /// <summary>
     /// Process a single action.
     /// </summary>
+    /// <param name="rules"></param>
     /// <param name="current"></param>
     /// <param name="action"></param>
     static void ProcessAction(in RulesCache rules, ref Snapshot current, GameAction action)
@@ -262,11 +278,19 @@ public partial class GameSimulation<TData>
                 break;
 
             case BuildStructureAction act:
-                current.CelestialBodies[act.CelestialBody].BuildQueue.Add(new(act.Structure));
+                ref CelestialBody b1 = ref current.CelestialBodies[act.CelestialBody];
+                b1.BuildQueue.Add(new(act.Structure));
+                b1.UpdatedDuringLastTick = true;
                 break;
 
             case ToggleRepairStructureAction act:
-                current.CelestialBodies[act.CelestialBody].Structures[act.Structure].RepairDamaged = act.Enabled;
+                ref CelestialBody b2 = ref current.CelestialBodies[act.CelestialBody];
+                ref Structure s1 = ref b2.Structures[act.Structure];
+                if (s1.RepairDamaged != act.Enabled)
+                {
+                    s1.RepairDamaged = act.Enabled;
+                    b2.UpdatedDuringLastTick = true;
+                }
                 break;
 
             default:
@@ -279,13 +303,13 @@ public partial class GameSimulation<TData>
     /// </summary>
     /// <param name="rules"></param>
     /// <param name="current"></param>
-    static void ProcessStructures(in RulesCache rules, in Snapshot current)
+    static void ProcessStructures(in RulesCache rules, ref Snapshot current)
     {
         Span<int> activeStructures = stackalloc int[rules.Rules.Structures.Length];
 
         // Iterate all celestial bodies. The order does not matter, each
         // celestial body is isolated from the others.
-        foreach (CelestialBody body in current.CelestialBodies)
+        foreach (ref CelestialBody body in current.CelestialBodies)
         {
             // For each celestial body, iterate all structure types at random.
             // Iterating randomly is necessary so that even in case of resource
@@ -321,6 +345,8 @@ public partial class GameSimulation<TData>
                 if (enoughResourcesFor is 0)
                     continue;
 
+                body.UpdatedDuringLastTick = true;
+
                 // Use up resources.
                 foreach (ResourceCountCache cost in structure.TypeData.ActiveCost)
                     body.Resources[cost.Index].Count -= cost.CountPerTick * enoughResourcesFor;
@@ -340,7 +366,7 @@ public partial class GameSimulation<TData>
     /// </summary>
     /// <param name="rules"></param>
     /// <param name="current"></param>
-    static void ProcessBuildQueue(in RulesCache rules, in Snapshot current)
+    static void ProcessBuildQueue(in RulesCache rules, ref Snapshot current)
     {
         // Iterate all celestial bodies. The order does not matter, each
         // celestial body is isolated from the others.
@@ -364,6 +390,8 @@ public partial class GameSimulation<TData>
                 // Repair.
                 structure.Damage = FP48D16.Max(0, structure.Damage - structure.TypeData.RepairedDamagePerTick);
 
+                body.UpdatedDuringLastTick = true;
+
                 somethingHasBeenRepaired = true;
                 break;
             }
@@ -382,6 +410,7 @@ public partial class GameSimulation<TData>
                 // Some structures cannot be built, in which case they are simply removed from the build queue.
                 if (structureRule.BuildCost is not { } buildCost)
                 {
+                    body.UpdatedDuringLastTick = true;
                     body.BuildQueue.RemoveAt(i--);
                     continue;
                 }
@@ -389,6 +418,8 @@ public partial class GameSimulation<TData>
                 // Make sure that there are enough resources to process one build tick for this structure.
                 if (!TryTakeResources(ref body, buildCost))
                     break;
+
+                body.UpdatedDuringLastTick = true;
 
                 // Increase the build progress and check if the build process is complete.
                 if (++build.Progress >= structureRule.Rules.BuildTicks)
@@ -443,10 +474,15 @@ public partial class GameSimulation<TData>
         {
             ref Resource r = ref body.Resources[resource.Index];
 
+            FP48D16 initialCount = r.Count;
+
             r.Count += resource.Data.Count;
 
             if (r.Configuration.HardLimit is { } limit && r.Count > limit)
                 r.Count = limit;
+
+            if (r.Count != initialCount)
+                body.UpdatedDuringLastTick = true;
         }
     }
 
@@ -485,6 +521,8 @@ public partial class GameSimulation<TData>
                 r.Count = FP48D16.Min(r.Count, limit);
         }
 
+        body.UpdatedDuringLastTick = true;
+
         return true;
     }
 
@@ -521,6 +559,8 @@ public partial class GameSimulation<TData>
             if (r.HardLimit is { } limit)
                 r.Count = FP48D16.Min(r.Count, limit);
         }
+
+        body.UpdatedDuringLastTick = true;
 
         return true;
     }

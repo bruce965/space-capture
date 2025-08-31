@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System.Diagnostics.CodeAnalysis;
 using SpaceCapture.Shared.Logic.Simulation;
 
 namespace SpaceCapture.Shared.Logic.Events;
@@ -12,16 +13,16 @@ namespace SpaceCapture.Shared.Logic.Events;
 public abstract class GameEventListener<TData> : IDisposable
 {
     readonly GameSimulation<TData> _game;
-    readonly Action<GameEvent> _listener;
+    readonly GameEventHandler _handler;
 
     bool _disposed;
 
     public GameEventListener(GameSimulation<TData> game)
     {
         _game = game;
-        _listener = ProcessEvent;
+        _handler = HandleEvent;
 
-        _game.Event += _listener;
+        _game.Event += _handler;
     }
 
     protected virtual void Dispose(bool disposing)
@@ -29,7 +30,7 @@ public abstract class GameEventListener<TData> : IDisposable
         if (!_disposed)
         {
             if (disposing)
-                _game.Event -= _listener;
+                _game.Event -= _handler;
 
             _disposed = true;
         }
@@ -41,17 +42,19 @@ public abstract class GameEventListener<TData> : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void ProcessEvent(GameEvent ev)
+    protected virtual void HandleEvent(GameEvent ev, bool revert = false)
     {
         switch (ev)
         {
             #region Add
 
             case PlayerAddEvent evt:
+                ThrowNotSupportedIfReverting(evt, revert);
                 AddPlayer(ref _game.Players[new() { Index = evt.Index }]);
                 break;
 
             case CelestialBodyAddEvent evt:
+                ThrowNotSupportedIfReverting(evt, revert);
                 AddCelestialBody(ref _game.CelestialBodies[new() { Index = evt.Index }]);
                 break;
 
@@ -59,7 +62,7 @@ public abstract class GameEventListener<TData> : IDisposable
 
             #region Update
 
-            case StageUpdateEvent evt:
+            case StageUpdateEvent:
                 UpdateStage(_game);
                 break;
 
@@ -75,19 +78,17 @@ public abstract class GameEventListener<TData> : IDisposable
 
             #region Remove
 
-            case PlayerRemoveEvent evt:
-                // TODO: RemovePlayer(TODO);
-                break;
-
-            case CelestialBodyRemoveEvent evt:
-                // TODO: RemoveCelestialBody(TODO);
-                break;
-
             #endregion
 
             default:
-                throw new NotImplementedException($"Unknown game action: {ev.GetType().FullName}");
+                throw new NotImplementedException($"Unknown game event: {ev.GetType().FullName}");
         }
+    }
+
+    static void ThrowNotSupportedIfReverting(GameEvent ev, [DoesNotReturnIf(true)] bool revert)
+    {
+        if (revert)
+            throw new NotSupportedException($"Game event does not support revert: {ev.GetType().FullName}");
     }
 
     #region Add
@@ -130,18 +131,6 @@ public abstract class GameEventListener<TData> : IDisposable
     #endregion
 
     #region Remove
-
-    /// <summary>
-    /// A player left the game.
-    /// </summary>
-    /// <param name="player"></param>
-    public abstract void RemovePlayer(ref readonly GameSimulation<TData>.Player player);
-
-    /// <summary>
-    /// A celestial body is no longer part of the game.
-    /// </summary>
-    /// <param name="body"></param>
-    public abstract void RemoveCelestialBody(ref readonly GameSimulation<TData>.CelestialBody body);
 
     #endregion
 }

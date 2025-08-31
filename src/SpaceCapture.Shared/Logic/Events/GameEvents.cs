@@ -3,18 +3,17 @@
 
 namespace SpaceCapture.Shared.Logic.Events;
 
-public abstract record class GameEvent(long Tick);
+/// <summary>
+/// Describes an event that happened in the game.
+/// </summary>
+public abstract record class GameEvent;
 
-public record class PlayerAddEvent(long Tick, int Index) : GameEvent(Tick);
+public record class PlayerAddEvent(int Index) : GameEvent;
 
-public record class CelestialBodyAddEvent(long Tick, int Index) : GameEvent(Tick);
+public record class CelestialBodyAddEvent(int Index) : GameEvent;
 
-public record class StageUpdateEvent(long Tick) : GameEvent(Tick);
+public record class StageUpdateEvent : GameEvent;
 
-public record class PlayerUpdateEvent(long Tick, int Index) : GameEvent(Tick);
+public record class PlayerUpdateEvent(int Index) : GameEvent;
 
-public record class CelestialBodyUpdateEvent(long Tick, int Index) : GameEvent(Tick);
-
-public record class PlayerRemoveEvent(long Tick, int Index) : GameEvent(Tick);
-
-public record class CelestialBodyRemoveEvent(long Tick, int Index) : GameEvent(Tick);
+public record class CelestialBodyUpdateEvent(int Index) : GameEvent;

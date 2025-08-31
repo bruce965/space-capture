@@ -5,6 +5,7 @@ using System.Buffers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SpaceCapture.Shared.Abstractions;
+using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture.Shared.Types;
 
@@ -19,11 +20,10 @@ public readonly struct Vector2<T>(T x, T y) : IImmutable
 
         public override void Write(Utf8JsonWriter writer, Vector2<T> value, JsonSerializerOptions options)
         {
-            T[] v = ArrayPool<T>.Shared.Rent(2);
+            using BufferLease<T> v = BufferPool.Rent<T>(2);
             v[0] = value.X;
             v[1] = value.Y;
-            JsonSerializer.Serialize(writer, (ReadOnlyMemory<T>)v.AsMemory(0, 2), options);
-            ArrayPool<T>.Shared.Return(v);
+            JsonSerializer.Serialize<ReadOnlyMemory<T>>(writer, v, options);
         }
     }
 
