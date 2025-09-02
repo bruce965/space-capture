@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dr8pb2ip0k08j"
-path="res://.godot/imported/albedo.png-8a78945f5bd4a32224e2d37d675babbb.ctex"
+uid="uid://bf617xxld2dm"
+path="res://.godot/imported/albedo_star.png-827a021b732b9023a85306cff83c39a4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://old/scenes/procedural_planet/albedo.png"
-dest_files=["res://.godot/imported/albedo.png-8a78945f5bd4a32224e2d37d675babbb.ctex"]
+source_file="res://scenes/celestial_bodies/albedo_star.png"
+dest_files=["res://.godot/imported/albedo_star.png-827a021b732b9023a85306cff83c39a4.ctex"]
 
 [params]
 

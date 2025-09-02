@@ -1,6 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://0qu0jgvo01su"]
+[gd_scene load_steps=12 format=3 uid="uid://0qu0jgvo01su"]
 
 [ext_resource type="PackedScene" uid="uid://m7w4u8ogp4fq" path="res://scenes/celestial_bodies/celestial_body.tscn" id="1_67xe4"]
+[ext_resource type="Shader" uid="uid://busav7g7kea12" path="res://scenes/celestial_bodies/procedural_planet.gdshader" id="3_u1jcb"]
+[ext_resource type="Texture2D" uid="uid://dr8pb2ip0k08j" path="res://scenes/celestial_bodies/albedo_terra.png" id="4_g7t11"]
+[ext_resource type="Script" uid="uid://di3bf3mexocfj" path="res://scenes/celestial_bodies/ProceduralPlanet.cs" id="4_u1jcb"]
 
 [sub_resource type="Shader" id="Shader_eepe1"]
 code = "shader_type canvas_item;
@@ -13,15 +16,51 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_p7n6x"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mn7pw"]
 shader = SubResource("Shader_eepe1")
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_lgb2n"]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fbth1"]
 size = Vector2(8, 8)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xihql"]
+fractal_octaves = 8
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_bt5w2"]
+width = 256
+height = 256
+depth = 256
+seamless = true
+noise = SubResource("FastNoiseLite_xihql")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_25177"]
+resource_local_to_scene = true
+shader = ExtResource("3_u1jcb")
+shader_parameter/noise = SubResource("NoiseTexture3D_bt5w2")
+shader_parameter/size = 50.0
+shader_parameter/rotationSpeed = 0.05
+shader_parameter/albedo = ExtResource("4_g7t11")
+shader_parameter/emissive = false
+shader_parameter/fluidity = 0.0
+shader_parameter/atmosphereColor = Color(0, 0.3, 1, 0.3)
+shader_parameter/atmosphereSize = 0.3
+shader_parameter/cloudsSize = 0.05
+shader_parameter/cloudsDensity = 0.22
+shader_parameter/cloudsTurbulence = 0.01
+shader_parameter/windSpeed = 0.03
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ipvyw"]
+size = Vector2(2, 2)
 
 [node name="Terra" instance=ExtResource("1_67xe4")]
 
 [node name="Sprite" type="Sprite2D" parent="." index="0"]
-material = SubResource("ShaderMaterial_p7n6x")
+visible = false
+material = SubResource("ShaderMaterial_mn7pw")
 scale = Vector2(6, 6)
-texture = SubResource("PlaceholderTexture2D_lgb2n")
+texture = SubResource("PlaceholderTexture2D_fbth1")
+
+[node name="ProceduralPlanet" type="Sprite2D" parent="." index="1"]
+material = SubResource("ShaderMaterial_25177")
+scale = Vector2(50, 50)
+texture = SubResource("PlaceholderTexture2D_ipvyw")
+script = ExtResource("4_u1jcb")

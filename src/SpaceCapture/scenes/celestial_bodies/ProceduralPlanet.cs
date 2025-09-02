@@ -34,6 +34,29 @@ public partial class ProceduralPlanet : Node2D
         set => ((ShaderMaterial)Material).SetShaderParameter("rotationSpeed", value);
     }
 
+    [ExportGroup("Star")]
+    /// <summary>
+    /// Whether this body is emissive, like a star.
+    /// </summary>
+    /// <value></value>
+    [Export]
+    public bool Emissive
+    {
+        get => ((ShaderMaterial)Material).GetShaderParameter("emissive").AsBool();
+        set => ((ShaderMaterial)Material).SetShaderParameter("emissive", value);
+    }
+
+    /// <summary>
+    /// Fluidity of the mantle.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001")]
+    public float Fluidity
+    {
+        get => (float)((ShaderMaterial)Material).GetShaderParameter("emissive").AsDouble();
+        set => ((ShaderMaterial)Material).SetShaderParameter("emissive", value);
+    }
+
     [ExportGroup("Weather")]
     /// <summary>
     /// Size of clouds between 0 (no clouds) and 1 (covered in clouds completely).
@@ -104,15 +127,18 @@ public partial class ProceduralPlanet : Node2D
 
     public override void _Ready()
     {
-        Size = 100f;
-        RotationSpeed = .05f;
+        //Size = 100f;
+        //RotationSpeed = .05f;
 
-        CloudsSize = .05f;
-        CloudDensity = .22f;
-        CloudTurbulence = .01f;
-        WindSpeed = .22f;
+        //Emissive = false;
+        //Fluidity = 0f;
 
-        AtmosphereSize = .3f;
-        AtmosphereColor = new(0f, .3f, 1f, .3f);
+        //CloudsSize = .05f;
+        //CloudDensity = .22f;
+        //CloudTurbulence = .01f;
+        //WindSpeed = 0.03f;
+
+        //AtmosphereSize = .3f;
+        //AtmosphereColor = new(0f, .3f, 1f, .3f);
     }
 }
