@@ -1,8 +1,9 @@
-[gd_resource type="Resource" load_steps=13 format=3 uid="uid://bwlojf7gxqdql"]
+[gd_resource type="Resource" load_steps=14 format=3 uid="uid://bwlojf7gxqdql"]
 
 [ext_resource type="PackedScene" uid="uid://ku6vttanajtg" path="res://scenes/celestial_bodies/yellow_dwarf.tscn" id="1_p4e56"]
 [ext_resource type="Script" uid="uid://cijv5ci7fv0ec" path="res://scenes/templates/Templates.cs" id="1_r20rn"]
 [ext_resource type="PackedScene" uid="uid://0qu0jgvo01su" path="res://scenes/celestial_bodies/terra.tscn" id="2_naxym"]
+[ext_resource type="PackedScene" uid="uid://dpjfkhhejyvjf" path="res://scenes/celestial_bodies/gas_giant.tscn" id="3_clktv"]
 [ext_resource type="Texture2D" uid="uid://1xh0qil16bkh" path="res://ui/icons/character.svg" id="3_hhj7d"]
 [ext_resource type="Texture2D" uid="uid://dvm8dj0sxw5ij" path="res://ui/icons/resource_wheat.svg" id="4_8nfxm"]
 [ext_resource type="Texture2D" uid="uid://2odmhcbf0lf2" path="res://ui/icons/resource_iron.svg" id="5_d6nyd"]
@@ -17,7 +18,8 @@
 script = ExtResource("1_r20rn")
 _celestialBodies = Dictionary[int, PackedScene]({
 0: ExtResource("1_p4e56"),
-1: ExtResource("2_naxym")
+1: ExtResource("2_naxym"),
+2: ExtResource("3_clktv")
 })
 _resourceIcons = Dictionary[int, Texture2D]({
 0: ExtResource("3_hhj7d"),

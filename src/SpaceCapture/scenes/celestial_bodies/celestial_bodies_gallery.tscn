@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://b1rguvlydf6q8"]
+
+[ext_resource type="PackedScene" uid="uid://b0ec8jbenscpp" path="res://scenes/backgrounds/stars.tscn" id="1_2i5nb"]
+[ext_resource type="PackedScene" uid="uid://ku6vttanajtg" path="res://scenes/celestial_bodies/yellow_dwarf.tscn" id="1_ldbrk"]
+[ext_resource type="PackedScene" uid="uid://0qu0jgvo01su" path="res://scenes/celestial_bodies/terra.tscn" id="2_ng0ol"]
+[ext_resource type="PackedScene" uid="uid://dtlatmtuggp6x" path="res://scenes/backgrounds/nebula.tscn" id="2_s5hit"]
+[ext_resource type="PackedScene" uid="uid://dpjfkhhejyvjf" path="res://scenes/celestial_bodies/gas_giant.tscn" id="3_2i5nb"]
+
+[node name="CelestialBodiesGallery" type="Node"]
+
+[node name="Stars" parent="." instance=ExtResource("1_2i5nb")]
+metadata/_edit_lock_ = true
+
+[node name="Nebula" parent="." instance=ExtResource("2_s5hit")]
+metadata/_edit_lock_ = true
+
+[node name="YellowDwarf" parent="." instance=ExtResource("1_ldbrk")]
+position = Vector2(118, 122)
+
+[node name="Terra" parent="." instance=ExtResource("2_ng0ol")]
+position = Vector2(265, 72)
+
+[node name="GasGiant" parent="." instance=ExtResource("3_2i5nb")]
+position = Vector2(344, 116)

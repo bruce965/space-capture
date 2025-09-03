@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: Copyright 2024 Fabio Iotti
 // SPDX-License-Identifier: AGPL-3.0-only
 
+using System;
 using Godot;
+using SpaceCapture.Shared;
+using SpaceCapture.Shared.Logic.Stage;
+using SpaceCapture.Shared.Utilities;
 
 namespace SpaceCapture;
 
@@ -9,30 +13,44 @@ public partial class ProceduralPlanet : Node2D
 {
     [ExportGroup("Planet")]
     /// <summary>
-    /// Size of the planet in pixels.
+    /// Minimum size of the planet in pixels.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "30,500,.001,or_greater,or_less")]
-    public float Size
-    {
-        get => Scale.X;
-        set
-        {
-            Scale = value * Vector2.One;
-            ((ShaderMaterial)Material).SetShaderParameter("size", value);
-        }
-    }
+    public float MinSize { get; set; } = 30;
 
     /// <summary>
-    /// Rotation speed of the planet in rad/sec.
+    /// Maximum size of the planet in pixels.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "30,500,.001,or_greater,or_less")]
+    public float MaxSize { get; set; } = 500;
+
+    /// <summary>
+    /// Minimum rotation of the planet in deg.
+    /// </summary>
+    [Export(PropertyHint.Range, "30,360,.001")]
+    public float MinTilt { get; set; } = 0;
+
+    /// <summary>
+    /// Maximum rotation of the planet in deg.
+    /// </summary>
+    [Export(PropertyHint.Range, "30,360,.001")]
+    public float MaxTilt { get; set; } = 0;
+
+    /// <summary>
+    /// Minimum rotation speed of the planet in rad/sec.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001,or_greater,or_less")]
-    public float RotationSpeed
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("rotationSpeed").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("rotationSpeed", value);
-    }
+    public float MinRotationSpeed { get; set; } = 0;
+
+    /// <summary>
+    /// Maximum rotation speed of the planet in rad/sec.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001,or_greater,or_less")]
+    public float MaxRotationSpeed { get; set; } = 1;
 
     [ExportGroup("Star")]
     /// <summary>
@@ -40,105 +58,154 @@ public partial class ProceduralPlanet : Node2D
     /// </summary>
     /// <value></value>
     [Export]
-    public bool Emissive
-    {
-        get => ((ShaderMaterial)Material).GetShaderParameter("emissive").AsBool();
-        set => ((ShaderMaterial)Material).SetShaderParameter("emissive", value);
-    }
+    public bool Emissive { get; set; }
 
     /// <summary>
-    /// Fluidity of the mantle.
+    /// Minimum fluidity of the mantle.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001")]
-    public float Fluidity
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("emissive").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("emissive", value);
-    }
+    public float MinFluidity { get; set; } = 0;
+
+    /// <summary>
+    /// Maximum fluidity of the mantle.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001")]
+    public float MaxFluidity { get; set; } = 1;
 
     [ExportGroup("Weather")]
     /// <summary>
-    /// Size of clouds between 0 (no clouds) and 1 (covered in clouds completely).
+    /// Minimum size of clouds between 0 (no clouds) and 1 (covered in clouds completely).
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001,or_greater,or_less")]
-    public float CloudsSize
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("cloudsSize").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("cloudsSize", value);
-    }
+    public float MinCloudsSize { get; set; } = 0;
 
     /// <summary>
-    /// Density of clouds between 0 (very thin) and 1 (very thick).
+    /// Maximum size of clouds between 0 (no clouds) and 1 (covered in clouds completely).
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001,or_greater,or_less")]
-    public float CloudDensity
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("cloudsDensity").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("cloudsDensity", value);
-    }
+    public float MaxCloudsSize { get; set; } = 1;
 
     /// <summary>
-    /// How often clouds change shape.
+    /// Minimum density of clouds between 0 (very thin) and 1 (very thick).
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001,or_greater,or_less")]
+    public float MinCloudsDensity { get; set; } = 0;
+
+    /// <summary>
+    /// Maximum density of clouds between 0 (very thin) and 1 (very thick).
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001,or_greater,or_less")]
+    public float MaxCloudsDensity { get; set; } = 1;
+
+    /// <summary>
+    /// Minimum value of how often clouds change shape.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001,or_greater")]
-    public float CloudTurbulence
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("cloudsTurbulence").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("cloudsTurbulence", value);
-    }
+    public float MinCloudsTurbulence { get; set; } = 0;
 
     /// <summary>
-    /// Wind speed in rad/sec.
+    /// Maximum value of how often clouds change shape.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001,or_greater")]
-    public float WindSpeed
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("windSpeed").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("windSpeed", value);
-    }
+    public float MaxCloudsTurbulence { get; set; } = 1;
+
+    /// <summary>
+    /// Minimum wind speed in rad/sec.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001,or_greater")]
+    public float MinWindSpeed { get; set; } = 0;
+
+    /// <summary>
+    /// Maximum wind speed in rad/sec.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001,or_greater")]
+    public float MaxWindSpeed { get; set; } = 1;
 
     [ExportGroup("Atmosphere")]
     /// <summary>
-    /// Size of the atmosphere halo around the planet.
+    /// Minimum size of the atmosphere halo around the planet.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001")]
-    public float AtmosphereSize
-    {
-        get => (float)((ShaderMaterial)Material).GetShaderParameter("atmosphereSize").AsDouble();
-        set => ((ShaderMaterial)Material).SetShaderParameter("atmosphereSize", value);
-    }
+    public float MinAtmosphereSize { get; set; } = 0;
 
     /// <summary>
-    /// Size of the atmosphere halo around the planet.
+    /// Maximum size of the atmosphere halo around the planet.
     /// </summary>
     /// <value></value>
     [Export(PropertyHint.Range, "0,1,.001")]
-    public Color AtmosphereColor
+    public float MaxAtmosphereSize { get; set; } = 1;
+
+    /// <summary>
+    /// Range of possible colors of the atmosphere halo around the planet.
+    /// </summary>
+    /// <value></value>
+    [Export(PropertyHint.Range, "0,1,.001")]
+    public Gradient AtmosphereColorRange { get; set; }
+
+    public void Initialize(CelestialBodyType type, CelestialBodyConfiguration configuration, DeterministicRandom seed)
     {
-        get => ((ShaderMaterial)Material).GetShaderParameter("atmosphereColor").AsColor();
-        set => ((ShaderMaterial)Material).SetShaderParameter("atmosphereColor", value);
+        // Always generate all properties at random without skipping any, to preserve determinism.
+        CelestialBodyClass randClass = seed.Pick(type.GetClasses().AsSpan());
+        float randSize = RandFloat(ref seed, MinSize, MaxSize);
+        float randTilt = RandFloat(ref seed, MinTilt, MaxTilt);
+        float randRotationSpeed = RandFloat(ref seed, MinRotationSpeed, MaxRotationSpeed);
+        float randFluidity = RandFloat(ref seed, MinFluidity, MaxFluidity);
+        float randCloudsSize = RandFloat(ref seed, MinCloudsSize, MaxCloudsSize);
+        float randCloudsDensity = RandFloat(ref seed, MinCloudsDensity, MaxCloudsDensity);
+        float randCloudsTurbulence = RandFloat(ref seed, MinCloudsTurbulence, MaxCloudsTurbulence);
+        float randWindSpeed = RandFloat(ref seed, MinWindSpeed, MaxWindSpeed);
+        float randAtmosphereSize = RandFloat(ref seed, MinAtmosphereSize, MaxAtmosphereSize);
+        float randAtmosphereColor = RandFloat(ref seed, 0, 1);
+
+        int noiseSeed = seed.Next();
+
+        // Get the actual values (either random or overridden by the configuration).
+        CelestialBodyClass _ = configuration.Class ?? randClass;
+        float size = (float?)configuration.Size ?? randSize;
+        float tilt = (float?)configuration.Tilt ?? randTilt;
+        float rotationSpeed = (float?)configuration.RotationSpeed ?? randRotationSpeed;
+        float fluidity = (float?)configuration.Fluidity ?? randFluidity;
+        float cloudsSize = (float?)configuration.CloudsSize ?? randCloudsSize;
+        float cloudsDensity = (float?)configuration.CloudsDensity ?? randCloudsDensity;
+        float cloudsTurbulence = (float?)configuration.CloudsTurbulence ?? randCloudsTurbulence;
+        float windSpeed = (float?)configuration.WindSpeed ?? randWindSpeed;
+        float atmosphereSize = (float?)configuration.AtmosphereSize ?? randAtmosphereSize;
+        Color atmosphereColor = configuration.AtmosphereColor is { } c
+            ? new(c.Rgba)
+            : AtmosphereColorRange.Sample(randAtmosphereColor);
+
+        // Assign properties to the Godot node.
+        Scale = size * Vector2.One;
+        RotationDegrees = tilt;
+
+        ShaderMaterial material = (ShaderMaterial)Material;
+        material.SetShaderParameter("size", size);
+        material.SetShaderParameter("rotationSpeed", rotationSpeed);
+        material.SetShaderParameter("emissive", Emissive);
+        material.SetShaderParameter("fluidity", fluidity);
+        material.SetShaderParameter("cloudsSize", cloudsSize);
+        material.SetShaderParameter("cloudsDensity", cloudsDensity);
+        material.SetShaderParameter("cloudsTurbulence", cloudsTurbulence);
+        material.SetShaderParameter("windSpeed", windSpeed);
+        material.SetShaderParameter("atmosphereSize", atmosphereSize);
+        material.SetShaderParameter("atmosphereColor", atmosphereColor);
+
+        NoiseTexture3D noiseTexture = (NoiseTexture3D)material.GetShaderParameter("noise");
+        FastNoiseLite noise = (FastNoiseLite)noiseTexture.Noise;
+        noise.Seed = noiseSeed;
     }
 
-    public override void _Ready()
-    {
-        //Size = 100f;
-        //RotationSpeed = .05f;
-
-        //Emissive = false;
-        //Fluidity = 0f;
-
-        //CloudsSize = .05f;
-        //CloudDensity = .22f;
-        //CloudTurbulence = .01f;
-        //WindSpeed = 0.03f;
-
-        //AtmosphereSize = .3f;
-        //AtmosphereColor = new(0f, .3f, 1f, .3f);
-    }
+    static float RandFloat(ref DeterministicRandom seed, float min, float max) =>
+        min + (float)seed.Next() / int.MaxValue * (max - min);
 }

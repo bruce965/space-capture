@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bf617xxld2dm"
-path="res://.godot/imported/albedo_star.png-827a021b732b9023a85306cff83c39a4.ctex"
+uid="uid://cy2yyxpq60uji"
+path="res://.godot/imported/color_gas_giant.png-b0c773b59727b8275bcbe9b665266369.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/celestial_bodies/albedo_star.png"
-dest_files=["res://.godot/imported/albedo_star.png-827a021b732b9023a85306cff83c39a4.ctex"]
+source_file="res://scenes/celestial_bodies/colors/color_gas_giant.png"
+dest_files=["res://.godot/imported/color_gas_giant.png-b0c773b59727b8275bcbe9b665266369.ctex"]
 
 [params]
 

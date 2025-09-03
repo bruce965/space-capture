@@ -1,8 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://0qu0jgvo01su"]
+[gd_scene load_steps=13 format=3 uid="uid://0qu0jgvo01su"]
 
 [ext_resource type="PackedScene" uid="uid://m7w4u8ogp4fq" path="res://scenes/celestial_bodies/celestial_body.tscn" id="1_67xe4"]
 [ext_resource type="Shader" uid="uid://busav7g7kea12" path="res://scenes/celestial_bodies/procedural_planet.gdshader" id="3_u1jcb"]
-[ext_resource type="Texture2D" uid="uid://dr8pb2ip0k08j" path="res://scenes/celestial_bodies/albedo_terra.png" id="4_g7t11"]
+[ext_resource type="Texture2D" uid="uid://dr8pb2ip0k08j" path="res://scenes/celestial_bodies/colors/color_terra.png" id="4_g7t11"]
 [ext_resource type="Script" uid="uid://di3bf3mexocfj" path="res://scenes/celestial_bodies/ProceduralPlanet.cs" id="4_u1jcb"]
 
 [sub_resource type="Shader" id="Shader_eepe1"]
@@ -22,20 +22,20 @@ shader = SubResource("Shader_eepe1")
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fbth1"]
 size = Vector2(8, 8)
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_xihql"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_u1jcb"]
 fractal_octaves = 8
 
-[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_bt5w2"]
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_g7t11"]
 width = 256
 height = 256
 depth = 256
 seamless = true
-noise = SubResource("FastNoiseLite_xihql")
+noise = SubResource("FastNoiseLite_u1jcb")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_25177"]
 resource_local_to_scene = true
 shader = ExtResource("3_u1jcb")
-shader_parameter/noise = SubResource("NoiseTexture3D_bt5w2")
+shader_parameter/noise = SubResource("NoiseTexture3D_g7t11")
 shader_parameter/size = 50.0
 shader_parameter/rotationSpeed = 0.05
 shader_parameter/albedo = ExtResource("4_g7t11")
@@ -51,7 +51,11 @@ shader_parameter/windSpeed = 0.03
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ipvyw"]
 size = Vector2(2, 2)
 
-[node name="Terra" instance=ExtResource("1_67xe4")]
+[sub_resource type="Gradient" id="Gradient_u1jcb"]
+colors = PackedColorArray(0, 0.3, 1, 0.3, 0, 0.3, 0.5, 0.3)
+
+[node name="Terra" node_paths=PackedStringArray("_planet") instance=ExtResource("1_67xe4")]
+_planet = NodePath("ProceduralPlanet")
 
 [node name="Sprite" type="Sprite2D" parent="." index="0"]
 visible = false
@@ -64,3 +68,16 @@ material = SubResource("ShaderMaterial_25177")
 scale = Vector2(50, 50)
 texture = SubResource("PlaceholderTexture2D_ipvyw")
 script = ExtResource("4_u1jcb")
+MaxSize = 80.0
+MinRotationSpeed = 0.03
+MaxRotationSpeed = 0.2
+MaxFluidity = 0.0
+MinCloudsSize = 0.01
+MaxCloudsSize = 0.1
+MinCloudsDensity = 0.1
+MaxCloudsDensity = 0.3
+MaxCloudsTurbulence = 0.03
+MaxWindSpeed = 0.1
+MinAtmosphereSize = 0.2
+MaxAtmosphereSize = 0.4
+AtmosphereColorRange = SubResource("Gradient_u1jcb")

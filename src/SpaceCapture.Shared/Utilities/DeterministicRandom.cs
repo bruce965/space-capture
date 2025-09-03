@@ -26,7 +26,7 @@ public struct DeterministicRandom
         IUtf8SpanFormattable
 {
     [InlineArray(4)]
-    struct UInt32Buffer4
+    internal struct UInt32Buffer4
     {
         uint _element;
     }
@@ -66,7 +66,17 @@ public struct DeterministicRandom
         Random.Shared.NextBytes(MemoryMarshal.AsBytes<uint>(_buffer));
     }
 
-    DeterministicRandom(UInt32Buffer4 buffer) => _buffer = buffer;
+    internal DeterministicRandom(UInt32Buffer4 buffer) => _buffer = buffer;
+
+    internal DeterministicRandom(uint a, uint b, uint c, uint d)
+    {
+        UInt32Buffer4 buffer = new();
+        buffer[0] = a;
+        buffer[1] = b;
+        buffer[2] = c;
+        buffer[3] = d;
+        this = new(buffer);
+    }
 
     /// <summary>
     /// Get the next deterministic random number between <see cref="int.MinValue"/> and <see cref="int.MaxValue"/>.
@@ -469,6 +479,17 @@ public static class DeterministicRandomExtensions
 
     #region Custom
 
+    public static DeterministicRandom NextSeed(this ref DeterministicRandom rand)
+    {
+        rand.Next();
+        return new(
+            unchecked((uint)rand.Next()),
+            unchecked((uint)rand.Next()),
+            unchecked((uint)rand.Next()),
+            unchecked((uint)rand.Next())
+        );
+    }
+
     /// <summary>
     /// Generate a sequence of non-repeating integers between <c>0</c> (inclusive) and <paramref name="maxValue"/> (exclusive).
     /// </summary>
@@ -497,6 +518,16 @@ public static class DeterministicRandomExtensions
     /// <returns></returns>
     public static ShuffledEnumerable<T> Shuffled<T>(this ref DeterministicRandom rand, Span<T> values) =>
         new(ref rand, values);
+
+    /// <summary>
+    /// Pick an item at random from a set of values.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="rand"></param>
+    /// <param name="values"></param>
+    /// <returns></returns>
+    public static T Pick<T>(this ref DeterministicRandom rand, ReadOnlySpan<T> values) =>
+        values[rand.Next(values.Length)];
 
     #endregion
 }

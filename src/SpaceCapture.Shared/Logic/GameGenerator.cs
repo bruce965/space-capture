@@ -20,19 +20,13 @@ public static class GameGenerator
             Rules = RulesSet.Standard,
             CelestialBodies =
             [
-                new(CelestialBodyType.YellowDwarf, RandomNameGenerator.Star(ref rand), (0, 0)),
-                new(CelestialBodyType.Terra, RandomNameGenerator.Planet(ref rand), (-200, -50))
+                new((0, 0))
                 {
-                    Resources =
-                    [
-                        new(ResourceType.Population) { HardLimit = 1000 },
-                        new(ResourceType.Food) { SoftLimit = 10, HardLimit = 12 },
-                        new(ResourceType.Metal) { SoftLimit = 10, HardLimit = 12 },
-                        new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
-                    ],
-                    MaxUpgradeLevel = 3,
+                    Class = CelestialBodyClass.YellowDwarf,
+                    //Name = RandomNameGenerator.Star(ref rand),
+                    //Size = 200,
                 },
-                new(CelestialBodyType.Terra, RandomNameGenerator.Planet(ref rand), (200, 50))
+                new((-200, -50))
                 {
                     Resources =
                     [
@@ -42,6 +36,23 @@ public static class GameGenerator
                         new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
                     ],
                     MaxUpgradeLevel = 3,
+                    Class = CelestialBodyClass.Terra,
+                    //Name = RandomNameGenerator.Planet(ref rand),
+                    //Size = 100,
+                },
+                new((200, 50))
+                {
+                    Resources =
+                    [
+                        new(ResourceType.Population) { HardLimit = 1000 },
+                        new(ResourceType.Food) { SoftLimit = 10, HardLimit = 12 },
+                        new(ResourceType.Metal) { SoftLimit = 10, HardLimit = 12 },
+                        new(ResourceType.Gas) { SoftLimit = 10, HardLimit = 12 },
+                    ],
+                    MaxUpgradeLevel = 3,
+                    Class = CelestialBodyClass.GasGiant,
+                    //Name = RandomNameGenerator.Planet(ref rand),
+                    //Size = 100,
                 },
             ],
         };

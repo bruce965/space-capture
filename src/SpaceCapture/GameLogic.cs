@@ -45,19 +45,27 @@ public partial class GameLogic : Node
 
         Simulation.Initialize();
 
+        DeterministicRandom celestialBodySeed = seed;
+
         for (int i = 0; i < Simulation.CelestialBodies.Span.Length; i++)
         {
             ref var body = ref Simulation.CelestialBodies.Span[i];
 
-            CelestialBody instance = Templates.Instantiate(body.Configuration.Type);
+            DeterministicRandom thisCelestialBodySeed = celestialBodySeed.NextSeed();
+            DeterministicRandom rand = thisCelestialBodySeed;
+
+            CelestialBodyType type = i is 0 ? CelestialBodyType.Star : CelestialBodyType.Planet;
+            CelestialBodyClass @class = body.Configuration.Class ?? rand.Pick(type.GetClasses().AsSpan());
+
+            CelestialBody instance = Templates.Instantiate(@class);
 
             _celestialBodiesContainer.AddChild(instance);
 
             instance.Game = this;
-
             instance.Index = i;
-
             instance.Position = new Vector2(body.Configuration.Location.X, body.Configuration.Location.Y);
+
+            instance.Initialize(@type, body.Configuration, thisCelestialBodySeed);
 
             body.Data = instance;
         }

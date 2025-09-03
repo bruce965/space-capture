@@ -13,8 +13,10 @@ _celestialBodiesContainer = NodePath("../CelestialBodies")
 _infoPanel = NodePath("../GameplayUI/InfoPanel")
 
 [node name="Stars" parent="." instance=ExtResource("9_lum1l")]
+metadata/_edit_lock_ = true
 
 [node name="Nebula" parent="." instance=ExtResource("7_sv4lv")]
+metadata/_edit_lock_ = true
 
 [node name="CelestialBodies" type="Node2D" parent="."]
 position = Vector2(576, 324)
@@ -27,6 +29,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 0
+metadata/_edit_lock_ = true
 
 [node name="InfoPanel" parent="GameplayUI" instance=ExtResource("4_1bvp3")]
 layout_mode = 0

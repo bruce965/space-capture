@@ -23,7 +23,7 @@ public partial class Templates : Resource
     public static IconTemplates Icons => default;
 
     [Export]
-    Dictionary<CelestialBodyType, PackedScene> _celestialBodies;
+    Dictionary<CelestialBodyClass, PackedScene> _celestialBodies;
 
     [Export]
     Dictionary<ResourceType, Texture2D> _resourceIcons;
@@ -31,6 +31,6 @@ public partial class Templates : Resource
     [Export]
     Dictionary<StructureType, Texture2D> _structureIcons;
 
-    public static CelestialBody Instantiate(CelestialBodyType type) =>
+    public static CelestialBody Instantiate(CelestialBodyClass type) =>
         s_instance._celestialBodies[type].Instantiate<CelestialBody>();
 }

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://dnerbdusnaofr"]
 
 [ext_resource type="Shader" uid="uid://busav7g7kea12" path="res://scenes/celestial_bodies/procedural_planet.gdshader" id="1_tl7a6"]
-[ext_resource type="Texture2D" uid="uid://dr8pb2ip0k08j" path="res://scenes/celestial_bodies/albedo_terra.png" id="2_6s7qe"]
+[ext_resource type="Texture2D" uid="uid://dr8pb2ip0k08j" path="res://scenes/celestial_bodies/colors/color_terra.png" id="2_6s7qe"]
 [ext_resource type="Script" uid="uid://di3bf3mexocfj" path="res://scenes/celestial_bodies/ProceduralPlanet.cs" id="3_dyl4c"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_xihql"]
