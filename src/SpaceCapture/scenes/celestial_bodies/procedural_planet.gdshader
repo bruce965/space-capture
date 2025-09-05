@@ -4,7 +4,7 @@
 shader_type canvas_item;
 
 // Noise texture.
-uniform sampler3D noise: repeat_enable;
+uniform sampler3D noise: repeat_enable, filter_linear;
 
 // Planet.
 uniform float size = 100.; // Size in pixels, not including atmosphere.

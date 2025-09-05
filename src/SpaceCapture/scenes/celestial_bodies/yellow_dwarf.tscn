@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://ku6vttanajtg"]
+[gd_scene load_steps=12 format=3 uid="uid://ku6vttanajtg"]
 
 [ext_resource type="PackedScene" uid="uid://m7w4u8ogp4fq" path="res://scenes/celestial_bodies/celestial_body.tscn" id="1_45aow"]
 [ext_resource type="Shader" uid="uid://busav7g7kea12" path="res://scenes/celestial_bodies/procedural_planet.gdshader" id="2_fy7a6"]
 [ext_resource type="Texture2D" uid="uid://bf617xxld2dm" path="res://scenes/celestial_bodies/colors/color_star.png" id="3_fy7a6"]
+[ext_resource type="NoiseTexture3D" uid="uid://bo0amr6s70ned" path="res://scenes/celestial_bodies/noise.tres" id="4_4bdr5"]
 [ext_resource type="Script" uid="uid://di3bf3mexocfj" path="res://scenes/celestial_bodies/ProceduralPlanet.cs" id="4_58tc7"]
 
 [sub_resource type="Shader" id="Shader_eepe1"]
@@ -22,20 +23,10 @@ shader = SubResource("Shader_eepe1")
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_73v6w"]
 size = Vector2(8, 8)
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_fy7a6"]
-fractal_octaves = 8
-
-[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_4bdr5"]
-width = 256
-height = 256
-depth = 256
-seamless = true
-noise = SubResource("FastNoiseLite_fy7a6")
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3h86j"]
 resource_local_to_scene = true
 shader = ExtResource("2_fy7a6")
-shader_parameter/noise = SubResource("NoiseTexture3D_4bdr5")
+shader_parameter/noise = ExtResource("4_4bdr5")
 shader_parameter/size = 100.0
 shader_parameter/rotationSpeed = 0.05
 shader_parameter/albedo = ExtResource("3_fy7a6")
